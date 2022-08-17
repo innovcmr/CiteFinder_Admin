@@ -1,0 +1,4 @@
+{
+    "first": "This file will contain all french translation corresponding to the placeholders in the english json file. Note: The name of the attributes must remain the same.i.e." ,
+    "phone_code": "Veuillez entrer le code de vérification reçu par SMS"
+}
