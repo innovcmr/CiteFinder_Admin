@@ -4,7 +4,7 @@ class Config {
   // static final apiUrl = "http://192.168.43.49:5000/";
   static final keys = _Keys();
   static final assets = _Assets();
-  // static final appName = "Cite Finder";
+  static final appName = "Cite Finder Admin";
   // static final countryCode = "+237";
   // static final appKeyAndroid = "j8V634F9f0x8DGkqj4HkT6bELJWd0mBt";
 }
