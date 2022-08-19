@@ -1,0 +1,9 @@
+{
+    "id": "234kb2k3b23b",
+    "firstName": "James",
+    "lastName": "Bond",
+    "displayName":" James Bond",
+    "email": "jamesbond@gmail.com",
+    "photoUrl": "public/image.png",
+    "role": "Admin"
+}
