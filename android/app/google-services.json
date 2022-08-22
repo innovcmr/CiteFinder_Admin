@@ -7,78 +7,6 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:198222666676:android:5cdd6a78cb51dd26ebf0e1",
-        "android_client_info": {
-          "package_name": "com.DopeTech.HomeFInderAdmin"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "198222666676-cpkpgbq1pvi24vrgr438si0djogg6hmg.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyDOFGla93B838ES2u5KQ3vOyieG-XITokI"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "198222666676-cpkpgbq1pvi24vrgr438si0djogg6hmg.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "198222666676-4o6j76gcjj73uu2uhfavda6tk3iaoa3j.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.example.citeFinderAdmin"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:198222666676:android:e7738be35f56af8febf0e1",
-        "android_client_info": {
-          "package_name": "com.DopeTech.HomeFinderAdmin"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "198222666676-cpkpgbq1pvi24vrgr438si0djogg6hmg.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyDOFGla93B838ES2u5KQ3vOyieG-XITokI"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "198222666676-cpkpgbq1pvi24vrgr438si0djogg6hmg.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "198222666676-4o6j76gcjj73uu2uhfavda6tk3iaoa3j.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.example.citeFinderAdmin"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
         "mobilesdk_app_id": "1:198222666676:android:302720f99e7e95c4ebf0e1",
         "android_client_info": {
           "package_name": "com.DopeTech.citefinder"
@@ -130,6 +58,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "198222666676-uilpeau62s60isj0j1ufv5pltipo6k6q.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.dopetech.home_finder",
+            "certificate_hash": "b15852886cf1c54069be9fc42c1a1d11309ec793"
+          }
+        },
+        {
           "client_id": "198222666676-cpkpgbq1pvi24vrgr438si0djogg6hmg.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -159,7 +95,7 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:198222666676:android:ea2d66af8a131d7eebf0e1",
+        "mobilesdk_app_id": "1:198222666676:android:2d47a0df8640a6c7ebf0e1",
         "android_client_info": {
           "package_name": "com.example.cite_finder_admin"
         }

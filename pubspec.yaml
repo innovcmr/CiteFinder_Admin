@@ -12,6 +12,7 @@ dependencies:
   firebase_auth: ^3.6.3
   firebase_storage: ^10.3.5
   firebase_core: ^1.20.1
+  font_awesome_flutter: ^10.1.0
   get: 4.6.5
   flutter: 
     sdk: flutter
