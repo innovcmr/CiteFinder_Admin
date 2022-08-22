@@ -14,6 +14,9 @@ class _Keys {
   // final token = "token";
   // final user = "user";
   // uncomment if needed
+  final fisrtOpen = 'firstOpen';
+  final userIsLogIn = "userIsLogIn";
+  final user = "user";
 }
 
 class _Assets {
@@ -21,4 +24,5 @@ class _Assets {
   // final logo = "assets/images/logo.png";
   // final english = "assets/images/english.svg";
   // final french = "assets/images/french.svg";
+  final loginBg = "assets/images/loginBg.jpeg";
 }

@@ -23,7 +23,10 @@ class DefaultFirebaseOptions {
       case TargetPlatform.android:
         return android;
       case TargetPlatform.iOS:
-        return ios;
+        throw UnsupportedError(
+          'DefaultFirebaseOptions have not been configured for ios - '
+          'you can reconfigure this by running the FlutterFire CLI again.',
+        );
       case TargetPlatform.macOS:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for macos - '
@@ -58,20 +61,9 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyDOFGla93B838ES2u5KQ3vOyieG-XITokI',
-    appId: '1:198222666676:android:ea2d66af8a131d7eebf0e1',
+    appId: '1:198222666676:android:2d47a0df8640a6c7ebf0e1',
     messagingSenderId: '198222666676',
     projectId: 'citefinder',
     storageBucket: 'citefinder.appspot.com',
-  );
-
-  static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyADApmaQpZbse45BwboaGaMROyPmuyZKos',
-    appId: '1:198222666676:ios:a8c9f456ec59a1cbebf0e1',
-    messagingSenderId: '198222666676',
-    projectId: 'citefinder',
-    storageBucket: 'citefinder.appspot.com',
-    androidClientId: '198222666676-mc5maaa0sqlqui96jus2094shnir796f.apps.googleusercontent.com',
-    iosClientId: '198222666676-4o6j76gcjj73uu2uhfavda6tk3iaoa3j.apps.googleusercontent.com',
-    iosBundleId: 'com.example.citeFinderAdmin',
   );
 }
