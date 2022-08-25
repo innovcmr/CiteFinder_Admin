@@ -1,0 +1,10 @@
+
+//TODO: Implement Home Provider
+// Add here all requests to firebase involving home Class
+class HomeProvider extends BasePovider {
+  @override
+  void onInit() {
+    super.onInit();
+    
+    }
+}

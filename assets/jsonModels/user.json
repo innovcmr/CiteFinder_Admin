@@ -1,9 +1,12 @@
 {
     "id": "234kb2k3b23b",
-    "firstName": "James",
-    "lastName": "Bond",
-    "displayName":" James Bond",
+    "fullName":" James Bond",
     "email": "jamesbond@gmail.com",
+    "location": "upstation Bamenda",
     "photoUrl": "public/image.png",
-    "role": "Admin"
+    "role": "Admin",
+    "dateAdded": "23-01-1999",
+    "isVerified": false,
+    "isGoogleUser": false,
+    "isFacebookUser": false
 }
