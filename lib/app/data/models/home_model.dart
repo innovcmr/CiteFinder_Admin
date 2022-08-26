@@ -12,13 +12,11 @@ class Home {
   double? rating;
   Location? location;
   List<String>? facilities;
-  String? waterAvailability;
-  String? electricityAvailability;
-  String? security;
   String? mainImage;
   List<String>? images;
   String? dateAdded;
   Landlord? landlord;
+  double? basePrice;
 
   Home(
       {this.id,
@@ -29,13 +27,11 @@ class Home {
       this.rating,
       this.location,
       this.facilities,
-      this.waterAvailability,
-      this.electricityAvailability,
-      this.security,
       this.mainImage,
       this.images,
       this.dateAdded,
-      this.landlord});
+      this.landlord,
+      this.basePrice});
 
   Home.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -47,14 +43,13 @@ class Home {
     location =
         json['location'] != null ? Location?.fromJson(json['location']) : null;
     facilities = json['facilities'].cast<String>();
-    waterAvailability = json['waterAvailability'];
-    electricityAvailability = json['electricityAvailability'];
-    security = json['security'];
     mainImage = json['mainImage'];
     images = json['images'].cast<String>();
     dateAdded = json['dateAdded'];
+    dateAdded = json['dateAdded'];
     landlord =
         json['landlord'] != null ? Landlord?.fromJson(json['landlord']) : null;
+    basePrice = json['basePrice'];
   }
 
   Map<String, dynamic> toJson() {
@@ -69,15 +64,13 @@ class Home {
       data['location'] = location?.toJson();
     }
     data['facilities'] = facilities;
-    data['waterAvailability'] = waterAvailability;
-    data['electricityAvailability'] = electricityAvailability;
-    data['security'] = security;
     data['mainImage'] = mainImage;
     data['images'] = images;
     data['dateAdded'] = dateAdded;
     if (landlord != null) {
       data['landlord'] = landlord?.toJson();
     }
+    data['basePrice'] = basePrice;
     return data;
   }
 }

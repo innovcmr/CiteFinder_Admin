@@ -63,11 +63,11 @@ class Validator {
   static String? email(String? val) {
     if (val != null) {
       if (val.isEmpty) return "This field is required";
-      return RegExp(
-                  r"^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$")
-              .hasMatch(val)
-          ? null
-          : 'Email is invalid';
+      // return RegExp(
+      //             r"^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$")
+      //         .hasMatch(val)
+      //     ? null
+      //     : 'Email is invalid';
     }
     return null;
   }

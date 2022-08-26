@@ -25,4 +25,5 @@ class _Assets {
   // final english = "assets/images/english.svg";
   // final french = "assets/images/french.svg";
   final loginBg = "assets/images/loginBg.jpeg";
+  final logo = "assets/images/logo.png";
 }

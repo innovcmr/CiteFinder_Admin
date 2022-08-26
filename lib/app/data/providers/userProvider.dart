@@ -23,8 +23,9 @@ class UserProvider extends BasePovider {
   Future<bool> signInUser(
       {required String email, required String password}) async {
     try {
-      final userCredential = await auth.signInWithEmailAndPassword(
-          email: email, password: password);
+      final userCredential = await auth
+          .signInWithEmailAndPassword(email: email, password: password)
+          .timeout(const Duration(seconds: 15));
       final user = userCredential.user;
       print(user?.uid);
       // box.write(Config.keys.user, user);

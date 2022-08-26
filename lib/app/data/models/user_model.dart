@@ -9,6 +9,7 @@ class User {
   bool? isVerified;
   bool? isGoogleUser;
   bool? isFacebookUser;
+  String? phoneNumber;
 
   User(
       {this.id,
@@ -20,7 +21,8 @@ class User {
       this.dateAdded,
       this.isVerified,
       this.isGoogleUser,
-      this.isFacebookUser});
+      this.isFacebookUser,
+      this.phoneNumber});
 
   User.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -33,6 +35,7 @@ class User {
     isVerified = json['isVerified'];
     isGoogleUser = json['isGoogleUser'];
     isFacebookUser = json['isFacebookUser'];
+    phoneNumber = json['phoneNumber'];
   }
 
   Map<String, dynamic> toJson() {
@@ -47,6 +50,7 @@ class User {
     data['isVerified'] = isVerified;
     data['isGoogleUser'] = isGoogleUser;
     data['isFacebookUser'] = isFacebookUser;
+    data['phoneNumber'] = phoneNumber;
     return data;
   }
 }

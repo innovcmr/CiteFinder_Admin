@@ -17,9 +17,7 @@
         "premade beds",
         "gaz"
     ],
-    "waterAvailability": "high",
-    "electricityAvailability": "high",
-    "security": "high",
+    
     "mainImage": "public/ckplaza/mainImg.jpg",
     "images": [
         "public/ckplaza/images/1.jpg",
@@ -29,5 +27,6 @@
     "dateAdded": "30/12/2022",
     "landlord": {
         "id": "pwerjwojn"
-    }
+    },
+    "basePrice": 230.5
 }

@@ -17,7 +17,9 @@ class LoginView extends GetView<LoginController> {
           child: Container(
             decoration: BoxDecoration(
               image: DecorationImage(
-                  image: AssetImage(Config.assets.loginBg), opacity: 0.6),
+                  image: AssetImage(Config.assets.loginBg),
+                  opacity: 0.6,
+                  fit: BoxFit.fill),
             ),
             child: Container(
               padding: const EdgeInsets.all(50.0),
