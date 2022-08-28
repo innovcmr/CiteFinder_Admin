@@ -5,7 +5,7 @@ class Agent extends User {
 
   Agent({this.jurisdiction});
 
-  Agent.fromJson(Map<String, dynamic> json) {
+  Agent.fromJson(json) {
     User.fromJson(json);
     jurisdiction = json['jurisdiction'];
   }

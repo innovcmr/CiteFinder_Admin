@@ -11,12 +11,13 @@ class HouseView extends GetView<HouseController> {
   Widget build(BuildContext context) {
     final controller = Get.put(HouseController());
     return Scaffold(
-      backgroundColor: AppTheme.colors.mainGreyBg,
-      body: CRUD(
-        title: "Houses",
-        subTitle: "All Houses",
-        searchController: controller.searchController,
-      ),
-    );
+        // backgroundColor: AppTheme.colors.mainGreyBg,
+        // body: CRUD(
+        //   title: "Houses",
+        //   subTitle: "All Houses",
+
+        //   searchController: controller.searchController,
+        // ),
+        );
   }
 }

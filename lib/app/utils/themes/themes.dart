@@ -61,6 +61,7 @@ class _Colors {
   final darkerGreyTextColor = Color.fromARGB(255, 167, 168, 172);
   final lightPurpleSidebarColor = const Color(0xFFF5F4F8);
   final inputPlaceholderColor = const Color(0xFFA1A5C1);
+  final mainRedColor = const Color(0xFFFF3D00);
 }
 
 class _Sizes {

@@ -2,6 +2,7 @@ import 'package:cite_finder_admin/app/utils/config.dart';
 import 'package:cite_finder_admin/app/utils/themes/themes.dart';
 import 'package:cite_finder_admin/app/utils/validator.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'package:get/get.dart';
 
@@ -11,6 +12,8 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 class LoginView extends GetView<LoginController> {
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setPreferredOrientations(
+        [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
     return SafeArea(
       child: Scaffold(
         body: SingleChildScrollView(

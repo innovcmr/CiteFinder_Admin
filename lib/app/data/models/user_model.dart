@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class User {
   String? id;
   String? fullName;
@@ -5,7 +7,7 @@ class User {
   String? location;
   String? photoUrl;
   String? role;
-  String? dateAdded;
+  Timestamp? dateAdded;
   bool? isVerified;
   bool? isGoogleUser;
   bool? isFacebookUser;
@@ -24,18 +26,29 @@ class User {
       this.isFacebookUser,
       this.phoneNumber});
 
-  User.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    fullName = json['fullName'];
-    email = json['email'];
-    location = json['location'];
-    photoUrl = json['photoUrl'];
-    role = json['role'];
-    dateAdded = json['dateAdded'];
-    isVerified = json['isVerified'];
-    isGoogleUser = json['isGoogleUser'];
-    isFacebookUser = json['isFacebookUser'];
-    phoneNumber = json['phoneNumber'];
+  User.fromJson(DocumentSnapshot json) {
+    id = json.data().toString().contains("id") ? json['id'] : "";
+    fullName =
+        json.data().toString().contains("fullName") ? json['fullName'] : "";
+    email = json.data().toString().contains("email") ? json['email'] : "";
+    location =
+        json.data().toString().contains("location") ? json['location'] : "";
+    photoUrl =
+        json.data().toString().contains("photoUrl") ? json['photoUrl'] : "";
+    role = json.data().toString().contains("role") ? json['role'] : "";
+    dateAdded =
+        json.data().toString().contains("dateAdded") ? json['dateAdded'] : "";
+    isVerified =
+        json.data().toString().contains("isVerified") ? json['isVerified'] : "";
+    isGoogleUser = json.data().toString().contains("isGoogleUser")
+        ? json['isGoogleUser']
+        : "";
+    isFacebookUser = json.data().toString().contains("isFacebookUser")
+        ? json['isFacebookUser']
+        : "";
+    phoneNumber = json.data().toString().contains("phoneNumber")
+        ? json['phoneNumber']
+        : "";
   }
 
   Map<String, dynamic> toJson() {

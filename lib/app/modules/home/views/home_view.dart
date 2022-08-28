@@ -11,7 +11,9 @@ import '../controllers/home_controller.dart';
 
 class HomeView extends GetView<HomeController> {
   @override
+  @override
   Widget build(BuildContext context) {
+    final controller = Get.put(HomeController());
     SystemChrome.setPreferredOrientations(
         [DeviceOrientation.landscapeLeft, DeviceOrientation.landscapeRight]);
     return Scaffold(
