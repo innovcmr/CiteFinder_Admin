@@ -55,40 +55,40 @@ class UserProvider extends BasePovider {
   }) async {
     //create firebase user
     try {
-      // final userCred = await auth.createUserWithEmailAndPassword(
-      //     email: email, password: password);
+      final userCred = await auth.createUserWithEmailAndPassword(
+          email: email, password: password);
 
-      // if (userCred.user != null) {
-      //   // final userType = SplashController.to.initialUserType;
+      if (userCred.user != null) {
+        // final userType = SplashController.to.initialUserType;
 
-      //   //create firestore document for user
+        //create firestore document for user
 
-      //   final newDoc = firestore
-      //       .collection(Config.firebaseKeys.users)
-      //       .doc(userCred.user!.uid);
-      //   final userMap = {
-      //     Config.firebaseKeys.id: userCred.user!.uid,
-      //     Config.firebaseKeys.fullName: fullName,
-      //     Config.firebaseKeys.email: email,
-      //     Config.firebaseKeys.role: role,
-      //     Config.firebaseKeys.dateAdded: DateTime.now(),
-      //     Config.firebaseKeys.isVerified: false,
-      //     Config.firebaseKeys.isGoogleUser: false,
-      //     Config.firebaseKeys.isFacebookUser: false
-      //     // if(phoneNumber.isNotEmpty || phoneNumber != null)
+        final newDoc = firestore
+            .collection(Config.firebaseKeys.users)
+            .doc(userCred.user!.uid);
+        final userMap = {
+          Config.firebaseKeys.id: userCred.user!.uid,
+          Config.firebaseKeys.fullName: fullName,
+          Config.firebaseKeys.email: email,
+          Config.firebaseKeys.role: role,
+          Config.firebaseKeys.dateAdded: DateTime.now(),
+          Config.firebaseKeys.isVerified: false,
+          Config.firebaseKeys.isGoogleUser: false,
+          Config.firebaseKeys.isFacebookUser: false
+          // if(phoneNumber.isNotEmpty || phoneNumber != null)
 
-      //     // Config.firebaseKeys.phoneNumber: phoneNumber,
-      //   };
-      //   if (phoneNumber!.isNotEmpty || phoneNumber != null) {
-      //     userMap.addEntries(
-      //         {Config.firebaseKeys.phoneNumber: phoneNumber}.entries);
-      //   }
-      //   await newDoc.set(
-      //     userMap,
-      //   );
+          // Config.firebaseKeys.phoneNumber: phoneNumber,
+        };
+        if (phoneNumber!.isNotEmpty || phoneNumber != null) {
+          userMap.addEntries(
+              {Config.firebaseKeys.phoneNumber: phoneNumber}.entries);
+        }
+        await newDoc.set(
+          userMap,
+        );
 
-      //   await userCred.user!.sendEmailVerification();
-      // }
+        await userCred.user!.sendEmailVerification();
+      }
       Get.snackbar("Success",
           "User successfully Created. An Email verification has been sent.",
           duration: const Duration(seconds: 6));
