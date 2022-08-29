@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 
 // This is a file to include all validators for all forms in project
 
@@ -20,6 +21,14 @@ class Validator {
       if (val.length < 6) {
         return "Password length should be at least 6 characters";
       }
+    }
+    return null;
+  }
+
+  static String? phoneNumber(String? val) {
+    if (val == null || val.isEmpty) return null;
+    if (!GetUtils.isPhoneNumber(val)) {
+      return "Invalid Phone Number";
     }
     return null;
   }
@@ -63,11 +72,11 @@ class Validator {
   static String? email(String? val) {
     if (val != null) {
       if (val.isEmpty) return "This field is required";
-      // return RegExp(
-      //             r"^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$")
-      //         .hasMatch(val)
-      //     ? null
-      //     : 'Email is invalid';
+      return RegExp(
+                  r"^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$")
+              .hasMatch(val.trim())
+          ? null
+          : 'Email is invalid';
     }
     return null;
   }

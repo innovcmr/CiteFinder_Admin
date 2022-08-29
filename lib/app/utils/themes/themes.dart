@@ -6,7 +6,8 @@ class AppTheme {
   static final colors = _Colors();
   static final sizes = _Sizes();
   static final themeLight = ThemeData(
-    primaryColor: colors.mainPurpleColor,
+    dialogBackgroundColor: colors.dialogBgColor,
+    // primaryColor: colors.mainPurpleColor,
     backgroundColor: colors.mainGreyBg,
     focusColor: colors.mainPurpleColor,
     fontFamily: "LatoRegular",
@@ -22,6 +23,7 @@ class AppTheme {
       headline5: TextStyle(fontFamily: "LatoRegular", fontSize: 14),
       button: TextStyle(fontFamily: "LatoRegular", fontSize: 16),
     ),
+    iconTheme: IconThemeData(color: colors.darkerGreyTextColor),
     snackBarTheme: const SnackBarThemeData(
       backgroundColor: Colors.white,
     ),
@@ -33,12 +35,16 @@ class AppTheme {
           borderSide: const BorderSide(width: 0.0, style: BorderStyle.none),
           borderRadius: BorderRadius.circular(10.0)),
       fillColor: colors.greyInputColor,
+      prefixIconColor: colors.inputPlaceholderColor,
+      suffixIconColor: colors.inputPlaceholderColor,
     ),
+
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(13)),
-          minimumSize: const Size(200, 30),
+          minimumSize: const Size(200, 40),
+          // maximumSize: const Size(500, 50),
           primary: colors.mainPurpleColor),
     ),
   );
@@ -53,6 +59,7 @@ class AppTheme {
 class _Colors {
   // Here input all colors to be used in project i.e.
   // final bluecolor = Colors.blueAccent;
+  final dialogBgColor = const Color(0xFFa884ac);
   final mainPurpleColor = const Color(0xFF431C69);
   final mainLightPurpleColor = const Color(0xFF8560A8);
   final mainGreyBg = const Color(0xFFE5E5E5);

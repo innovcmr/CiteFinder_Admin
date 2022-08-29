@@ -49,7 +49,7 @@ class LoginView extends GetView<LoginController> {
                     ),
                     Obx(
                       () => Form(
-                        key: controller.key,
+                        key: controller.loginFormKey,
                         autovalidateMode: controller.autoValidate.value
                             ? AutovalidateMode.always
                             : AutovalidateMode.disabled,

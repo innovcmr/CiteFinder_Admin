@@ -1,5 +1,6 @@
 import 'package:cite_finder_admin/app/data/providers/userProvider.dart';
 import 'package:cite_finder_admin/app/modules/home/views/home_view.dart';
+import 'package:cite_finder_admin/app/utils/formKeys.dart';
 import 'package:cite_finder_admin/app/utils/getExtension.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -10,7 +11,7 @@ class LoginController extends GetxController {
   final _userProvider = UserProvider();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
-  final key = GlobalKey<FormState>();
+  final loginFormKey = LoginFormKey();
 
   final autoValidate = false.obs;
   @override
@@ -33,7 +34,7 @@ class LoginController extends GetxController {
   void increment() => count.value++;
 
   void login() async {
-    if (!key.currentState!.validate()) {
+    if (!loginFormKey.currentState!.validate()) {
       autoValidate(true);
       return;
     } else {
@@ -42,7 +43,8 @@ class LoginController extends GetxController {
       bool successful = false;
       try {
         successful = await _userProvider.signInUser(
-            email: emailController.text, password: passwordController.text);
+            email: emailController.text.trim(),
+            password: passwordController.text);
         if (successful) {
           Get.snackbar("Login", "Login Successful");
           print("successful signin");

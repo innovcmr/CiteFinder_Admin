@@ -4,6 +4,7 @@
 
 import 'dart:developer';
 
+import 'package:cite_finder_admin/app/components/createEditView.dart';
 import 'package:cite_finder_admin/app/data/models/user_model.dart';
 import 'package:cite_finder_admin/app/modules/user/controllers/user_controller.dart';
 import 'package:cite_finder_admin/app/utils/extensions.dart';
@@ -12,7 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 
-class CRUD extends StatefulWidget {
+class CRUD extends GetView {
   CRUD(
       {Key? key,
       this.addBtnVisibility = true,
@@ -21,6 +22,7 @@ class CRUD extends StatefulWidget {
       this.subTitle,
       this.showEditIcon = true,
       this.showDeleteIcon = true,
+      required this.createEditView,
       required this.searchController,
       required this.moduleItems})
       : super(key: key);
@@ -33,52 +35,24 @@ class CRUD extends StatefulWidget {
   final Function()? onAdd;
   final TextEditingController searchController;
   final userController = UserController();
-  List<Map<String, dynamic>> mockData = [
-    // {
-    //   "id": "01",
-    //   "name": "ck plaza",
-    //   "description": "Very popular cite. Come one come all",
-    //   "type": "hostel",
-    //   "shortVideo": "public/ckplaza/vid.mp4",
-    //   "rating": 4.4,
-    //   "mainImage": "public/ckplaza/mainImg.jpg",
-    //   "dateAdded": "30/12/2022",
-    //   "basePrice": 230.5
-    // },
-    {
-      "id": "02",
-      "name": "",
-      "description": "",
-      "type": "",
-      "shortVideo": "",
-      "rating": "",
-      "mainImage": "",
-      "dateAdded": "",
-      "basePrice": ""
-    },
-    // {
-    //   "id": "03",
-    //   "name": "",
-    //   "description": "",
-    //   "type": "",
-    //   "shortVideo": "",
-    //   "rating": "",
-    //   "mainImage": "",
-    //   "dateAdded": "",
-    //   "basePrice": ""
-    // }
-  ];
+  final GetView createEditView;
+  // <Map<String, dynamic> createFormFields ={
+  //   // "user" :{
 
-  @override
-  State<CRUD> createState() => _CRUDState();
-}
+  //   // }
 
-class _CRUDState extends State<CRUD> {
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-  }
+  // }
+
+//   @override
+//   State<CRUD> createState() => _CRUDState();
+// }
+
+// class _CRUDState extends State<CRUD> {
+//   @override
+//   void initState() {
+//     // TODO: implement initState
+//     super.initState();
+//   }
 
   @override
   Widget build(BuildContext context) {
@@ -92,13 +66,19 @@ class _CRUDState extends State<CRUD> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  widget.title ?? '',
+                  title ?? '',
                   style: Get.textTheme.headline2!
                       .copyWith(color: AppTheme.colors.mainPurpleColor),
                 ),
-                if (widget.addBtnVisibility)
+                if (addBtnVisibility)
                   ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      showDialog(
+                          context: context,
+                          builder: (context) {
+                            return createEditView;
+                          });
+                    },
                     child: Text(
                       "+ADD",
                       style: Get.textTheme.headline4!
@@ -126,7 +106,7 @@ class _CRUDState extends State<CRUD> {
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Text(
-                        widget.subTitle ?? '',
+                        subTitle ?? '',
                         style: Get.textTheme.headline5!.copyWith(
                             fontWeight: FontWeight.bold, letterSpacing: 1.5),
                       ),
@@ -149,7 +129,7 @@ class _CRUDState extends State<CRUD> {
                                       color: AppTheme
                                           .colors.inputPlaceholderColor),
                                 ),
-                                controller: widget.searchController),
+                                controller: searchController),
                           ),
                         ),
                         const SizedBox(
@@ -158,16 +138,18 @@ class _CRUDState extends State<CRUD> {
                         IconButton(
                           onPressed: () {},
                           icon: const Icon(Icons.filter_list),
+                          splashRadius: 20,
                         ),
                         IconButton(
                           onPressed: () {},
                           icon: const Icon(Icons.more_vert),
+                          splashRadius: 20,
                         )
                       ],
                     ),
 
                     StreamBuilder<List<User>>(
-                      stream: widget.userController.userProvider.moduleStream(),
+                      stream: userController.userProvider.moduleStream(),
                       builder: (context, snapshot) {
                         final items = snapshot.data;
                         if (!snapshot.hasData) {
@@ -180,15 +162,14 @@ class _CRUDState extends State<CRUD> {
                         if (snapshot.hasError) {
                           return Center(
                               child: Text(
-                            "An error  occurred while retrieving ${widget.title}",
+                            "An error  occurred while retrieving ${title}",
                             textAlign: TextAlign.center,
                           ));
                         }
                         if (snapshot.data!.isEmpty) {
                           return Padding(
                             padding: const EdgeInsets.all(8.0),
-                            child: Center(
-                                child: Text("No ${widget.title} to show")),
+                            child: Center(child: Text("No ${title} to show")),
                           );
                         }
 
@@ -262,7 +243,7 @@ class _CRUDState extends State<CRUD> {
                                             color: AppTheme
                                                 .colors.mainPurpleColor),
                                       ),
-                                      if (widget.showEditIcon)
+                                      if (showEditIcon)
                                         IconButton(
                                           padding: const EdgeInsets.symmetric(
                                               horizontal: 3),
@@ -274,7 +255,7 @@ class _CRUDState extends State<CRUD> {
                                               color: AppTheme
                                                   .colors.mainPurpleColor),
                                         ),
-                                      if (widget.showDeleteIcon)
+                                      if (showDeleteIcon)
                                         IconButton(
                                           padding: const EdgeInsets.symmetric(
                                               horizontal: 3),
