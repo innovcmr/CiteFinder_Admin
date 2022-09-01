@@ -89,9 +89,7 @@ class UserProvider extends BasePovider {
 
         await userCred.user!.sendEmailVerification();
       }
-      Get.snackbar("Success",
-          "User successfully Created. An Email verification has been sent.",
-          duration: const Duration(seconds: 6));
+      Get.back();
       log("User successfully Created.");
       return true;
     } on FirebaseAuthException catch (e) {
@@ -120,7 +118,7 @@ class UserProvider extends BasePovider {
     return firestore.collection("users").snapshots().map((QuerySnapshot query) {
       List<UserModel.User> users = [];
       for (var user in query.docs) {
-        final userModel = UserModel.User.fromJson(user);
+        final userModel = UserModel.User.fromJson(user, "document");
         users.add(userModel);
       }
       log("User Fetch  ${users.map((element) => element.toJson()).toString()}");

@@ -17,7 +17,7 @@ class _Keys {
   // uncomment if needed
   final fisrtOpen = 'firstOpen';
   final userIsLogIn = "userIsLogIn";
-  final user = "user";
+  final selectedUser = "selectedUser";
 }
 
 class _Assets {

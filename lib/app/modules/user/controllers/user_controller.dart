@@ -16,10 +16,15 @@ class UserController extends GetxController {
   final count = 0.obs;
   // It is necasssy to name it as ModuleItemList nd not User because this name is used in child component
   Rx<List<User>> moduleItemList = Rx<List<User>>([]);
-  List<User> get moduleItems => moduleItemList.value;
-  final userProvider = UserProvider();
+  static UserController get to => Get.find();
 
-  final GlobalKey<FormState> createUserFormKey = CreateUserFormKey();
+  List<User> get moduleItems => moduleItemList.value;
+  var createEditViewData = Rxn();
+  final userProvider = UserProvider();
+  final selectedUserIndex = Rxn<int>();
+  // final selectedUserIndex = Rxn<int>();
+
+  final GlobalKey<FormState> _createUserFormKey = CreateUserFormKey();
 
   final searchController = TextEditingController();
   final autoValidate = false.obs;
@@ -50,6 +55,9 @@ class UserController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    createEditViewData.listen((p0) {
+      log("new val is $p0");
+    });
     userProvider.onInit();
     //initialize text controllers
     userNameController = TextEditingController();
@@ -79,11 +87,15 @@ class UserController extends GetxController {
     // log("user count is ${moduleItems.first.toString()}");
   }
 
+  getFormKey() {
+    return _createUserFormKey;
+  }
+
   void increment() => count.value++;
 
   void createNewUser() async {
     Get.focusScope?.unfocus();
-    if (!createUserFormKey.currentState!.validate()) {
+    if (!_createUserFormKey.currentState!.validate()) {
       autoValidate(true);
       return;
     } else {
@@ -98,11 +110,15 @@ class UserController extends GetxController {
             phoneNumber: phoneNumberController.text.trim());
         if (success) {
           clear();
-          Get.back();
+          Get.snackbar("Success",
+              "User successfully Created. An Email verification has been sent.",
+              duration: const Duration(seconds: 6));
+          Get.closeLoader();
         }
-      } on fb.FirebaseAuthException catch (e) {
-        Get.snackbar("Error in user Creation", e.message ?? "");
+      } catch (e) {
+        Get.snackbar("Error in user Creation", e.toString());
         log("Successful User Creation");
+        Get.closeLoader();
       } finally {
         Get.closeLoader();
       }

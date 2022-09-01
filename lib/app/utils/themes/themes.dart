@@ -11,7 +11,19 @@ class AppTheme {
     backgroundColor: colors.mainGreyBg,
     focusColor: colors.mainPurpleColor,
     fontFamily: "LatoRegular",
-    // colorSchemeSeed: colors.mainPurpleColor,
+    colorScheme: ColorScheme(
+        brightness: Brightness.light,
+        primary: colors.mainPurpleColor,
+        onPrimary: Colors.white,
+        secondary: colors.mainLightPurpleColor,
+        onSecondary: colors.darkerGreyTextColor,
+        tertiary: colors.lightPurpleSidebarColor,
+        background: colors.lightPurpleSidebarColor,
+        onBackground: Colors.white,
+        surface: Colors.white,
+        onSurface: Colors.black,
+        error: colors.mainRedColor,
+        onError: Colors.white),
     // primarySwatch: MaterialColor(5, {
     //   1: colors.lightPurpleSidebarColor,
     //   5: colors.mainLightPurpleColor,
@@ -59,7 +71,7 @@ class AppTheme {
 class _Colors {
   // Here input all colors to be used in project i.e.
   // final bluecolor = Colors.blueAccent;
-  final dialogBgColor = const Color(0xFFa884ac);
+  final dialogBgColor = const Color(0xFFF5F4F8);
   final mainPurpleColor = const Color(0xFF431C69);
   final mainLightPurpleColor = const Color(0xFF8560A8);
   final mainGreyBg = const Color(0xFFE5E5E5);

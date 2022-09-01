@@ -51,5 +51,9 @@ class AppPages {
       page: () => AgentView(),
       binding: AgentBinding(),
     ),
+    GetPage(
+      name: _Paths.CREATEEDIT,
+      page: () => CreateEditView(),
+    ),
   ];
 }

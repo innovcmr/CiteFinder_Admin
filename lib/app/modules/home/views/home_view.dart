@@ -29,8 +29,8 @@ class HomeView extends GetView<HomeController> {
             Row(
               children: [
                 IconButton(
+                  constraints: BoxConstraints(),
                   splashRadius: 20,
-                  alignment: Alignment.centerRight,
                   padding: EdgeInsets.zero,
                   onPressed: () {},
                   icon: const Icon(
@@ -59,65 +59,7 @@ class HomeView extends GetView<HomeController> {
       body: Obx(
         () => controller.children[controller.index.value]["view"],
       ),
-      drawer:
-          // Obx(
-          //   () => Drawer(
-          //     width: 210,
-          //     child: Padding(
-          //       padding: const EdgeInsets.all(8.0),
-          //       child: ListView(
-          //         children: [
-          //           // const DrawerHeader(
-          //           //   child: Text(
-          //           //     'Drawer Header',
-          //           //     style: TextStyle(color: Colors.white),
-          //           //   ),
-          //           //   decoration: BoxDecoration(
-          //           //     color: Colors.blue,
-          //           //   ),
-          //           // ),
-          //           ListTile(
-          //             leading: Image.asset(
-          //               Config.assets.logo,
-          //               height: 30,
-          //             ),
-          //             trailing: IconButton(
-          //               icon: const Icon(Icons.close_rounded),
-          //               onPressed: controller.closeDrawer,
-          //             ),
-          //           ),
-          //           ...controller.children
-          //               .mapIndexed(
-          //                 (item, index) => Padding(
-          //                   padding: const EdgeInsets.all(3.0),
-          //                   child: ListTile(
-          //                     shape: RoundedRectangleBorder(
-          //                         borderRadius: BorderRadius.circular(40)),
-          //                     leading: Icon(
-          //                       item["icon"],
-          //                       color: controller.index.value == index
-          //                           ? AppTheme.colors.mainPurpleColor
-          //                           : AppTheme.colors.greySidebarTextColor,
-          //                     ),
-          //                     title: Text(item["label"]),
-          //                     textColor: AppTheme.colors.greySidebarTextColor,
-          //                     selectedColor: AppTheme.colors.mainPurpleColor,
-          //                     selectedTileColor: AppTheme
-          //                         .colors.mainLightPurpleColor
-          //                         .withOpacity(0.15),
-          //                     selected: controller.index.value == index,
-          //                     onTap: controller.changeIndex(index),
-          //                   ),
-          //                 ),
-          //               )
-          //               .toList(),
-          //         ],
-          //       ),
-          //     ),
-          //   ),
-          // ),
-
-          Drawer(
+      drawer: Drawer(
         width: 210,
         child: Padding(
           padding: const EdgeInsets.all(8.0),
@@ -125,7 +67,7 @@ class HomeView extends GetView<HomeController> {
             id: "drawer",
             builder: (controller) => ListView.builder(
                 shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
+                physics: const NeverScrollableScrollPhysics(),
                 itemCount: controller.children.length,
                 itemBuilder: (BuildContext context, int index) {
                   // ListTile(
@@ -143,7 +85,8 @@ class HomeView extends GetView<HomeController> {
                     padding: const EdgeInsets.all(3.0),
                     child: ListTile(
                       shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(40)),
+                        borderRadius: BorderRadius.circular(40),
+                      ),
                       leading: Icon(
                         controller.children[index]["icon"],
                         color: controller.index.value == index

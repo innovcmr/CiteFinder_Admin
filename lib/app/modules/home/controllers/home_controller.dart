@@ -54,8 +54,8 @@ class HomeController extends GetxController {
     print(index);
     // Future.delayed(Duration(milliseconds: 100), () {
     // if () {}
-    // index(val);
     // update(["drawer"]);
+    // index(val);
     // });
     // index(val);
   }
