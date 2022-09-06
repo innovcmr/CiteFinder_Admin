@@ -1,0 +1,32 @@
+   
+{
+    "id": "ertyukjh",
+    "name": "ck plaza",
+    "description": "Very popular cite. Come one come all",
+    "type": "hostel",
+    "shortVideo": "public/ckplaza/vid.mp4",
+    "rating": 4.4,
+    "location": {
+        "id": "owiejwoe",
+        "geoCoordinates": "12.455.23.11",
+        "city": "Bambili",
+        "quarter": "downquartier"
+    },
+    "facilities": [
+        "generator",
+        "premade beds",
+        "gaz"
+    ],
+    
+    "mainImage": "public/ckplaza/mainImg.jpg",
+    "images": [
+        "public/ckplaza/images/1.jpg",
+        "public/ckplaza/images/2.jpg",
+        "public/ckplaza/images/3.jpg"
+    ],
+    "dateAdded": "30/12/2022",
+    "landlord": {
+        "id": "pwerjwojn"
+    },
+    "basePrice": 230.5
+}

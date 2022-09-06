@@ -2,6 +2,7 @@ import 'package:cite_finder_admin/app/utils/config.dart';
 import 'package:cite_finder_admin/app/utils/themes/themes.dart';
 import 'package:cite_finder_admin/app/utils/validator.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'package:get/get.dart';
 
@@ -11,13 +12,17 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 class LoginView extends GetView<LoginController> {
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setPreferredOrientations(
+        [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
     return SafeArea(
       child: Scaffold(
         body: SingleChildScrollView(
           child: Container(
             decoration: BoxDecoration(
               image: DecorationImage(
-                  image: AssetImage(Config.assets.loginBg), opacity: 0.6),
+                  image: AssetImage(Config.assets.loginBg),
+                  opacity: 0.6,
+                  fit: BoxFit.fill),
             ),
             child: Container(
               padding: const EdgeInsets.all(50.0),
@@ -44,7 +49,7 @@ class LoginView extends GetView<LoginController> {
                     ),
                     Obx(
                       () => Form(
-                        key: controller.key,
+                        key: controller.loginFormKey,
                         autovalidateMode: controller.autoValidate.value
                             ? AutovalidateMode.always
                             : AutovalidateMode.disabled,

@@ -1,0 +1,12 @@
+{
+    "id": "eretrbdfb",
+    "type": "studio",
+    "images": [
+        "public/ckplaza/studioImages/1.jpg",
+        "public/ckplaza/studioImages/2.jpg",
+        "public/ckplaza/studioImages/3.jpg"
+    ],
+    "numberAvailable": 4,
+    "description": "parlor, kitchen, toilet",
+    "price": 250.5
+}
