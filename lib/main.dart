@@ -1,4 +1,5 @@
 import 'package:cite_finder_admin/app/utils/config.dart';
+import 'package:cite_finder_admin/app/utils/getExtension.dart';
 import 'package:cite_finder_admin/app/utils/themes/themes.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
@@ -13,7 +14,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
-  );
+  ).timeout(const Duration(seconds: 15));
   await GetStorage.init();
   runApp(
     GetMaterialApp(
