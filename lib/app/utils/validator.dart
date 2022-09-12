@@ -25,12 +25,37 @@ class Validator {
     return null;
   }
 
-  static String? phoneNumber(String? val) {
+  static String? phoneNumberOptional(String? val) {
     if (val == null || val.isEmpty) return null;
     if (!GetUtils.isPhoneNumber(val)) {
-      return "Invalid Phone Number";
+      return "Invalid Phone Number. Enter valid Phone number or leave field empty";
     }
     return null;
+  }
+
+  static String? phoneNumberMandatory(String? val) {
+    if (val != null) {
+      if (val.isEmpty) return "This field is required";
+      if (!GetUtils.isPhoneNumber(val)) return "Invalid Phone Number";
+    }
+    return null;
+  }
+
+  static String? isNumberOptional(String? val) {
+    if (val == null || val.isEmpty) return null;
+    if (!GetUtils.isNum(val)) {
+      return "Invalid value. Enter valid value or leave field empty";
+    }
+    return null;
+  }
+
+  static String? isNumberMandatory(String? val) {
+    if (val != null) {
+      if (val.isEmpty) return "This field is required";
+      if (!GetUtils.isNum(val)) return "Invalid Phone Number";
+    }
+    return null;
+    ;
   }
 
 // This validator checks if a phone number's length(without country code) is = 9 (camerooninan number) add if val!=null to them as requires

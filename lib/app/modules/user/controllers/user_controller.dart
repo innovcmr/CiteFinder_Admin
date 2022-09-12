@@ -14,22 +14,18 @@ class UserController extends GetxController {
   //TODO: Implement UserController
 
   final count = 0.obs;
-  // It is necasssy to name it as ModuleItemList nd not User because this name is used in child component
-  Rx<List<User>> moduleItemList = Rx<List<User>>([]);
   static UserController get to => Get.find();
 
-  List<User> get moduleItems => moduleItemList.value;
-  var createEditViewData = Rxn();
+  // List<User> get moduleItems => moduleItemList.value;
   final userProvider = UserProvider();
   final selectedUserIndex = Rxn<int>();
-  // final selectedUserIndex = Rxn<int>();
 
   final GlobalKey<FormState> _createUserFormKey = CreateUserFormKey();
 
   final searchController = TextEditingController();
   final autoValidate = false.obs;
-  final selectedUserRole = "".obs;
   // final selectedUserRole = Config.firebaseKeys.userRole.first.obs;
+  final selectedUserRole = "".obs;
   late TextEditingController userNameController;
   late TextEditingController fullNameController;
   late TextEditingController emailController;
@@ -55,9 +51,6 @@ class UserController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    createEditViewData.listen((p0) {
-      log("new val is $p0");
-    });
     userProvider.onInit();
     //initialize text controllers
     userNameController = TextEditingController();

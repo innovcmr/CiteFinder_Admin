@@ -8,5 +8,9 @@ class CreateUserFormKey extends GlobalObjectKey<FormState> {
   CreateUserFormKey() : super("createUser" + DateTime.now().toIso8601String());
 }
 
+class CreateHomeFormKey extends GlobalObjectKey<FormState> {
+  CreateHomeFormKey() : super("createHome" + DateTime.now().toIso8601String());
+}
+
 // class OTPFormKey extends GlobalObjectKey<FormState> {
 //   OTPFormKey() : super(Config.otp + DateTime.now().toIso8601String());

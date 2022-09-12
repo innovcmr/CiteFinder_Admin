@@ -18,6 +18,8 @@ class _Keys {
   final fisrtOpen = 'firstOpen';
   final userIsLogIn = "userIsLogIn";
   final selectedUser = "selectedUser";
+  final selectedHome = "selectedHome";
+  final selectedAgent = "selectedAgent";
 }
 
 class _Assets {
@@ -104,8 +106,24 @@ class _firebaseKeys {
   final String AllChatsPage = "AllChatsPage";
   final String MyHomes = "MyHomes";
 
+  final String userA = "userA";
+  final String userB = "userB";
+  final String usersAB = "usersAB";
+  final String lastMessage = "lastMessage";
+  final String lastMessageSeenBy = "lastMessageSeenBy";
+  final String lastMessageSentBy = "lastMessageSentBy";
+  final String lastMessageTime = "lastMessageTime";
+  final String chats = "chats";
+  final String chat_messages = "chat_messages";
+  final String chat = "chat";
+  final String timestamp = "timestamp";
+  final String image = "image";
+  final String isRead = "isRead";
+  final String source = "source";
+  final String isApproved = "isApproved";
+
   //list of cities
-  final List<String> userRole = ['tenant', 'landlord', 'agent', 'admin'];
+
   final List<String> availableCities = [
     'Bamenda',
     'Buea',
@@ -153,5 +171,11 @@ class _firebaseKeys {
     'wifi',
     'generator',
     'restaurant'
+  ];
+  final List<String> userRole = [
+    'tenant',
+    'landlord',
+    'agent',
+    'admin',
   ];
 }

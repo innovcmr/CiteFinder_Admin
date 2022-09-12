@@ -30,7 +30,8 @@ class AppTheme {
     //   9: colors.mainPurpleColor
     // }),
     textTheme: const TextTheme(
-      headline2: TextStyle(fontFamily: "LatoBold", fontSize: 20),
+      headline2: TextStyle(fontFamily: "LatoBold", fontSize: 30),
+      headline3: TextStyle(fontFamily: "LatoBold", fontSize: 20),
       headline4: TextStyle(fontFamily: "LatoRegular", fontSize: 12),
       headline5: TextStyle(fontFamily: "LatoRegular", fontSize: 14),
       button: TextStyle(fontFamily: "LatoRegular", fontSize: 16),
