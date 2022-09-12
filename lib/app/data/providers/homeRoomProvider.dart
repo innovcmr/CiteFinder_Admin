@@ -1,8 +1,6 @@
-//TODO: Implement Home Provider
-// Add here all requests to firebase involving home Class
 import 'dart:developer';
 
-import 'package:cite_finder_admin/app/data/models/house_model.dart';
+import 'package:cite_finder_admin/app/data/models/home_room_model.dart';
 import 'package:cite_finder_admin/app/data/providers/baseProvider.dart';
 import 'package:cite_finder_admin/app/utils/config.dart';
 import 'package:cite_finder_admin/app/utils/getExtension.dart';
@@ -10,10 +8,39 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 
-class HouseProvider extends BasePovider {
+// currentHomeRooms//TODO: Implement Home
+
+class HomeRoomProvider extends BasePovider {
   @override
   void onInit() {
     super.onInit();
+  }
+
+  Future<List<HomeRoom>> getAllHomeRooms(uid) async {
+    try {
+      var houseReference =
+          firestore.collection(Config.firebaseKeys.home).doc(uid);
+      var query = await firestore
+          .collection(Config.firebaseKeys.homeRooms)
+          .where(Config.firebaseKeys.home, isEqualTo: houseReference)
+          .withConverter<HomeRoom>(
+            fromFirestore: (item, _) => HomeRoom.fromJson(item.data()!),
+            toFirestore: (item, _) => item.toJson(),
+          );
+      List<HomeRoom> homeRooms = [];
+      List<QueryDocumentSnapshot<HomeRoom>> homeRoomsSnapshot =
+          await query.get().then((value) => value.docs);
+      homeRooms.forEach((element) {
+        homeRooms.add(element);
+        log("homeRoom Fetch  ${element.toJson()}");
+      });
+
+      return homeRooms;
+    } catch (e) {
+      Get.snackbar("Error in homeRoom Fetch", e.toString());
+      log("error in homeRoom Fetch, $e");
+      rethrow;
+    }
   }
 
 // create home Operation
@@ -70,61 +97,6 @@ class HouseProvider extends BasePovider {
     } finally {
       Get.closeLoader();
     }
-  }
-
-// read user operation
-  Stream<List<House>> moduleStream() {
-    return firestore
-        .collection(Config.firebaseKeys.homes)
-        .snapshots()
-        .map((QuerySnapshot query) {
-      List<House> homes = [];
-      for (var home in query.docs) {
-        final homeModel = House.fromJson(home, "document");
-        homes.add(homeModel);
-      }
-      log("home Fetch  ${homes.map((element) => element.toJson()).toString()}");
-      log("home count is ${homes.length}");
-
-      return homes;
-    })
-        // .timeout(const Duration(seconds: 30))
-        .handleError((error) {
-      Get.snackbar("Error in home Fetch", error.toString());
-      log("Error in home Fetch  ${error.toString()}");
-    });
-  }
-
-  // update home operation
-  update(House newhome) async {
-    await firestore
-        .collection(Config.firebaseKeys.homes)
-        .doc(newhome.id)
-        .update(newhome.toJson())
-        .timeout(const Duration(seconds: 20))
-        .then((val) {
-      Get.snackbar("Success", "home Update successful");
-      log("home update Succesful}");
-    }).catchError((error) {
-      Get.snackbar("Error in home Update", error.toString());
-      log("Error in home Update  ${error.toString()}");
-    });
-  }
-
-  approve(id) async {
-    await firestore
-        .collection(Config.firebaseKeys.homes)
-        .doc(id)
-        .update({Config.firebaseKeys.isApproved: true})
-        .timeout(const Duration(seconds: 20))
-        .then((val) {
-          Get.snackbar("Success", "Home Approval successful");
-          log("Home Approval Succesful}");
-        })
-        .catchError((error) {
-          Get.snackbar("Error in home Approval", error.toString());
-          log("Error in home Approval  ${error.toString()}");
-        });
   }
 
   // delete home operation

@@ -4,46 +4,38 @@
 
 import 'dart:developer';
 
-import 'package:cite_finder_admin/app/components/createEditView.dart';
-import 'package:cite_finder_admin/app/data/models/user_model.dart';
+import 'package:cite_finder_admin/app/data/providers/houseProvider.dart';
 import 'package:cite_finder_admin/app/data/providers/userProvider.dart';
-import 'package:cite_finder_admin/app/modules/user/controllers/user_controller.dart';
 import 'package:cite_finder_admin/app/utils/config.dart';
-import 'package:cite_finder_admin/app/utils/extensions.dart';
 import 'package:cite_finder_admin/app/utils/themes/themes.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 
 class CRUD extends GetView {
-  CRUD(
-      {Key? key,
-      this.addBtnVisibility = true,
-      this.user,
-      this.onAdd,
-      this.canEdit = true,
-      this.canDelete = true,
-      this.editView,
-      this.seeView,
-      required this.moduleName,
-      required this.selectedTileIndexController,
-      required this.createView,
-      required this.searchController,
-      required this.moduleItems})
-      : super(key: key);
+  CRUD({
+    Key? key,
+    this.addBtnVisibility = true,
+    this.onAdd,
+    this.canEdit = true,
+    this.canDelete = true,
+    this.editView,
+    this.seeView,
+    required this.moduleName,
+    required this.selectedTileIndexController,
+    required this.createView,
+    required this.searchController,
+  }) : super(key: key);
 
   final String moduleName;
   final bool canEdit;
   final bool canDelete;
-  List<dynamic> moduleItems;
   bool addBtnVisibility;
   final Function()? onAdd;
   final TextEditingController searchController;
   final GetView createView;
   final GetView? editView;
   final GetView? seeView;
-  final User? user;
   Rx<bool> settingsSwitch = false.obs;
   Rxn<int> selectedTileIndexController;
   List<String> generalActions = [
@@ -51,31 +43,27 @@ class CRUD extends GetView {
     "Edit",
     "Delete",
   ];
-  int sublistEnd = 4;
+  int sublistEnd = 7;
   final userProvider = UserProvider();
+  final houseProvider = HouseProvider();
   final box = GetStorage();
-  // <Map<String, dynamic> createFormFields ={
-  //   // "user" :{
-
-  //   // }
-
-  // }
-
-//   @override
-//   State<CRUD> createState() => _CRUDState();
-// }
-
-// class _CRUDState extends State<CRUD> {
-//   @override
-//   void initState() {
-//     // TODO: implement initState
-//     super.initState();
-//   }
 
   @override
   Widget build(BuildContext context) {
     userProvider.onInit();
-    void editModuleItem() {
+    houseProvider.onInit();
+    void editModuleItem(i) {
+      switch (moduleName) {
+        case "users":
+          box.write(Config.keys.selectedUser, i.toJson());
+          break;
+        case "houses":
+          box.write(Config.keys.selectedHome, i.toJson());
+          break;
+        case "agents":
+          box.write(Config.keys.selectedAgent, i.toJson());
+          break;
+      }
       Get.dialog(editView!, barrierColor: AppTheme.colors.dialogBgColor);
     }
 
@@ -84,8 +72,43 @@ class CRUD extends GetView {
     }
 
     void viewModuleItem(var i) {
-      box.write(Config.keys.selectedUser, i.toJson());
+      switch (moduleName) {
+        case "users":
+          box.write(Config.keys.selectedUser, i.toJson());
+          break;
+        case "houses":
+          box.write(Config.keys.selectedHome, i.toJson());
+          break;
+        case "agents":
+          box.write(Config.keys.selectedAgent, i.toJson());
+          break;
+      }
       Get.dialog(seeView!, barrierColor: AppTheme.colors.dialogBgColor);
+    }
+
+    void deleteModuleItem(var item) {
+      Get.defaultDialog(
+        title: "Confirm Delete",
+        middleText:
+            "Are you really sure you want to delete this ${moduleName.trim().endsWith("s") ? moduleName.substring(0, moduleName.length - 1) : moduleName}  \n Warning! This action Cannot be undone",
+        buttonColor: AppTheme.colors.mainRedColor,
+        onCancel: () => Get.back(),
+        onConfirm: () {
+          String? id = item.id;
+          if (id != null) {
+            switch (moduleName) {
+              // add cases according to modules
+              case "users":
+                userProvider.delete(id);
+                break;
+              case "houses":
+                houseProvider.delete(id);
+                break;
+            }
+          }
+          Get.back();
+        },
+      );
     }
 
     return Container(
@@ -215,8 +238,10 @@ class CRUD extends GetView {
                       ],
                     ),
 
-                    StreamBuilder<List<User>>(
-                      stream: userProvider.moduleStream(),
+                    StreamBuilder<List>(
+                      stream: moduleName == "users"
+                          ? userProvider.moduleStream()
+                          : houseProvider.moduleStream(),
                       builder: (context, snapshot) {
                         final items = snapshot.data;
                         if (!snapshot.hasData) {
@@ -254,6 +279,9 @@ class CRUD extends GetView {
                                   child: ListTile(
                                     title: Row(
                                       children: [
+                                        const SizedBox(
+                                          width: 20,
+                                        ),
                                         for (var key in items.first
                                             .toJson()
                                             .keys
@@ -266,7 +294,9 @@ class CRUD extends GetView {
                                                   const EdgeInsets.symmetric(
                                                       vertical: 5.0),
                                               child: Text(
-                                                key,
+                                                key.trim().isEmpty
+                                                    ? "---"
+                                                    : key.toUpperCase(),
                                                 textAlign: TextAlign.center,
                                                 style: Get.textTheme.headline4!
                                                     .copyWith(
@@ -274,7 +304,7 @@ class CRUD extends GetView {
                                               ),
                                             ),
                                           ),
-                                        const SizedBox(width: 95)
+                                        const SizedBox(width: 60)
                                       ],
                                     ),
                                   ),
@@ -312,6 +342,19 @@ class CRUD extends GetView {
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
                                         // COlumn loop
+
+                                        moduleName == "houses" &&
+                                                i.isApproved != null &&
+                                                i.isApproved == true
+                                            ? const Icon(
+                                                Icons.verified_outlined,
+                                                size: 20,
+                                                color: Colors.lightBlue,
+                                              )
+                                            : const SizedBox(
+                                                width: 20,
+                                              ),
+
                                         for (var j in i
                                             .toJson()
                                             .values
@@ -356,6 +399,7 @@ class CRUD extends GetView {
                                             viewModuleItem(i);
                                           },
                                         ),
+
                                         if (canEdit)
                                           IconButton(
                                             padding: const EdgeInsets.symmetric(
@@ -363,7 +407,7 @@ class CRUD extends GetView {
                                             constraints: const BoxConstraints(),
                                             onPressed: () {
                                               if (canEdit) {
-                                                editModuleItem();
+                                                editModuleItem(i);
                                               }
                                             },
                                             splashRadius: 20,
@@ -385,26 +429,7 @@ class CRUD extends GetView {
                                                   AppTheme.colors.mainRedColor,
                                             ),
                                             onPressed: () {
-                                              Get.defaultDialog(
-                                                title: "Confirm Delete",
-                                                middleText:
-                                                    "Are you sure you want to delete this ${moduleName.trim().endsWith("s") ? moduleName.substring(0, moduleName.length - 1) : moduleName}",
-                                                buttonColor: AppTheme
-                                                    .colors.mainRedColor,
-                                                onCancel: () => Get.back(),
-                                                onConfirm: () {
-                                                  String? id = i.id;
-                                                  if (id != null) {
-                                                    switch (moduleName) {
-                                                      // add cases according to modules
-                                                      case "users":
-                                                        userProvider.delete(id);
-                                                        break;
-                                                    }
-                                                  }
-                                                  Get.back();
-                                                },
-                                              );
+                                              deleteModuleItem(i);
                                             },
                                           ),
 

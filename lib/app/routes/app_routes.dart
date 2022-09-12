@@ -9,7 +9,7 @@ abstract class Routes {
   static const HOUSE = _Paths.HOUSE;
   static const USER = _Paths.USER;
   static const AGENT = _Paths.AGENT;
-  static const CREATEEDIT = _Paths.CREATEEDIT;
+  // static const CREATEEDIT = _Paths.CREATEEDIT;
 }
 
 abstract class _Paths {
@@ -20,5 +20,5 @@ abstract class _Paths {
   static const HOUSE = '/house';
   static const USER = '/user';
   static const AGENT = '/agent';
-  static const CREATEEDIT = '/createEdit';
+  // static const CREATEEDIT = '/createEdit';
 }

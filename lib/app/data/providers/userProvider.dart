@@ -99,23 +99,14 @@ class UserProvider extends BasePovider {
     } finally {
       Get.closeLoader();
     }
-
-    // await firestore
-    //     .collection("users")
-    //     .add(user.toJson())
-    //     .timeout(const Duration(seconds: 20))
-    //     .then((val) {
-    //   Get.snackbar("Success", "User Update successful");
-    //   log("User update Succesful}");
-    // }).catchError((error) {
-    //   Get.snackbar("Error in User Creation", error.toString());
-    //   log("Error in User Creation  ${error.toString()}");
-    // });
   }
 
 // read user operation
   Stream<List<UserModel.User>> moduleStream() {
-    return firestore.collection("users").snapshots().map((QuerySnapshot query) {
+    return firestore
+        .collection(Config.firebaseKeys.users)
+        .snapshots()
+        .map((QuerySnapshot query) {
       List<UserModel.User> users = [];
       for (var user in query.docs) {
         final userModel = UserModel.User.fromJson(user, "document");
@@ -136,7 +127,7 @@ class UserProvider extends BasePovider {
   // update user operation
   update(UserModel.User newUser) async {
     await firestore
-        .collection("users")
+        .collection(Config.firebaseKeys.users)
         .doc(newUser.id)
         .update(newUser.toJson())
         .timeout(const Duration(seconds: 20))
@@ -152,7 +143,7 @@ class UserProvider extends BasePovider {
   // delete user operation
   delete(String userId) async {
     await firestore
-        .collection("users")
+        .collection(Config.firebaseKeys.users)
         .doc(userId)
         .delete()
         .timeout(const Duration(seconds: 20))

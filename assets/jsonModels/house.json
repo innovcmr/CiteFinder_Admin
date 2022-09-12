@@ -28,5 +28,6 @@
     "landlord": {
         "id": "pwerjwojn"
     },
-    "basePrice": 230.5
+    "basePrice": 230.5,
+    "isApproved": false
 }

@@ -29,19 +29,20 @@ class User {
       this.phoneNumber});
 
   User.fromJson(json1, String type) {
+    var json = json1;
     if (type == "document") {
-      var json = json1;
-      id = json.data().toString().contains("id") ? json['id'] : "";
-      fullName =
-          json.data().toString().contains("fullName") ? json['fullName'] : "";
-      email = json.data().toString().contains("email") ? json['email'] : "";
-      location =
-          json.data().toString().contains("location") ? json['location'] : "";
-      photoUrl =
-          json.data().toString().contains("photoUrl") ? json['photoUrl'] : "";
-      role = json.data().toString().contains("role") ? json['role'] : "";
+      json = json1.data();
+    }
+    id = json.toString().contains("id") ? json['id'] : "";
+    fullName = json.toString().contains("fullName") ? json['fullName'] : "";
+    email = json.toString().contains("email") ? json['email'] : "";
+    location = json.toString().contains("location") ? json['location'] : "";
+    photoUrl = json.toString().contains("photoUrl") ? json['photoUrl'] : "";
+    role = json.toString().contains("role") ? json['role'] : "";
+    if (type == "document") {
+      log("hiiyaa");
       Timestamp timestampDate =
-          json.data().toString().contains("dateAdded") ? json['dateAdded'] : "";
+          json.toString().contains("dateAdded") ? json['dateAdded'] : "";
       DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(
           timestampDate.millisecondsSinceEpoch);
       dateAdded = dateTime.day.toString() +
@@ -49,41 +50,46 @@ class User {
           dateTime.month.toString() +
           "/" +
           dateTime.year.toString();
-
-      isVerified = json.data().toString().contains("isVerified")
-          ? json['isVerified']
-          : "";
-      isGoogleUser = json.data().toString().contains("isGoogleUser")
-          ? json['isGoogleUser']
-          : "";
-      isFacebookUser = json.data().toString().contains("isFacebookUser")
-          ? json['isFacebookUser']
-          : "";
-      phoneNumber = json.data().toString().contains("phoneNumber")
-          ? json['phoneNumber']
-          : "";
     } else {
-      Map json = json1;
-      id = json.toString().contains("id") ? json['id'] : "";
-      fullName = json.toString().contains("fullName") ? json['fullName'] : "";
-      email = json.toString().contains("email") ? json['email'] : "";
-      location = json.toString().contains("location") ? json['location'] : "";
-      photoUrl = json.toString().contains("photoUrl") ? json['photoUrl'] : "";
-      role = json.toString().contains("role") ? json['role'] : "";
-
       dateAdded =
           json.toString().contains("dateAdded") ? json['dateAdded'] : "";
-
-      isVerified =
-          json.toString().contains("isVerified") ? json['isVerified'] : "";
-      isGoogleUser =
-          json.toString().contains("isGoogleUser") ? json['isGoogleUser'] : "";
-      isFacebookUser = json.toString().contains("isFacebookUser")
-          ? json['isFacebookUser']
-          : "";
-      phoneNumber =
-          json.toString().contains("phoneNumber") ? json['phoneNumber'] : "";
+      log("hii");
     }
+    location = json.toString().contains("location") ? json['location'] : "";
+
+    isVerified =
+        json.toString().contains("isVerified") ? json['isVerified'] : "";
+    isGoogleUser =
+        json.toString().contains("isGoogleUser") ? json['isGoogleUser'] : "";
+    isFacebookUser = json.toString().contains("isFacebookUser")
+        ? json['isFacebookUser']
+        : "";
+    phoneNumber =
+        json.toString().contains("phoneNumber") ? json['phoneNumber'] : "";
+
+    // }
+    //  else {
+    //   Map json = json1;
+    //   id = json.toString().contains("id") ? json['id'] : "";
+    //   fullName = json.toString().contains("fullName") ? json['fullName'] : "";
+    //   email = json.toString().contains("email") ? json['email'] : "";
+    //   location = json.toString().contains("location") ? json['location'] : "";
+    //   photoUrl = json.toString().contains("photoUrl") ? json['photoUrl'] : "";
+    //   role = json.toString().contains("role") ? json['role'] : "";
+
+    //   dateAdded =
+    //       json.toString().contains("dateAdded") ? json['dateAdded'] : "";
+
+    //   isVerified =
+    //       json.toString().contains("isVerified") ? json['isVerified'] : "";
+    //   isGoogleUser =
+    //       json.toString().contains("isGoogleUser") ? json['isGoogleUser'] : "";
+    //   isFacebookUser = json.toString().contains("isFacebookUser")
+    //       ? json['isFacebookUser']
+    //       : "";
+    //   phoneNumber =
+    //       json.toString().contains("phoneNumber") ? json['phoneNumber'] : "";
+    // }
   }
 
   Map<String, dynamic> toJson() {
