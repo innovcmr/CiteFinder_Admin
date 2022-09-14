@@ -1,12 +1,16 @@
 import 'dart:developer';
 
+import 'package:cite_finder_admin/app/components/controllers/crud_controller.dart';
+import 'package:cite_finder_admin/app/data/models/kyc_model.dart';
 import 'package:cite_finder_admin/app/data/models/user_model.dart';
 import 'package:cite_finder_admin/app/data/providers/userProvider.dart';
 import 'package:cite_finder_admin/app/utils/config.dart';
 import 'package:cite_finder_admin/app/utils/formKeys.dart';
 import 'package:cite_finder_admin/app/utils/getExtension.dart';
+import 'package:cite_finder_admin/app/utils/themes/themes.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:firebase_auth/firebase_auth.dart' as fb;
+import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
 
@@ -15,10 +19,13 @@ class UserController extends GetxController {
 
   final count = 0.obs;
   static UserController get to => Get.find();
+  // final crudController = Get.find<CrudController>();
 
   // List<User> get moduleItems => moduleItemList.value;
   final userProvider = UserProvider();
   final selectedUserIndex = Rxn<int>();
+  List<KYC> kycRequests = [];
+  KYC? chosenKYC;
 
   final GlobalKey<FormState> _createUserFormKey = CreateUserFormKey();
 
@@ -82,6 +89,27 @@ class UserController extends GetxController {
 
   getFormKey() {
     return _createUserFormKey;
+  }
+
+  getKycRequests() async {
+    kycRequests = await userProvider.getKycRequests();
+    // currentKYCUser = await userProvider.getUser()
+  }
+
+  Future<bool> hasKYCApproved(User item) async {
+    if (kycRequests.isEmpty) {
+      await getKycRequests();
+    }
+    return item.isVerified != null &&
+        item.isVerified == false &&
+        kycRequests.any((element) => element.user == item.record);
+  }
+
+  approveKYC(moduleId) async {
+    await userProvider.approveUserKYC(
+        kycUid: chosenKYC!.id!, userUid: moduleId);
+    await getKycRequests();
+    Get.closeLoader();
   }
 
   void increment() => count.value++;

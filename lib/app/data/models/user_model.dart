@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:cite_finder_admin/app/utils/config.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class User {
@@ -107,4 +108,8 @@ class User {
     data['phoneNumber'] = phoneNumber;
     return data;
   }
+
+  DocumentReference<Map<String, dynamic>> get record => id != null
+      ? FirebaseFirestore.instance.collection(Config.firebaseKeys.users).doc(id)
+      : FirebaseFirestore.instance.collection(Config.firebaseKeys.users).doc();
 }

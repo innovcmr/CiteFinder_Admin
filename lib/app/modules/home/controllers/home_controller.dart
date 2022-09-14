@@ -10,25 +10,33 @@ import 'package:get/get.dart';
 class HomeController extends GetxController {
   //TODO: Implement HomeController
 
-  final index = 2.obs;
+  final index = 1.obs;
   var scaffoldKey = GlobalKey<ScaffoldState>();
 
   final List<Map<String, dynamic>> children = [
-    {"view": DashboardView(), "label": "Dashboard", "icon": Icons.dashboard},
+    {
+      "view": DashboardView(),
+      "label": "Dashboard",
+      "icon": Icons.dashboard,
+      "route": "/dashboard",
+    },
     {
       "view": HouseView(),
       "label": "Houses",
-      "icon": Icons.maps_home_work_rounded
+      "icon": Icons.maps_home_work_rounded,
+      "route": "/house"
     },
     {
       "view": UserView(),
       "label": "Users",
-      "icon": Icons.people_outline_rounded
+      "icon": Icons.people_outline_rounded,
+      "route": "/user"
     },
     {
       "view": AgentView(),
       "label": "House Agent",
-      "icon": Icons.real_estate_agent
+      "icon": Icons.real_estate_agent,
+      "route": "/agent"
     },
   ];
   late Map<int, Map<String, dynamic>> child;

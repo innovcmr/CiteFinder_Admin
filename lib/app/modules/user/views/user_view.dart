@@ -1,8 +1,15 @@
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
+
 import 'dart:developer';
 
+import 'package:cite_finder_admin/app/components/ImageWidget.dart';
+import 'package:cite_finder_admin/app/components/SmallImageWidget.dart';
+import 'package:cite_finder_admin/app/components/controllers/crud_controller.dart';
 import 'package:cite_finder_admin/app/components/crudComponentWidget.dart';
 import 'package:cite_finder_admin/app/data/models/user_model.dart';
+import 'package:cite_finder_admin/app/modules/home/views/home_view.dart';
 import 'package:cite_finder_admin/app/utils/config.dart';
+import 'package:cite_finder_admin/app/utils/getExtension.dart';
 import 'package:cite_finder_admin/app/utils/themes/themes.dart';
 import 'package:cite_finder_admin/app/utils/validator.dart';
 import 'package:flutter/material.dart';
@@ -18,17 +25,23 @@ class UserView extends GetView<UserController> {
   Widget build(BuildContext context) {
     final controller = Get.put(UserController());
     return Scaffold(
+      appBar: HomeView().MainAppBar(),
+      drawer: MainDrawer(),
       backgroundColor: AppTheme.colors.mainGreyBg,
       body: CRUD(
         moduleName: "users",
         searchController: controller.searchController,
         selectedTileIndexController: controller.selectedUserIndex,
         canEdit: false,
+        canApprove: true,
         createView: CreateEditView(
           mode: "create",
         ),
         seeView: CreateEditView(
           mode: "view",
+        ),
+        approveView: CreateEditView(
+          mode: "approve",
         ),
       ),
     );
@@ -40,13 +53,19 @@ class CreateEditView extends GetView<UserController> {
   final box = GetStorage();
   final String mode;
   User? moduleItem;
+  final controller = Get.put(UserController.to);
+
   @override
   Widget build(BuildContext context) {
     if (box.read(Config.keys.selectedUser) != null && mode != "create") {
       moduleItem = User.fromJson(box.read(Config.keys.selectedUser), "map");
+      if (mode == "approve") {
+        // final crudController = Get.put(CrudController.to);
+        controller.chosenKYC = controller.kycRequests
+            .firstWhere((element) => element.user == moduleItem!.record);
+      }
     }
     log(moduleItem.toString());
-    final controller = Get.put(UserController.to);
     return Obx(
       (() =>
           //  Scaffold(
@@ -88,7 +107,9 @@ class CreateEditView extends GetView<UserController> {
                                       ? "New Users"
                                       : mode == "edit"
                                           ? "Edit User"
-                                          : "View User",
+                                          : mode == "approve"
+                                              ? "Approve User(KYC)"
+                                              : "View User",
                                   style: Get.textTheme.headline2!.copyWith(
                                       color: AppTheme.colors.mainPurpleColor),
                                 )
@@ -116,11 +137,12 @@ class CreateEditView extends GetView<UserController> {
                             Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: TextFormField(
-                                initialValue: mode != "view"
-                                    ? null
-                                    : moduleItem!.fullName,
-                                enabled: mode != "view",
-                                controller: mode == "view"
+                                initialValue:
+                                    mode != "view" && mode != "approve"
+                                        ? null
+                                        : moduleItem!.fullName,
+                                enabled: mode != "view" && mode != "approve",
+                                controller: mode == "view" || mode == "approve"
                                     ? null
                                     : controller.fullNameController,
                                 focusNode: controller.fullNameFocusNode,
@@ -142,9 +164,11 @@ class CreateEditView extends GetView<UserController> {
                               padding: const EdgeInsets.all(8.0),
                               child: TextFormField(
                                 initialValue:
-                                    mode != "view" ? null : moduleItem!.email,
-                                enabled: mode != "view",
-                                controller: mode == "view"
+                                    mode != "view" && mode != "approve"
+                                        ? null
+                                        : moduleItem!.email,
+                                enabled: mode != "view" && mode != "approve",
+                                controller: mode == "view" || mode == "approve"
                                     ? null
                                     : controller.emailController,
                                 focusNode: controller.emailFocusNode,
@@ -164,11 +188,12 @@ class CreateEditView extends GetView<UserController> {
                             Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: TextFormField(
-                                initialValue: mode != "view"
-                                    ? null
-                                    : moduleItem!.phoneNumber,
-                                enabled: mode != "view",
-                                controller: mode == "view"
+                                initialValue:
+                                    mode != "view" && mode != "approve"
+                                        ? null
+                                        : moduleItem!.phoneNumber,
+                                enabled: mode != "view" && mode != "approve",
+                                controller: mode == "view" || mode == "approve"
                                     ? null
                                     : controller.phoneNumberController,
                                 focusNode: controller.phoneNumberFocusNode,
@@ -191,7 +216,7 @@ class CreateEditView extends GetView<UserController> {
                               padding: EdgeInsets.all(8),
                               child: DropdownButtonFormField(
                                   focusNode: controller.userRoleFocusNode,
-                                  value: mode == "view"
+                                  value: mode == "view" || mode == "approve"
                                       ? moduleItem!.role
                                       : controller.selectedUserRole.value
                                           .toLowerCase(),
@@ -232,11 +257,14 @@ class CreateEditView extends GetView<UserController> {
                                 padding: const EdgeInsets.all(8.0),
                                 child: TextFormField(
                                   initialValue:
-                                      mode != "view" ? null : moduleItem!.email,
-                                  enabled: mode != "view",
-                                  controller: mode == "view"
-                                      ? null
-                                      : controller.passwordController,
+                                      mode != "view" && mode != "approve"
+                                          ? null
+                                          : moduleItem!.email,
+                                  enabled: mode != "view" && mode != "approve",
+                                  controller:
+                                      mode == "view" || mode == "approve"
+                                          ? null
+                                          : controller.passwordController,
                                   focusNode: controller.passwordFocusNode,
                                   obscureText: controller.obscurePassword.value,
                                   validator: Validator.isRequired,
@@ -269,12 +297,15 @@ class CreateEditView extends GetView<UserController> {
                                 padding: const EdgeInsets.all(8.0),
                                 child: TextFormField(
                                   initialValue:
-                                      mode != "view" ? null : moduleItem!.email,
-                                  enabled: mode != "view",
-                                  controller: mode == "view"
-                                      ? null
-                                      : controller
-                                          .passwordConfirmationController,
+                                      mode != "view" && mode != "approve"
+                                          ? null
+                                          : moduleItem!.email,
+                                  enabled: mode != "view" && mode != "approve",
+                                  controller:
+                                      mode == "view" || mode == "approve"
+                                          ? null
+                                          : controller
+                                              .passwordConfirmationController,
                                   focusNode:
                                       controller.passwordConfirmFocusNode,
                                   obscureText: controller.obscurePassword.value,
@@ -302,31 +333,31 @@ class CreateEditView extends GetView<UserController> {
                                 ),
                               ),
                             // Extra attributes not in create or editform
-                            if (mode == "view")
+                            if (mode == "view" || mode == "approve")
                               customTextFieldFunction(
                                   moduleAttribute:
                                       moduleItem!.location.toString(),
                                   labelText: "Location",
                                   icondata: Icons.location_on),
-                            if (mode == "view")
+                            if (mode == "view" || mode == "approve")
                               customTextFieldFunction(
                                   moduleAttribute:
                                       moduleItem!.dateAdded.toString(),
                                   labelText: "Date added",
                                   icondata: Icons.calendar_month_rounded),
-                            if (mode == "view")
+                            if (mode == "view" || mode == "approve")
                               customTextFieldFunction(
                                   moduleAttribute:
                                       moduleItem!.isVerified.toString(),
                                   labelText: "Is Verified",
                                   icondata: Icons.verified),
-                            if (mode == "view")
+                            if (mode == "view" || mode == "approve")
                               customTextFieldFunction(
                                   moduleAttribute:
                                       moduleItem!.isGoogleUser.toString(),
                                   labelText: "Is Google user",
                                   icondata: Icons.circle),
-                            if (mode == "view")
+                            if (mode == "view" || mode == "approve")
                               customTextFieldFunction(
                                   moduleAttribute:
                                       moduleItem!.isFacebookUser.toString(),
@@ -334,15 +365,69 @@ class CreateEditView extends GetView<UserController> {
                                   icondata: Icons.facebook),
                           ],
                         ),
+                        if (mode == "approve")
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "KYC Approval ",
+                                textDirection: TextDirection.ltr,
+                                style: Get.textTheme.headline3!.copyWith(
+                                  color: Colors.black,
+                                ),
+                              ),
+                              SizedBox(
+                                height: 20,
+                              ),
+                              Wrap(
+                                // alignment: WrapAlignment.spaceBetween,
+                                direction: Axis.horizontal,
+                                children: [
+                                  KYCImageFields(
+                                    imgpth: controller.chosenKYC!.idUser!,
+                                    label: "User Holding Id",
+                                  ),
+                                  KYCImageFields(
+                                    imgpth: controller.chosenKYC!.idFront!,
+                                    label: "Id Front",
+                                  ),
+                                  KYCImageFields(
+                                    imgpth: controller.chosenKYC!.idBack!,
+                                    label: "Id Back",
+                                  ),
+                                ],
+                              )
+                            ],
+                          ),
                         const SizedBox(
                           height: 20,
                         ),
-                        if (mode != "view")
+                        if (mode != "view" && mode != "approve")
                           Center(
                             // widthFactor: 0.5,
                             child: ElevatedButton(
                               onPressed: controller.createNewUser,
                               child: const Text('Create User'),
+                            ),
+                          ),
+                        if (mode == "approve")
+                          Center(
+                            // widthFactor: 0.5,
+                            child: ElevatedButton(
+                              onPressed: () {
+                                Get.defaultDialog(
+                                  title: "Confirm Delete",
+                                  middleText:
+                                      "Are you really sure you want to Approve this User  \n This action Cannot be undone",
+                                  buttonColor: Colors.blueAccent,
+                                  onCancel: () => Get.back(),
+                                  onConfirm: () async {
+                                    Get.showLoader();
+                                    await controller.approveKYC(moduleItem!.id);
+                                  },
+                                );
+                              },
+                              child: const Text('Approve Landlord'),
                             ),
                           ),
                         const SizedBox(
@@ -361,6 +446,21 @@ class CreateEditView extends GetView<UserController> {
     );
   }
 
+  Column KYCImageFields({required String imgpth, required String label}) {
+    return Column(
+      children: [
+        Text(
+          label,
+          style: TextStyle(fontSize: 16),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(10),
+          child: SmallImageWidget(imageUrl: imgpth),
+        ),
+      ],
+    );
+  }
+
   Padding customTextFieldFunction({
     required String moduleAttribute,
     required String labelText,
@@ -369,8 +469,9 @@ class CreateEditView extends GetView<UserController> {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: TextFormField(
-        initialValue: mode != "view" ? null : moduleAttribute,
-        enabled: mode != "view",
+        initialValue:
+            mode != "view" && mode != "approve" ? null : moduleAttribute,
+        enabled: mode != "view" && mode != "approve",
         decoration: InputDecoration(
           constraints: const BoxConstraints(
             maxWidth: 300,

@@ -1,6 +1,9 @@
+import 'package:cite_finder_admin/app/data/models/kyc_model.dart';
+import 'package:cite_finder_admin/app/data/models/landlord_model.dart';
 import 'package:cite_finder_admin/app/data/models/user_model.dart' as UserModel;
 import 'package:cite_finder_admin/app/data/providers/baseProvider.dart';
 import 'package:cite_finder_admin/app/utils/config.dart';
+import 'package:cite_finder_admin/app/utils/enumeration.dart';
 import 'package:cite_finder_admin/app/utils/getExtension.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -155,4 +158,80 @@ class UserProvider extends BasePovider {
       log("Error in User Deletion  ${error.toString()}");
     });
   }
+
+  // get KYC requests
+  Future<List<KYC>> getKycRequests() {
+    return firestore
+        .collection(Config.firebaseKeys.kyc)
+        .where(Config.firebaseKeys.status, isEqualTo: KYCStatus.pending.toStr())
+        .get()
+        .then((querySnapshot) {
+          List<KYC> items = [];
+          for (var item in querySnapshot.docs) {
+            items.add(KYC.fromJson(item.data()));
+            //   log("KYC count is ${items.length}");
+          }
+          log("KYC Fetch  ${items.map((element) => element.toJson()).toString()}");
+          return items;
+        })
+        .timeout(const Duration(seconds: 30))
+        .catchError((error) {
+          Get.snackbar("Error in KYC Fetch", error.toString());
+          log("Error in KYC Fetch  ${error.toString()}");
+        });
+  }
+
+  Future<void> approveUserKYC(
+      {required String kycUid, required String userUid}) async {
+    try {
+      await firestore.collection(Config.firebaseKeys.kyc).doc(kycUid).update({
+        Config.firebaseKeys.status: KYCStatus.approved.toStr()
+      }).timeout(const Duration(seconds: 20));
+
+      await firestore
+          .collection(Config.firebaseKeys.users)
+          .doc(userUid)
+          .update({Config.firebaseKeys.isVerified: true}).timeout(
+              const Duration(seconds: 20));
+      Get.back();
+      Get.back();
+      Get.snackbar("Success", "User Approval successful");
+      log("Home Approval Succesful}");
+    } catch (error) {
+      Get.back();
+      Get.snackbar("Error in home Approval", error.toString());
+      log("Error in home Approval  ${error.toString()}");
+    } finally {
+      Get.closeLoader();
+    }
+  }
+
+  // Stream<Landlord> currentLandlordStream(uid) {
+  //   final user = firestore
+  //       .collection(Config.firebaseKeys.users)
+  //       .where(Config.firebaseKeys.id,
+  //           // isEqualTo:
+  //           // currentHome.value!.landlord!.id)
+  //           isEqualTo: uid)
+  //       .limit(1)
+  //       .snapshots()
+  //       .map((snapshots) => Landlord.fromJson(snapshots.docs.first.data(), ''));
+
+  //   return user;
+  // }
+
+  // Future<UserModel.User> getUser(uid) {
+  //   return firestore
+  //       .collection(Config.firebaseKeys.users)
+  //       .doc(
+  //         Config.firebaseKeys.id,
+  //       )
+  //       .get()
+  //       .then((result) {
+  //     return UserModel.User.fromJson(result, "document");
+  //   }).catchError((error) {
+  //     Get.snackbar("Error in KYCUser Fetch", error.toString());
+  //     log("Error in KYCUser Fetch  ${error.toString()}");
+  //   });
+  // }
 }

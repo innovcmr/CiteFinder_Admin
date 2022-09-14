@@ -1,5 +1,7 @@
 import 'package:get/get.dart';
 
+import '../modules/ImageViewWidget/bindings/image_view_widget_binding.dart';
+import '../modules/ImageViewWidget/views/image_view_widget_view.dart';
 import '../modules/agent/bindings/agent_binding.dart';
 import '../modules/agent/views/agent_view.dart';
 import '../modules/dashboard/bindings/dashboard_binding.dart';
@@ -18,7 +20,7 @@ part 'app_routes.dart';
 class AppPages {
   AppPages._();
 
-  static const INITIAL = Routes.HOME;
+  static const INITIAL = Routes.DASHBOARD;
 
   static final routes = [
     GetPage(
@@ -54,6 +56,11 @@ class AppPages {
     // GetPage(
     //   name: _Paths.CREATEEDIT,
     //   page: () => CreateEditView(),
+    // ),
+    // GetPage(
+    //   name: _Paths.IMAGE_VIEW_WIDGET,
+    //   // page: () => ImageViewWidgetView(),
+    //   binding: ImageViewWidgetBinding(),
     // ),
   ];
 }

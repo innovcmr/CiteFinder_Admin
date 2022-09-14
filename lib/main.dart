@@ -18,6 +18,7 @@ void main() async {
   await GetStorage.init();
   runApp(
     GetMaterialApp(
+      navigatorKey: Get.key,
       title: Config.appName,
       debugShowCheckedModeBanner: false,
       theme: AppTheme.themeLight,

@@ -4,23 +4,22 @@
 
 import 'dart:developer';
 
-import 'package:cite_finder_admin/app/data/providers/houseProvider.dart';
-import 'package:cite_finder_admin/app/data/providers/userProvider.dart';
-import 'package:cite_finder_admin/app/utils/config.dart';
+import 'package:cite_finder_admin/app/components/controllers/crud_controller.dart';
 import 'package:cite_finder_admin/app/utils/themes/themes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
 
-class CRUD extends GetView {
+class CRUD extends GetView<CrudController> {
   CRUD({
     Key? key,
     this.addBtnVisibility = true,
     this.onAdd,
     this.canEdit = true,
+    this.canApprove = false,
     this.canDelete = true,
     this.editView,
     this.seeView,
+    this.approveView,
     required this.moduleName,
     required this.selectedTileIndexController,
     required this.createView,
@@ -29,6 +28,7 @@ class CRUD extends GetView {
 
   final String moduleName;
   final bool canEdit;
+  final bool canApprove;
   final bool canDelete;
   bool addBtnVisibility;
   final Function()? onAdd;
@@ -36,81 +36,14 @@ class CRUD extends GetView {
   final GetView createView;
   final GetView? editView;
   final GetView? seeView;
-  Rx<bool> settingsSwitch = false.obs;
+  final GetView? approveView;
   Rxn<int> selectedTileIndexController;
-  List<String> generalActions = [
-    "View",
-    "Edit",
-    "Delete",
-  ];
-  int sublistEnd = 7;
-  final userProvider = UserProvider();
-  final houseProvider = HouseProvider();
-  final box = GetStorage();
+  CrudController controller = Get.put(CrudController());
 
   @override
   Widget build(BuildContext context) {
-    userProvider.onInit();
-    houseProvider.onInit();
-    void editModuleItem(i) {
-      switch (moduleName) {
-        case "users":
-          box.write(Config.keys.selectedUser, i.toJson());
-          break;
-        case "houses":
-          box.write(Config.keys.selectedHome, i.toJson());
-          break;
-        case "agents":
-          box.write(Config.keys.selectedAgent, i.toJson());
-          break;
-      }
-      Get.dialog(editView!, barrierColor: AppTheme.colors.dialogBgColor);
-    }
-
-    void createModuleItem() {
-      Get.dialog(createView, barrierColor: AppTheme.colors.dialogBgColor);
-    }
-
-    void viewModuleItem(var i) {
-      switch (moduleName) {
-        case "users":
-          box.write(Config.keys.selectedUser, i.toJson());
-          break;
-        case "houses":
-          box.write(Config.keys.selectedHome, i.toJson());
-          break;
-        case "agents":
-          box.write(Config.keys.selectedAgent, i.toJson());
-          break;
-      }
-      Get.dialog(seeView!, barrierColor: AppTheme.colors.dialogBgColor);
-    }
-
-    void deleteModuleItem(var item) {
-      Get.defaultDialog(
-        title: "Confirm Delete",
-        middleText:
-            "Are you really sure you want to delete this ${moduleName.trim().endsWith("s") ? moduleName.substring(0, moduleName.length - 1) : moduleName}  \n Warning! This action Cannot be undone",
-        buttonColor: AppTheme.colors.mainRedColor,
-        onCancel: () => Get.back(),
-        onConfirm: () {
-          String? id = item.id;
-          if (id != null) {
-            switch (moduleName) {
-              // add cases according to modules
-              case "users":
-                userProvider.delete(id);
-                break;
-              case "houses":
-                houseProvider.delete(id);
-                break;
-            }
-          }
-          Get.back();
-        },
-      );
-    }
-
+    controller = Get.put(CrudController.to);
+    controller.moduleName = moduleName;
     return Container(
       padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
       child: SingleChildScrollView(
@@ -127,7 +60,11 @@ class CRUD extends GetView {
                 ),
                 if (addBtnVisibility)
                   ElevatedButton(
-                    onPressed: createModuleItem,
+                    onPressed: () {
+                      controller.createModuleItem;
+                      Get.dialog(createView,
+                          barrierColor: AppTheme.colors.dialogBgColor);
+                    },
                     child: Text(
                       "+ADD",
                       style: Get.textTheme.headline4!
@@ -211,7 +148,8 @@ class CRUD extends GetView {
                         //     : SizedBox(),
                         IconButton(
                           onPressed: () {
-                            settingsSwitch.value = !settingsSwitch.value;
+                            controller.settingsSwitch.value =
+                                !controller.settingsSwitch.value;
                           },
                           icon: const Icon(Icons.more_vert),
                           splashRadius: 20,
@@ -225,7 +163,8 @@ class CRUD extends GetView {
                               }
                             },
                             itemBuilder: (context) {
-                              return generalActions.map((String choice) {
+                              return controller.generalActions
+                                  .map((String choice) {
                                 return PopupMenuItem<String>(
                                   value: choice.toLowerCase(),
                                   child: Text(
@@ -240,8 +179,8 @@ class CRUD extends GetView {
 
                     StreamBuilder<List>(
                       stream: moduleName == "users"
-                          ? userProvider.moduleStream()
-                          : houseProvider.moduleStream(),
+                          ? controller.userProvider.moduleStream()
+                          : controller.houseProvider.moduleStream(),
                       builder: (context, snapshot) {
                         final items = snapshot.data;
                         if (!snapshot.hasData) {
@@ -279,14 +218,14 @@ class CRUD extends GetView {
                                   child: ListTile(
                                     title: Row(
                                       children: [
-                                        const SizedBox(
-                                          width: 20,
-                                        ),
+                                        // const SizedBox(
+                                        //   width: 20,
+                                        // ),
                                         for (var key in items.first
                                             .toJson()
                                             .keys
                                             .toList()
-                                            .sublist(0, sublistEnd))
+                                            .sublist(0, controller.sublistEnd))
                                           Flexible(
                                             fit: FlexFit.tight,
                                             child: Padding(
@@ -343,23 +282,23 @@ class CRUD extends GetView {
                                       children: [
                                         // COlumn loop
 
-                                        moduleName == "houses" &&
-                                                i.isApproved != null &&
-                                                i.isApproved == true
-                                            ? const Icon(
-                                                Icons.verified_outlined,
-                                                size: 20,
-                                                color: Colors.lightBlue,
-                                              )
-                                            : const SizedBox(
-                                                width: 20,
-                                              ),
+                                        // moduleName == "houses" &&
+                                        //         i.isApproved != null &&
+                                        //         i.isApproved == true
+                                        //     ? const Icon(
+                                        //         Icons.verified_outlined,
+                                        //         size: 20,
+                                        //         color: Colors.lightBlue,
+                                        //       )
+                                        //     : const SizedBox(
+                                        //         width: 20,
+                                        //       ),
 
                                         for (var j in i
                                             .toJson()
                                             .values
                                             .toList()
-                                            .sublist(0, sublistEnd))
+                                            .sublist(0, controller.sublistEnd))
                                           Flexible(
                                             fit: FlexFit.loose,
                                             child: ListTile(
@@ -396,9 +335,86 @@ class CRUD extends GetView {
                                                   .refresh();
                                             }
 
-                                            viewModuleItem(i);
+                                            controller.viewModuleItem(i);
+                                            Get.dialog(seeView!,
+                                                barrierColor: AppTheme
+                                                    .colors.dialogBgColor);
                                           },
                                         ),
+                                        // kycIcon
+                                        if (moduleName == "houses" &&
+                                            i.isApproved != null &&
+                                            i.isApproved == false)
+                                          IconButton(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 3),
+                                            constraints: const BoxConstraints(),
+                                            splashRadius: 20,
+                                            // ignore: prefer_const_constructors
+                                            icon: Icon(
+                                                Icons.verified_user_rounded,
+                                                size: 20,
+                                                color: Colors.blueAccent),
+                                            onPressed: () {
+                                              if (selectedTileIndexController
+                                                      .value !=
+                                                  null) {
+                                                selectedTileIndexController(
+                                                    items.indexOf(i));
+                                                log("Selected ${selectedTileIndexController.value}");
+                                                selectedTileIndexController
+                                                    .refresh();
+                                              }
+
+                                              controller.approveModuleItem(i);
+                                              Get.dialog(approveView!,
+                                                  barrierColor: AppTheme
+                                                      .colors.dialogBgColor);
+                                            },
+                                          ),
+
+                                        if (moduleName == "users")
+                                          FutureBuilder<bool>(
+                                              future: controller.userController
+                                                  .hasKYCApproved(i),
+                                              builder: (context, future) {
+                                                if (future.data == true) {
+                                                  return IconButton(
+                                                    padding: const EdgeInsets
+                                                            .symmetric(
+                                                        horizontal: 3),
+                                                    constraints:
+                                                        const BoxConstraints(),
+                                                    splashRadius: 20,
+                                                    // ignore: prefer_const_constructors
+                                                    icon: Icon(
+                                                        Icons
+                                                            .verified_user_rounded,
+                                                        size: 20,
+                                                        color:
+                                                            Colors.blueAccent),
+                                                    onPressed: () {
+                                                      if (selectedTileIndexController
+                                                              .value !=
+                                                          null) {
+                                                        selectedTileIndexController(
+                                                            items.indexOf(i));
+                                                        log("Selected ${selectedTileIndexController.value}");
+                                                        selectedTileIndexController
+                                                            .refresh();
+                                                      }
+
+                                                      controller
+                                                          .approveModuleItem(i);
+                                                      Get.dialog(approveView!,
+                                                          barrierColor: AppTheme
+                                                              .colors
+                                                              .dialogBgColor);
+                                                    },
+                                                  );
+                                                }
+                                                return SizedBox.shrink();
+                                              }),
 
                                         if (canEdit)
                                           IconButton(
@@ -407,7 +423,10 @@ class CRUD extends GetView {
                                             constraints: const BoxConstraints(),
                                             onPressed: () {
                                               if (canEdit) {
-                                                editModuleItem(i);
+                                                controller.editModuleItem(i);
+                                                Get.dialog(createView,
+                                                    barrierColor: AppTheme
+                                                        .colors.dialogBgColor);
                                               }
                                             },
                                             splashRadius: 20,
@@ -429,7 +448,7 @@ class CRUD extends GetView {
                                                   AppTheme.colors.mainRedColor,
                                             ),
                                             onPressed: () {
-                                              deleteModuleItem(i);
+                                              controller.deleteModuleItem(i);
                                             },
                                           ),
 

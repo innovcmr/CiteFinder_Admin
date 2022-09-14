@@ -8,9 +8,11 @@ import 'package:cite_finder_admin/app/components/MapWidget.dart';
 import 'package:cite_finder_admin/app/components/PageScrollView.dart';
 import 'package:cite_finder_admin/app/components/crudComponentWidget.dart';
 import 'package:cite_finder_admin/app/data/models/house_model.dart';
+import 'package:cite_finder_admin/app/modules/home/views/home_view.dart';
 import 'package:cite_finder_admin/app/modules/house/views/home_room_view.dart';
 import 'package:cite_finder_admin/app/modules/user/views/user_view.dart';
 import 'package:cite_finder_admin/app/utils/config.dart';
+import 'package:cite_finder_admin/app/utils/getExtension.dart';
 import 'package:cite_finder_admin/app/utils/validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -31,17 +33,23 @@ class HouseView extends GetView<HouseController> {
     final controller = Get.put(HouseController());
     return Scaffold(
       backgroundColor: AppTheme.colors.mainGreyBg,
+      appBar: HomeView().MainAppBar(),
+      drawer: MainDrawer(),
       body: CRUD(
         moduleName: "houses",
         searchController: controller.searchController,
         selectedTileIndexController: controller.selectedUserIndex,
         canEdit: false,
+        addBtnVisibility: false,
         createView: CreateEditView(
           mode: "create",
         ),
         // editView: CreateEditView(
         //   mode: "edit",
         // ),
+        approveView: CreateEditView(
+          mode: "approve",
+        ),
         seeView: CreateEditView(
           mode: "view",
         ),
@@ -63,7 +71,7 @@ class CreateEditView extends GetView<HouseController> {
       moduleItem = House.fromJson(box.read(Config.keys.selectedHome), "map");
     }
     log(moduleItem.toString());
-    if (mode == "view") {
+    if (mode == "view" || mode == "approve") {
       if (moduleItem?.facilities != null) {
         for (var facility in moduleItem!.facilities!) {
           controller.setFacility(facility);
@@ -94,7 +102,8 @@ class CreateEditView extends GetView<HouseController> {
                     padding: const EdgeInsets.symmetric(
                         horizontal: 20, vertical: 20),
                     child: PageScrollView(
-                      title: "${mode == "view" ? 'Approve/View' : 'Add'} Home",
+                      title:
+                          "${mode == "view" ? 'View' : mode == "approve" ? 'Approve' : 'Add'} Home",
                       onExit: () {
                         Get.delete<HouseController>();
                       },
@@ -105,17 +114,21 @@ class CreateEditView extends GetView<HouseController> {
                           child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                if (mode != "view")
+                                if (mode != "view" && mode != "approve")
                                   Text(
                                       "Fill in the form below to add a new home"),
-                                if (mode != "view") SizedBox(height: 30),
+                                if (mode != "view" && mode != "approve")
+                                  SizedBox(height: 30),
                                 TextFormField(
                                   initialValue:
-                                      mode == "view" ? moduleItem!.name : null,
-                                  controller: mode != "view"
-                                      ? controller.nameController
-                                      : null,
-                                  enabled: mode != "view",
+                                      mode == "view" || mode == "approve"
+                                          ? moduleItem!.name
+                                          : null,
+                                  controller:
+                                      mode != "view" && mode != "approve"
+                                          ? controller.nameController
+                                          : null,
+                                  enabled: mode != "view" && mode != "approve",
                                   focusNode: controller.nameFocusNode,
                                   validator: (val) {
                                     if (val == null || val.isEmpty) {
@@ -133,13 +146,15 @@ class CreateEditView extends GetView<HouseController> {
                                 ),
                                 SizedBox(height: 15),
                                 TextFormField(
-                                  initialValue: mode == "view"
-                                      ? moduleItem!.description
-                                      : null,
-                                  controller: mode != "view"
-                                      ? controller.descriptionController
-                                      : null,
-                                  enabled: mode != "view",
+                                  initialValue:
+                                      mode == "view" || mode == "approve"
+                                          ? moduleItem!.description
+                                          : null,
+                                  controller:
+                                      mode != "view" && mode != "approve"
+                                          ? controller.descriptionController
+                                          : null,
+                                  enabled: mode != "view" && mode != "approve",
                                   focusNode: controller.descriptionFocusNode,
                                   maxLines: 5,
                                   maxLength: 1000,
@@ -163,7 +178,7 @@ class CreateEditView extends GetView<HouseController> {
 
                                 //home type selector
                                 DropdownButtonFormField<String>(
-                                  value: mode == "view"
+                                  value: mode == "view" || mode == "approve"
                                       ? moduleItem!.type
                                       : controller.type.value,
                                   validator: (val) {
@@ -191,7 +206,8 @@ class CreateEditView extends GetView<HouseController> {
                                     fontSize: 14,
                                   ),
                                   decoration: InputDecoration(
-                                      enabled: mode != "view",
+                                      enabled:
+                                          mode != "view" && mode != "approve",
                                       prefixIcon: Icon(
                                           FontAwesomeIcons.houseChimneyWindow,
                                           size: 18)),
@@ -200,13 +216,15 @@ class CreateEditView extends GetView<HouseController> {
 
                                 //base price field
                                 TextFormField(
-                                  initialValue: mode == "view"
-                                      ? moduleItem!.basePrice.toString()
-                                      : null,
-                                  controller: mode != "view"
-                                      ? controller.basePriceController
-                                      : null,
-                                  enabled: mode != "view",
+                                  initialValue:
+                                      mode == "view" || mode == "approve"
+                                          ? moduleItem!.basePrice.toString()
+                                          : null,
+                                  controller:
+                                      mode != "view" && mode != "approve"
+                                          ? controller.basePriceController
+                                          : null,
+                                  enabled: mode != "view" && mode != "approve",
                                   validator: (val) {
                                     if (val != null &&
                                         val.isNotEmpty &&
@@ -223,8 +241,9 @@ class CreateEditView extends GetView<HouseController> {
                                       hintText: 'Enter base price',
                                       labelText: "Base Price (Optional)"),
                                 ),
-                                if (mode == "view") SizedBox(height: 30),
-                                if (mode == "view")
+                                if (mode == "view" || mode == "approve")
+                                  SizedBox(height: 30),
+                                if (mode == "view" || mode == "approve")
                                   customTextFieldFunction(
                                       moduleAttribute:
                                           moduleItem?.rating.toString() ?? '',
@@ -250,7 +269,7 @@ class CreateEditView extends GetView<HouseController> {
                                                 children: [
                                                   Checkbox(
                                                       value:
-                                                          //  mode == "view"
+                                                          //  mode == "view" || mode == "approve"
                                                           //     ? controller.isFacilitySelected(
                                                           //         moduleItem!
                                                           //             .facilities!
@@ -287,7 +306,7 @@ class CreateEditView extends GetView<HouseController> {
                                 Text("Main Image (max: 5MB)",
                                     style: Get.textTheme.titleMedium),
                                 SizedBox(height: 15),
-                                if (mode != "view")
+                                if (mode != "view" && mode != "approve")
                                   Stack(
                                     children: [
                                       InkWell(
@@ -387,8 +406,9 @@ class CreateEditView extends GetView<HouseController> {
 
                                 Text("Short Video (max: 5MB)",
                                     style: Get.textTheme.titleMedium),
-                                if (mode != "view") SizedBox(height: 15),
-                                if (mode != "view")
+                                if (mode != "view" && mode != "approve")
+                                  SizedBox(height: 15),
+                                if (mode != "view" && mode != "approve")
                                   Stack(
                                     children: [
                                       InkWell(
@@ -470,11 +490,12 @@ class CreateEditView extends GetView<HouseController> {
 
                                 SizedBox(height: 40),
                                 //Other images selector
-                                if (mode != "view")
+                                if (mode != "view" && mode != "approve")
                                   Text("Other Images (max 2MB each)",
                                       style: Get.textTheme.titleMedium),
-                                if (mode != "view") SizedBox(height: 20),
-                                if (mode != "view")
+                                if (mode != "view" && mode != "approve")
+                                  SizedBox(height: 20),
+                                if (mode != "view" && mode != "approve")
                                   Obx(() {
                                     return ElevatedButton.icon(
                                         onPressed: () async {
@@ -497,7 +518,8 @@ class CreateEditView extends GetView<HouseController> {
                                                 lineWidth: 4,
                                               ));
                                   }),
-                                if (mode != "view") SizedBox(height: 20),
+                                if (mode != "view" && mode != "approve")
+                                  SizedBox(height: 20),
 
                                 Obx(() {
                                   return controller.images.length > 0
@@ -543,7 +565,8 @@ class CreateEditView extends GetView<HouseController> {
                                               }))
                                       : SizedBox.shrink();
                                 }),
-                                if (mode != "view") SizedBox(height: 40),
+                                if (mode != "view" && mode != "approve")
+                                  SizedBox(height: 40),
                                 //Location
                                 Text("Location",
                                     style: Get.textTheme.titleMedium),
@@ -600,11 +623,13 @@ class CreateEditView extends GetView<HouseController> {
                                         }),
                                         SizedBox(height: 20),
                                         TextFormField(
-                                          initialValue: mode == "view"
+                                          initialValue: mode == "view" ||
+                                                  mode == "approve"
                                               ? moduleItem!.location!.quarter
                                               : controller
                                                   .location.value.quarter,
-                                          enabled: mode != "view",
+                                          enabled: mode != "view" &&
+                                              mode != "approve",
                                           onChanged: (val) {
                                             controller.location
                                                 .update((location) {
@@ -628,12 +653,12 @@ class CreateEditView extends GetView<HouseController> {
                                         ),
 
                                         SizedBox(height: 30),
-                                        if (mode != "view")
+                                        if (mode != "view" && mode != "approve")
                                           Text("Choose location on Map",
                                               style: Get.textTheme.titleMedium),
-                                        if (mode != "view")
+                                        if (mode != "view" && mode != "approve")
                                           SizedBox(height: 30),
-                                        if (mode != "view")
+                                        if (mode != "view" && mode != "approve")
                                           Obx(() {
                                             return AspectRatio(
                                               aspectRatio: 16 / 9,
@@ -825,7 +850,7 @@ class CreateEditView extends GetView<HouseController> {
                                       : SizedBox.shrink();
                                 }),
                                 SizedBox(height: 20),
-                                if (mode != "view")
+                                if (mode != "view" && mode != "approve")
                                   Center(
                                     child: ElevatedButton(
                                         child: Text("Add Room Type"),
@@ -834,36 +859,38 @@ class CreateEditView extends GetView<HouseController> {
                                           //     transition: Transition.fadeIn);
                                         }),
                                   ),
-                                if (mode != "view") SizedBox(height: 30),
-
+                                if (mode != "view" && mode != "approve")
+                                  SizedBox(height: 30),
                                 //create button
+                                // if (mode != "view")
                                 Center(
                                   child: ElevatedButton(
-                                      onPressed: () {
-                                        if (mode != "create" &&
-                                            moduleItem?.isApproved != null &&
-                                            moduleItem?.isApproved != true) {
-                                          Get.defaultDialog(
-                                            title: "Confirm Approval",
-                                            middleText:
-                                                "Are you really sure you want to approve this Home}  \n  This action cannot be undone",
-                                            buttonColor:
-                                                AppTheme.colors.mainRedColor,
-                                            onCancel: () => Get.back(),
-                                            onConfirm: () {
-                                              controller
-                                                  .approveHome(moduleItem!.id);
-                                            },
-                                          );
-
-                                          controller
-                                              .approveHome(moduleItem!.id);
-                                        } else if (mode == "create") {
-                                          controller.addHome();
-                                        }
-                                      },
+                                      onPressed: mode != "view"
+                                          ? () {
+                                              if (mode == "approve" &&
+                                                  moduleItem?.isApproved !=
+                                                      null &&
+                                                  moduleItem?.isApproved ==
+                                                      false) {
+                                                Get.defaultDialog(
+                                                  title: "Confirm Approval",
+                                                  middleText:
+                                                      "Are you really sure you want to approve this Home}  \n  This action cannot be undone",
+                                                  buttonColor:
+                                                      Colors.blueAccent,
+                                                  onCancel: () => Get.back(),
+                                                  onConfirm: () {
+                                                    controller.approveHome(
+                                                        moduleItem!.id);
+                                                  },
+                                                );
+                                              } else if (mode == "create") {
+                                                controller.addHome();
+                                              }
+                                            }
+                                          : null,
                                       child: !controller.isLoading.value
-                                          ? Text(mode == "view"
+                                          ? Text(mode == "approve"
                                               ? 'Approve'
                                               : "Create")
                                           : SpinKitDualRing(
@@ -893,8 +920,9 @@ class CreateEditView extends GetView<HouseController> {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: TextFormField(
-        initialValue: mode != "view" ? null : moduleAttribute,
-        enabled: mode != "view",
+        initialValue:
+            mode != "view" && mode != "approve" ? null : moduleAttribute,
+        enabled: mode != "view" && mode != "approve",
         decoration: InputDecoration(
           constraints: const BoxConstraints(
             maxWidth: 300,
@@ -910,31 +938,31 @@ class CreateEditView extends GetView<HouseController> {
 }
 
 // // Extra attributes not in create or editform
-                            // if (mode == "view")
+                            // if (mode == "view" || mode == "approve")
                             //   customTextFieldFunction(
                             //       moduleAttribute:
                             //           moduleItem!.location.toString(),
                             //       labelText: "Location",
                             //       icondata: Icons.location_on),
-                            // if (mode == "view")
+                            // if (mode == "view" || mode == "approve")
                             //   customTextFieldFunction(
                             //       moduleAttribute:
                             //           moduleItem!.dateAdded.toString(),
                             //       labelText: "Date added",
                             //       icondata: Icons.calendar_month_rounded),
-                            // if (mode == "view")
+                            // if (mode == "view" || mode == "approve")
                             //   customTextFieldFunction(
                             //       moduleAttribute:
                             //           moduleItem!.isVerified.toString(),
                             //       labelText: "Is Verified",
                             //       icondata: Icons.verified),
-                            // if (mode == "view")
+                            // if (mode == "view" || mode == "approve")
                             //   customTextFieldFunction(
                             //       moduleAttribute:
                             //           moduleItem!.isGoogleUser.toString(),
                             //       labelText: "Is Google user",
                             //       icondata: Icons.circle),
-                            // if (mode == "view")
+                            // if (mode == "view" || mode == "approve")
                             //   customTextFieldFunction(
                             //       moduleAttribute:
                             //           moduleItem!.isFacebookUser.toString(),

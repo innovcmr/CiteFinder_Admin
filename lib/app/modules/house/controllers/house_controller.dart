@@ -12,6 +12,7 @@ import 'package:cite_finder_admin/app/data/providers/houseProvider.dart';
 import 'package:cite_finder_admin/app/modules/house/controllers/location_controller.dart';
 import 'package:cite_finder_admin/app/utils/config.dart';
 import 'package:cite_finder_admin/app/utils/formKeys.dart';
+import 'package:cite_finder_admin/app/utils/getExtension.dart';
 import 'package:cite_finder_admin/app/utils/upload_media.dart';
 import 'package:cite_finder_admin/app/utils/utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -566,6 +567,7 @@ class HouseController extends GetxController {
   }
 
   Future<void> approveHome(String? homeId) async {
+    Get.showLoader();
     if (!_createHomeFormKey.currentState!.validate()) {
       autoValidate(true);
       return;
@@ -576,11 +578,13 @@ class HouseController extends GetxController {
           try {
             isLoading.value = true;
             houseProvider.approve(homeId);
+            Get.closeLoader();
           } catch (e) {
           } finally {
             await clearFields();
             isLoading.value = false;
             Get.back();
+            Get.closeLoader();
           }
         });
   }
