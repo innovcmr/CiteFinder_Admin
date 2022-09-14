@@ -10,7 +10,7 @@ import 'package:get/get.dart';
 class HomeController extends GetxController {
   //TODO: Implement HomeController
 
-  final index = 2.obs;
+  final index = 1.obs;
   var scaffoldKey = GlobalKey<ScaffoldState>();
 
   final List<Map<String, dynamic>> children = [
