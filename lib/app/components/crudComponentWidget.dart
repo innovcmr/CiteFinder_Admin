@@ -5,21 +5,26 @@
 import 'dart:developer';
 
 import 'package:cite_finder_admin/app/components/controllers/crud_controller.dart';
+
 import 'package:cite_finder_admin/app/utils/themes/themes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+
 class CRUD extends GetView<CrudController> {
+
   CRUD({
     Key? key,
     this.addBtnVisibility = true,
     this.onAdd,
     this.canEdit = true,
+
     this.canApprove = false,
     this.canDelete = true,
     this.editView,
     this.seeView,
     this.approveView,
+
     required this.moduleName,
     required this.selectedTileIndexController,
     required this.createView,
@@ -36,6 +41,7 @@ class CRUD extends GetView<CrudController> {
   final GetView createView;
   final GetView? editView;
   final GetView? seeView;
+
   final GetView? approveView;
   Rxn<int> selectedTileIndexController;
   CrudController controller = Get.put(CrudController());
@@ -44,6 +50,7 @@ class CRUD extends GetView<CrudController> {
   Widget build(BuildContext context) {
     controller = Get.put(CrudController.to);
     controller.moduleName = moduleName;
+
     return Container(
       padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
       child: SingleChildScrollView(
@@ -179,8 +186,10 @@ class CRUD extends GetView<CrudController> {
 
                     StreamBuilder<List>(
                       stream: moduleName == "users"
+
                           ? controller.userProvider.moduleStream()
                           : controller.houseProvider.moduleStream(),
+
                       builder: (context, snapshot) {
                         final items = snapshot.data;
                         if (!snapshot.hasData) {
@@ -218,9 +227,11 @@ class CRUD extends GetView<CrudController> {
                                   child: ListTile(
                                     title: Row(
                                       children: [
+
                                         // const SizedBox(
                                         //   width: 20,
                                         // ),
+
                                         for (var key in items.first
                                             .toJson()
                                             .keys
@@ -294,6 +305,7 @@ class CRUD extends GetView<CrudController> {
                                         //         width: 20,
                                         //       ),
 
+
                                         for (var j in i
                                             .toJson()
                                             .values
@@ -341,6 +353,7 @@ class CRUD extends GetView<CrudController> {
                                                     .colors.dialogBgColor);
                                           },
                                         ),
+
                                         // kycIcon
                                         if (moduleName == "houses" &&
                                             i.isApproved != null &&
@@ -416,6 +429,7 @@ class CRUD extends GetView<CrudController> {
                                                 return SizedBox.shrink();
                                               }),
 
+
                                         if (canEdit)
                                           IconButton(
                                             padding: const EdgeInsets.symmetric(
@@ -423,10 +437,12 @@ class CRUD extends GetView<CrudController> {
                                             constraints: const BoxConstraints(),
                                             onPressed: () {
                                               if (canEdit) {
+
                                                 controller.editModuleItem(i);
                                                 Get.dialog(createView,
                                                     barrierColor: AppTheme
                                                         .colors.dialogBgColor);
+
                                               }
                                             },
                                             splashRadius: 20,
@@ -448,7 +464,9 @@ class CRUD extends GetView<CrudController> {
                                                   AppTheme.colors.mainRedColor,
                                             ),
                                             onPressed: () {
+
                                               controller.deleteModuleItem(i);
+
                                             },
                                           ),
 
