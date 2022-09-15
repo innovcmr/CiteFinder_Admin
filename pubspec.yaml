@@ -26,6 +26,8 @@ dependencies:
   firebase_core: ^1.20.1
   font_awesome_flutter: ^10.1.0
   get: 4.6.5
+  syncfusion_flutter_charts: ^20.2.48
+  fl_chart: ^0.55.1
   flutter: 
     sdk: flutter
 
