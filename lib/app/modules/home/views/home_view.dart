@@ -1,4 +1,6 @@
+import 'package:cite_finder_admin/app/data/providers/loginProvider.dart';
 import 'package:cite_finder_admin/app/modules/dashboard/views/dashboard_view.dart';
+import 'package:cite_finder_admin/app/routes/app_pages.dart';
 import 'package:cite_finder_admin/app/utils/config.dart';
 import 'package:cite_finder_admin/app/utils/extensions.dart';
 import 'package:cite_finder_admin/app/utils/themes/themes.dart';
@@ -110,27 +112,28 @@ class MainDrawer extends StatelessWidget {
       // "view": DashboardView(),
       "label": "Dashboard",
       "icon": Icons.dashboard,
-      "route": "/dashboard",
+      "route": Routes.DASHBOARD,
     },
     {
       // "view": HouseView(),
       "label": "Houses",
       "icon": Icons.maps_home_work_rounded,
-      "route": "/house"
+      "route": Routes.HOUSE
     },
     {
       // "view": UserView(),
       "label": "Users",
       "icon": Icons.people_outline_rounded,
-      "route": "/user"
+      "route": Routes.USER
     },
     {
       // "view": AgentView(),
       "label": "House Agent",
       "icon": Icons.real_estate_agent,
-      "route": "/agent"
+      "route": Routes.AGENT
     },
   ];
+  final loginProvider = LoginProvider();
 
   @override
   Widget build(BuildContext context) {
@@ -201,12 +204,13 @@ class MainDrawer extends StatelessWidget {
                     // selected: index.value ==
                     //     children.indexOf(item),
                     onTap: () {
-                      // Get.back();
+                      Get.back();
                       Get.offAndToNamed(
                           children[children.indexOf(item)]["route"]);
                     },
                   ),
                 ),
+              // ignore: prefer_const_constructors
               Divider(
                 thickness: 1,
               ),
@@ -227,7 +231,9 @@ class MainDrawer extends StatelessWidget {
                   ),
                   title: Text("Logout"),
                   textColor: AppTheme.colors.greySidebarTextColor,
-                  onTap: () {},
+                  onTap: () {
+                    loginProvider.logOut();
+                  },
                 ),
               )
             ]

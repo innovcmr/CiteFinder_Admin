@@ -13,36 +13,35 @@ class HomeController extends GetxController {
   final index = 1.obs;
   var scaffoldKey = GlobalKey<ScaffoldState>();
 
-  final List<Map<String, dynamic>> children = [
-    {
-      "view": DashboardView(),
-      "label": "Dashboard",
-      "icon": Icons.dashboard,
-      "route": "/dashboard",
-    },
-    {
-      "view": HouseView(),
-      "label": "Houses",
-      "icon": Icons.maps_home_work_rounded,
-      "route": "/house"
-    },
-    {
-      "view": UserView(),
-      "label": "Users",
-      "icon": Icons.people_outline_rounded,
-      "route": "/user"
-    },
-    {
-      "view": AgentView(),
-      "label": "House Agent",
-      "icon": Icons.real_estate_agent,
-      "route": "/agent"
-    },
-  ];
+  // final List<Map<String, dynamic>> children = [
+  //   {
+  //     "view": DashboardView(),
+  //     "label": "Dashboard",
+  //     "icon": Icons.dashboard,
+  //     "route": "/dashboard",
+  //   },
+  //   {
+  //     "view": HouseView(),
+  //     "label": "Houses",
+  //     "icon": Icons.maps_home_work_rounded,
+  //     "route": "/house"
+  //   },
+  //   {
+  //     "view": UserView(),
+  //     "label": "Users",
+  //     "icon": Icons.people_outline_rounded,
+  //     "route": "/user"
+  //   },
+  //   {
+  //     "view": AgentView(),
+  //     "label": "House Agent",
+  //     "icon": Icons.real_estate_agent,
+  //     "route": "/agent"
+  //   },
+  // ];
   late Map<int, Map<String, dynamic>> child;
   @override
   void onInit() {
-    child = children.asMap();
     super.onInit();
     // WidgetsBinding.instance.addPostFrameCallback((_) {
     //   // executes after build

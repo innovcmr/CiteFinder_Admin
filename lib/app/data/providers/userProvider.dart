@@ -14,38 +14,6 @@ class UserProvider extends BasePovider {
   @override
   void onInit() {
     super.onInit();
-    auth.authStateChanges().listen((User? user) {
-      if (user != null) {
-        print(user.uid);
-        //   box.write(Config.keys.user, user);
-        //   box.write(Config.keys.userIsLogIn, true);
-        // } else {
-        //   box.remove(Config.keys.user);
-        //   box.write(Config.keys.userIsLogIn, false);
-      }
-    });
-  }
-
-  Future<bool> signInUser(
-      {required String email, required String password}) async {
-    log(email);
-    log(password);
-    try {
-      final userCredential = await auth
-          .signInWithEmailAndPassword(
-              email: email.trim(), password: password.trim())
-          .timeout(const Duration(seconds: 15));
-      final user = userCredential.user;
-      print(user?.uid);
-      // box.write(Config.keys.user, user);
-      return true;
-    } on FirebaseAuthException catch (e) {
-      print("error in signin is ${e.message}");
-      Get.closeLoader();
-      Get.snackbar("Error", e.message ?? "Error in signIn. Check credentials");
-      return false;
-      // rethrow;
-    }
   }
 
 // create User Operation

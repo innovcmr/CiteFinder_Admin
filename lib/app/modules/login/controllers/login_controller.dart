@@ -1,28 +1,57 @@
+import 'package:cite_finder_admin/app/data/providers/loginProvider.dart';
 import 'package:cite_finder_admin/app/data/providers/userProvider.dart';
+import 'package:cite_finder_admin/app/modules/dashboard/views/dashboard_view.dart';
 import 'package:cite_finder_admin/app/modules/home/views/home_view.dart';
+import 'package:cite_finder_admin/app/modules/login/views/login_view.dart';
+import 'package:cite_finder_admin/app/routes/app_pages.dart';
 import 'package:cite_finder_admin/app/utils/formKeys.dart';
 import 'package:cite_finder_admin/app/utils/getExtension.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class LoginController extends GetxController {
   final count = 0.obs;
+  static LoginController instance = Get.find();
+  late Rx<User?> firebaseUser;
+  final loginProvider = LoginProvider();
+
+  // googleSignInAccount = Rx<GoogleSignInAccount?>(googleSign.currentUser);
   final _userProvider = UserProvider();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
-  final loginFormKey = LoginFormKey();
 
   final autoValidate = false.obs;
   @override
   void onInit() {
     super.onInit();
     _userProvider.onInit();
+    loginProvider.onInit();
   }
 
   @override
   void onReady() {
     super.onReady();
+    firebaseUser = Rx<User?>(loginProvider.auth.currentUser);
+    firebaseUser.bindStream(loginProvider.auth.userChanges());
+    ever(firebaseUser, _setInitialScreen);
+  }
+
+  _setInitialScreen(User? user) {
+    if (user == null) {
+      // if the user is not found then the user is navigated to the Register Screen
+
+      Get.offAllNamed(
+        Routes.LOGIN,
+      );
+    } else {
+      // if the user exists and logged in the the user is navigated to the Home Screen
+      Get.offAllNamed(
+        Routes.DASHBOARD,
+        // parameters: {"user": user.displayName!}
+      );
+    }
   }
 
   @override
@@ -31,9 +60,16 @@ class LoginController extends GetxController {
     passwordController.dispose();
   }
 
+  clearFields() {
+    this.emailController.clear();
+    this.passwordController.clear();
+  }
+
+  // getFormKey() => _loginFormKey;
+
   void increment() => count.value++;
 
-  void login() async {
+  void login(loginFormKey) async {
     if (!loginFormKey.currentState!.validate()) {
       autoValidate(true);
       return;
@@ -42,13 +78,13 @@ class LoginController extends GetxController {
       Get.showLoader();
       bool successful = false;
       try {
-        successful = await _userProvider.signInUser(
+        successful = await loginProvider.signInUser(
             email: emailController.text.trim(),
-            password: passwordController.text);
+            password: passwordController.text.trim());
         if (successful) {
           Get.snackbar("Login", "Login Successful");
           print("successful signin");
-          Get.offAll(() => HomeView());
+          clearFields();
         }
         Get.closeLoader();
       } catch (e) {

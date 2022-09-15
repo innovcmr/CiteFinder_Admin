@@ -1,3 +1,6 @@
+// ignore_for_file: prefer_const_constructors
+
+import 'package:cite_finder_admin/app/modules/login/controllers/login_controller.dart';
 import 'package:cite_finder_admin/app/utils/config.dart';
 import 'package:cite_finder_admin/app/utils/getExtension.dart';
 import 'package:cite_finder_admin/app/utils/themes/themes.dart';
@@ -14,7 +17,10 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
-  ).timeout(const Duration(seconds: 15));
+  ).then((value) {
+    Get.put(LoginController());
+  });
+
   await GetStorage.init();
   runApp(
     GetMaterialApp(
@@ -22,8 +28,16 @@ void main() async {
       title: Config.appName,
       debugShowCheckedModeBanner: false,
       theme: AppTheme.themeLight,
-      initialRoute: AppPages.INITIAL,
+      textDirection: TextDirection.ltr,
+      // initialRoute: AppPages.INITIAL,
+      // we don't really have to put the home page here
+      // GetX is going to navigate the user and clear the navigation stack
+
       getPages: AppPages.routes,
+      home: FractionallySizedBox(
+          widthFactor: 0.3,
+          heightFactor: 0.3,
+          child: const CircularProgressIndicator()),
     ),
   );
 }

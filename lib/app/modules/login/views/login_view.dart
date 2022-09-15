@@ -1,4 +1,5 @@
 import 'package:cite_finder_admin/app/utils/config.dart';
+import 'package:cite_finder_admin/app/utils/formKeys.dart';
 import 'package:cite_finder_admin/app/utils/themes/themes.dart';
 import 'package:cite_finder_admin/app/utils/validator.dart';
 import 'package:flutter/material.dart';
@@ -12,6 +13,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 class LoginView extends GetView<LoginController> {
   @override
   Widget build(BuildContext context) {
+    final _loginFormKey = LoginFormKey();
     SystemChrome.setPreferredOrientations(
         [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
     return SafeArea(
@@ -49,7 +51,7 @@ class LoginView extends GetView<LoginController> {
                     ),
                     Obx(
                       () => Form(
-                        key: controller.loginFormKey,
+                        key: _loginFormKey,
                         autovalidateMode: controller.autoValidate.value
                             ? AutovalidateMode.always
                             : AutovalidateMode.disabled,
@@ -86,7 +88,9 @@ class LoginView extends GetView<LoginController> {
                               height: 30.0,
                             ),
                             ElevatedButton(
-                              onPressed: controller.login,
+                              onPressed: () {
+                                controller.login(_loginFormKey);
+                              },
                               child: const Text("Login"),
                             ),
                             const SizedBox(

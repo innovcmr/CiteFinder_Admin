@@ -37,9 +37,8 @@ class AppTheme {
       button: TextStyle(fontFamily: "LatoRegular", fontSize: 16),
     ),
     iconTheme: IconThemeData(color: colors.darkerGreyTextColor),
-    snackBarTheme: const SnackBarThemeData(
-      backgroundColor: Colors.white,
-    ),
+    snackBarTheme: SnackBarThemeData(
+        backgroundColor: colors.mainPurpleColor.withOpacity(0.3)),
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
       floatingLabelStyle: TextStyle(color: colors.mainPurpleColor),
