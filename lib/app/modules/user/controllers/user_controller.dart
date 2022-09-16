@@ -92,7 +92,7 @@ class UserController extends GetxController {
   }
 
   getKycRequests() async {
-    kycRequests = await userProvider.getKycRequests();
+    kycRequests = await userProvider.getPendingKycRequests();
     // currentKYCUser = await userProvider.getUser()
   }
 
@@ -100,9 +100,9 @@ class UserController extends GetxController {
     if (kycRequests.isEmpty) {
       await getKycRequests();
     }
-    return item.isVerified != null &&
-        item.isVerified == false &&
-        kycRequests.any((element) => element.user == item.record);
+    // return item.isVerified != null &&
+    //     item.isVerified == false &&
+    return kycRequests.any((element) => element.user == item.record);
   }
 
   approveKYC(moduleId) async {
@@ -131,17 +131,17 @@ class UserController extends GetxController {
             phoneNumber: phoneNumberController.text.trim());
         if (success) {
           clear();
+          Get.closeLoader();
           Get.snackbar("Success",
               "User successfully Created. An Email verification has been sent.",
-              duration: const Duration(seconds: 6));
-          Get.closeLoader();
+              duration: const Duration(seconds: 10));
         }
       } catch (e) {
+        Get.closeLoader();
         Get.snackbar("Error in user Creation", e.toString());
         log("Successful User Creation");
-        Get.closeLoader();
       } finally {
-        Get.closeLoader();
+        // Get.closeLoader();
       }
     }
   }

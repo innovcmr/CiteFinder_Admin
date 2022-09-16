@@ -1,13 +1,19 @@
-// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_constructors, curly_braces_in_flow_control_structures
 
+import 'dart:convert';
 import 'dart:developer';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cite_finder_admin/app/components/CircularButton.dart';
+import 'package:cite_finder_admin/app/components/ImageWidget.dart';
 import 'package:cite_finder_admin/app/components/MapWidget.dart';
 import 'package:cite_finder_admin/app/components/PageScrollView.dart';
+import 'package:cite_finder_admin/app/components/SmallImageWidget.dart';
 import 'package:cite_finder_admin/app/components/crudComponentWidget.dart';
+import 'package:cite_finder_admin/app/components/home_gallery.dart';
 import 'package:cite_finder_admin/app/data/models/house_model.dart';
+import 'package:cite_finder_admin/app/data/models/landlord_model.dart';
+import 'package:cite_finder_admin/app/data/models/user_model.dart';
 import 'package:cite_finder_admin/app/modules/home/views/home_view.dart';
 import 'package:cite_finder_admin/app/modules/house/views/home_room_view.dart';
 import 'package:cite_finder_admin/app/modules/user/views/user_view.dart';
@@ -62,15 +68,18 @@ class CreateEditView extends GetView<HouseController> {
   CreateEditView({Key? key, this.mode = "create"}) : super(key: key);
   final box = GetStorage();
   @override
-  final controller = Get.put(HouseController.to);
   final String mode;
+
+  @override
+  HouseController controller = Get.put(HouseController());
   House? moduleItem;
   @override
   Widget build(BuildContext context) {
+    controller = Get.put(HouseController.to);
     if (box.read(Config.keys.selectedHome) != null && mode != "create") {
       moduleItem = House.fromJson(box.read(Config.keys.selectedHome), "map");
     }
-    log(moduleItem.toString());
+    // log(moduleItem!.toJson().toString());
     if (mode == "view" || mode == "approve") {
       if (moduleItem?.facilities != null) {
         for (var facility in moduleItem!.facilities!) {
@@ -104,9 +113,6 @@ class CreateEditView extends GetView<HouseController> {
                     child: PageScrollView(
                       title:
                           "${mode == "view" ? 'View' : mode == "approve" ? 'Approve' : 'Add'} Home",
-                      onExit: () {
-                        Get.delete<HouseController>();
-                      },
                       body: Padding(
                         padding: EdgeInsets.only(top: 40),
                         child: Form(
@@ -156,7 +162,7 @@ class CreateEditView extends GetView<HouseController> {
                                           : null,
                                   enabled: mode != "view" && mode != "approve",
                                   focusNode: controller.descriptionFocusNode,
-                                  maxLines: 5,
+                                  maxLines: 3,
                                   maxLength: 1000,
                                   maxLengthEnforcement:
                                       MaxLengthEnforcement.enforced,
@@ -175,7 +181,71 @@ class CreateEditView extends GetView<HouseController> {
                                       labelText: "Description"),
                                 ),
                                 SizedBox(height: 15),
-
+                                if (mode == "view" || mode == "approve")
+                                  // Gallery for view mode
+                                  if (moduleItem!.images!.isNotEmpty)
+                                    Column(
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 20.0),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Text("Gallery",
+                                                  style: Get
+                                                      .textTheme.titleLarge!
+                                                      .copyWith(fontSize: 20)),
+                                              TextButton(
+                                                  onPressed: () {
+                                                    Get.dialog(HomeGallery(
+                                                        details: moduleItem));
+                                                  },
+                                                  child: Text("View All",
+                                                      style: TextStyle(
+                                                          color: Get
+                                                              .theme
+                                                              .colorScheme
+                                                              .onSecondaryContainer)))
+                                            ],
+                                          ),
+                                        ),
+                                        SizedBox(height: 15),
+                                        SizedBox(height: 15),
+                                        SizedBox(
+                                            height: 110,
+                                            width: double.infinity,
+                                            child: ListView.builder(
+                                                itemCount: moduleItem
+                                                        ?.images!.length ??
+                                                    0,
+                                                scrollDirection:
+                                                    Axis.horizontal,
+                                                itemBuilder: (ctx, index) {
+                                                  return Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            left: 20, right: 5),
+                                                    child: AspectRatio(
+                                                      aspectRatio: 4 / 3,
+                                                      child: ImageWidget(
+                                                        imageUrl: moduleItem
+                                                                    ?.images![
+                                                                index] ??
+                                                            "https://images.unsplash.com/photo-1596233584351-73de5b4026d4?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80",
+                                                        width: 100,
+                                                        height: 70,
+                                                        index: index,
+                                                        imageList:
+                                                            moduleItem?.images,
+                                                      ),
+                                                    ),
+                                                  );
+                                                })),
+                                        SizedBox(height: 30),
+                                      ],
+                                    ),
                                 //home type selector
                                 DropdownButtonFormField<String>(
                                   value: mode == "view" || mode == "approve"
@@ -303,9 +373,11 @@ class CreateEditView extends GetView<HouseController> {
 
                                 SizedBox(height: 30),
                                 //Main image selector
-                                Text("Main Image (max: 5MB)",
-                                    style: Get.textTheme.titleMedium),
-                                SizedBox(height: 15),
+                                if (mode != "view" && mode != "approve")
+                                  Text("Main Image (max: 5MB)",
+                                      style: Get.textTheme.titleMedium),
+                                if (mode != "view" && mode != "approve")
+                                  SizedBox(height: 15),
                                 if (mode != "view" && mode != "approve")
                                   Stack(
                                     children: [
@@ -486,8 +558,176 @@ class CreateEditView extends GetView<HouseController> {
                                       })
                                     ],
                                   ),
-                                // End of video section
+                                if (mode == "view" || mode == "approve")
+                                  // Agent display
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 20.0, vertical: 10.0),
+                                        child: Text("House Agent",
+                                            style: Get.textTheme.titleLarge!
+                                                .copyWith(fontSize: 20)),
+                                      ),
+                                      SizedBox(height: 15),
+                                      StreamBuilder<User>(
+                                          stream: controller.landlordProvider
+                                              .currentLandLordStream(
+                                                  moduleItem!.landlord!.id),
+                                          builder: (context, snapshot) {
+                                            if (snapshot.hasData) {
+                                              // log(snapshot.data.toString());
+                                            }
+                                            // if (!snapshot.hasData)
+                                            //   return Text("Landlord not found");
 
+                                            if (snapshot.connectionState ==
+                                                ConnectionState.waiting)
+                                              return SpinKitDualRing(
+                                                color: Get.theme.primaryColor,
+                                              );
+
+                                            final landlord = snapshot.data!;
+                                            log(landlord.toJson().toString());
+                                            return Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 20.0),
+                                                child: InkWell(
+                                                  hoverColor: AppTheme.colors
+                                                      .mainLightPurpleColor,
+                                                  // focusColor: AppTheme
+                                                  //     .colors.mainPurpleColor,
+                                                  highlightColor: AppTheme
+                                                      .colors.mainGreyBg,
+                                                  borderRadius:
+                                                      BorderRadius.circular(25),
+
+                                                  onTap: () async {
+                                                    // Navigate to the selected landlord. Has Error
+                                                    // for now
+                                                    // await controller.box.write(
+                                                    //     Config
+                                                    //         .keys.selectedUser,
+                                                    //     landlord.toJson());
+                                                    // Get.dialog(CreateEditView(
+                                                    //   mode: "view",
+                                                    // ));
+                                                  },
+                                                  child: Container(
+                                                      padding:
+                                                          EdgeInsets.all(20),
+                                                      decoration: BoxDecoration(
+                                                        color: Get
+                                                            .theme
+                                                            .colorScheme
+                                                            .tertiary,
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(25),
+                                                      ),
+                                                      child: Row(
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .center,
+                                                          children: [
+                                                            SmallImageWidget(
+                                                                imageUrl: landlord
+                                                                    .photoURL),
+                                                            SizedBox(width: 20),
+                                                            Column(
+                                                                mainAxisSize:
+                                                                    MainAxisSize
+                                                                        .min,
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .start,
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .center,
+                                                                children: [
+                                                                  Text(
+                                                                      landlord.fullName ??
+                                                                          "Anonymous",
+                                                                      textAlign:
+                                                                          TextAlign
+                                                                              .left,
+                                                                      style: Get
+                                                                          .textTheme
+                                                                          .bodyLarge!
+                                                                          .copyWith(
+                                                                              color: AppTheme.colors.mainPurpleColor,
+                                                                              fontWeight: FontWeight.w900)),
+                                                                  // SizedBox(
+                                                                  //     height: 10),
+                                                                  // Text(
+                                                                  //     dateTimeFormat(
+                                                                  //         "relative",
+                                                                  //         controller
+                                                                  //             .currentHome
+                                                                  //             .value!
+                                                                  //             .dateAdded),
+                                                                  //     style: TextStyle(
+                                                                  //         color: Colors
+                                                                  //             .grey[500])),
+                                                                  if (Get.width <=
+                                                                      500)
+                                                                    InkWell(
+                                                                      child: Column(
+                                                                          mainAxisSize:
+                                                                              MainAxisSize.min,
+                                                                          children: [
+                                                                            Text(
+                                                                              landlord.phoneNumber ?? "",
+                                                                            ),
+                                                                            if (landlord.phoneNumber != null &&
+                                                                                landlord.phoneNumber!.isNotEmpty)
+                                                                              FaIcon(FontAwesomeIcons.whatsapp, color: Colors.green)
+                                                                          ]),
+                                                                    ),
+                                                                  // if (landlord
+                                                                  //         .id !=
+                                                                  //     controller
+                                                                  //         .authController
+                                                                  //         .currentUser
+                                                                  //         .value!
+                                                                  //         .id)
+                                                                  //   InkWell(
+                                                                  //       onTap: () =>
+                                                                  //           controller.initializeChat(
+                                                                  //               landlord),
+                                                                  //       child: Padding(
+                                                                  //           padding: EdgeInsets.all(
+                                                                  //               5),
+                                                                  //           child: Text(
+                                                                  //               "messageOwner".tr,
+                                                                  //               style: TextStyle(decoration: TextDecoration.underline))))
+                                                                  if (Get.width >
+                                                                      500)
+                                                                    InkWell(
+                                                                      child: Row(
+                                                                          mainAxisSize:
+                                                                              MainAxisSize.min,
+                                                                          children: [
+                                                                            Text(
+                                                                              landlord.phoneNumber ?? "",
+                                                                            ),
+                                                                            SizedBox(
+                                                                              width: 5,
+                                                                            ),
+                                                                            if (landlord.phoneNumber != null &&
+                                                                                landlord.phoneNumber!.isNotEmpty)
+                                                                              FaIcon(FontAwesomeIcons.whatsapp, color: Colors.green)
+                                                                          ]),
+                                                                    ),
+                                                                ]),
+                                                          ])),
+                                                ));
+                                          }),
+                                    ],
+                                  ),
                                 SizedBox(height: 40),
                                 //Other images selector
                                 if (mode != "view" && mode != "approve")
@@ -779,6 +1019,7 @@ class CreateEditView extends GetView<HouseController> {
                                                               index]);
                                                       Get.dialog(HomeRoomView(
                                                         mode: "view",
+                                                        index: index,
                                                       ));
                                                       // Get.to(() => AddHomeRoom(),
                                                       //     transition:

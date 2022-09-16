@@ -47,10 +47,12 @@ class LoginController extends GetxController {
       );
     } else {
       // if the user exists and logged in the the user is navigated to the Home Screen
-      Get.offAllNamed(
-        Routes.DASHBOARD,
-        // parameters: {"user": user.displayName!}
-      );
+      if (Get.currentRoute == Routes.LOGIN) {
+        Get.offAllNamed(
+          Routes.DASHBOARD,
+          // parameters: {"user": user.displayName!}
+        );
+      }
     }
   }
 
@@ -78,7 +80,7 @@ class LoginController extends GetxController {
       Get.showLoader();
       bool successful = false;
       try {
-        successful = await loginProvider.signInUser(
+        successful = await loginProvider.logInAsAdmin(
             email: emailController.text.trim(),
             password: passwordController.text.trim());
         if (successful) {
@@ -88,6 +90,7 @@ class LoginController extends GetxController {
         }
         Get.closeLoader();
       } catch (e) {
+        Get.snackbar("Error", "Error User not an Admin");
         Get.closeLoader();
       }
     }

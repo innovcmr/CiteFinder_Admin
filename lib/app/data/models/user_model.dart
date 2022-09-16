@@ -8,7 +8,7 @@ class User {
   String? fullName;
   String? email;
   String? location;
-  String? photoUrl;
+  String? photoURL;
   String? role;
   String? dateAdded;
   bool? isVerified;
@@ -21,7 +21,7 @@ class User {
       this.fullName,
       this.email,
       this.location,
-      this.photoUrl,
+      this.photoURL,
       this.role,
       this.dateAdded,
       this.isVerified,
@@ -38,7 +38,7 @@ class User {
     fullName = json.toString().contains("fullName") ? json['fullName'] : "";
     email = json.toString().contains("email") ? json['email'] : "";
     location = json.toString().contains("location") ? json['location'] : "";
-    photoUrl = json.toString().contains("photoUrl") ? json['photoUrl'] : "";
+    photoURL = json.toString().contains("photoURL") ? json['photoURL'] : "";
     role = json.toString().contains("role") ? json['role'] : "";
     if (type == "document") {
       log("hiiyaa");
@@ -99,7 +99,7 @@ class User {
     data['fullName'] = fullName;
     data['email'] = email;
     data['location'] = location;
-    data['photoUrl'] = photoUrl;
+    data['photoURL'] = photoURL;
     data['role'] = role;
     data['dateAdded'] = dateAdded;
     data['isVerified'] = isVerified;

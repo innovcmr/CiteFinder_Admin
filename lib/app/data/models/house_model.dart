@@ -53,9 +53,9 @@ class House {
     type = json.toString().contains("type") ? json['type'] : "";
 
     // changed short video to empty string for testing. change it later on by uncommenting code below
-    // shortVideo =
-    //     json.toString().contains("shortVideo") ? json['shortVideo'] : "";
-    shortVideo = "";
+    shortVideo =
+        json.toString().contains("shortVideo") ? json['shortVideo'] : "";
+    // shortVideo = "";
     //
     rating = json.toString().contains("rating") ? json['rating'] : null;
     location = json.toString().contains("location")
@@ -64,7 +64,7 @@ class House {
     facilities = json.toString().contains("facilities")
         ? json['facilities'].cast<String>()
         : "";
-    mainImage = json.toString().contains("mainimage") ? json['mainImage'] : "";
+    mainImage = json.toString().contains("mainImage") ? json['mainImage'] : "";
     images =
         json.toString().contains("images") ? json['images'].cast<String>() : "";
     if (type1 == "document") {
@@ -98,6 +98,7 @@ class House {
     //     ? Landlord?.fromJson(json['landlord'], type)
     //     : null;
     // if (type )
+    landlord = json.toString().contains("landlord") ? json['landlord'] : null;
     basePrice =
         json.toString().contains("basePrice") ? json['basePrice'] : null;
     isApproved =
@@ -120,9 +121,8 @@ class House {
     data['images'] = images;
     data['dateAdded'] = dateAdded;
     data['dateModified'] = dateModified;
-    // if (landlord != null) {
-    //   data['landlord'] = landlord?.toJson();
-    // }
+    data['landlord'] = landlord;
+
     data['basePrice'] = basePrice;
     data['isApproved'] = isApproved;
     return data;

@@ -29,8 +29,8 @@ class SmallImageWidget extends StatelessWidget {
       onTap: () {
         if (!isLast) {
           Get.put(ImageViewWidgetController());
-          Get.to(
-            () => ImageViewWidgetView(
+          Get.dialog(
+            ImageViewWidgetView(
                 imageUrl: imageUrl ?? "assets/images/Shapehome.png",
                 imageType: imageUrl != null ? 'network' : 'asset',
                 isNetworkImage: imageUrl != null,

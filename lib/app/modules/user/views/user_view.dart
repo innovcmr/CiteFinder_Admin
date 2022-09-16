@@ -33,6 +33,7 @@ class UserView extends GetView<UserController> {
         searchController: controller.searchController,
         selectedTileIndexController: controller.selectedUserIndex,
         canEdit: false,
+        canDelete: false,
         canApprove: true,
         createView: CreateEditView(
           mode: "create",

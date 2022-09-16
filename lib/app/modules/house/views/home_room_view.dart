@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:cite_finder_admin/app/components/CircularButton%20copy.dart';
+import 'package:cite_finder_admin/app/components/ImageWidget.dart';
 import 'package:cite_finder_admin/app/modules/house/controllers/house_controller.dart';
 import 'package:cite_finder_admin/app/utils/config.dart';
 import 'package:cite_finder_admin/app/utils/themes/themes.dart';
@@ -13,9 +14,10 @@ import 'package:get/get.dart';
 
 class HomeRoomView extends GetView<HouseController> {
   String mode;
-  HomeRoomView({Key? key, this.mode = "create"}) : super(key: key);
+  HomeRoomView({Key? key, this.index, this.mode = "create"}) : super(key: key);
   @override
   final controller = HouseController.to;
+  final int? index;
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -184,7 +186,8 @@ class HomeRoomView extends GetView<HouseController> {
                         SizedBox(height: 20),
 
                         //room Images
-                        Text("Room Type Images (max 2MB each)",
+                        Text(
+                            "Room Type Images ${mode == "view" ? '(max 2MB each)' : ''}",
                             style: Get.textTheme.titleMedium),
 
                         SizedBox(height: 20),
@@ -253,6 +256,37 @@ class HomeRoomView extends GetView<HouseController> {
                                       }))
                               : SizedBox.shrink();
                         }),
+
+                        SizedBox(height: 15),
+                        if (mode == "view")
+                          SizedBox(
+                              height: 190,
+                              width: double.infinity,
+                              child: ListView.builder(
+                                  itemCount: controller
+                                          .currentHomeRooms2[index!]
+                                          .images
+                                          ?.length ??
+                                      0,
+                                  scrollDirection: Axis.horizontal,
+                                  itemBuilder: (ctx, index2) {
+                                    List<String> imageLk = controller
+                                        .currentHomeRooms2[index!].images!;
+                                    return Padding(
+                                      padding: const EdgeInsets.only(
+                                          left: 20, right: 5),
+                                      child: AspectRatio(
+                                        aspectRatio: 4 / 3,
+                                        child: ImageWidget(
+                                          imageUrl: imageLk[index2],
+                                          width: 100,
+                                          height: 70,
+                                          index: index2,
+                                          imageList: imageLk,
+                                        ),
+                                      ),
+                                    );
+                                  })),
 
                         SizedBox(height: 30),
 

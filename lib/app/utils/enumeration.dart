@@ -6,6 +6,19 @@ extension modeParseToString on Mode {
   }
 }
 
+enum userRole {
+  tenant,
+  landlord,
+  agent,
+  admin,
+}
+
+extension userRoleParseToString on userRole {
+  String toStr() {
+    return this.toString().split('.').last;
+  }
+}
+
 enum KYCStatus { pending, approved }
 
 extension KYCParseToString on KYCStatus {

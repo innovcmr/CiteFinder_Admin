@@ -16,32 +16,32 @@ class HomeRoomProvider extends BasePovider {
     super.onInit();
   }
 
-  Future<List<HomeRoom>> getAllHomeRooms(uid) async {
-    try {
-      var houseReference =
-          firestore.collection(Config.firebaseKeys.home).doc(uid);
-      var query = await firestore
-          .collection(Config.firebaseKeys.homeRooms)
-          .where(Config.firebaseKeys.home, isEqualTo: houseReference)
-          .withConverter<HomeRoom>(
-            fromFirestore: (item, _) => HomeRoom.fromJson(item.data()!),
-            toFirestore: (item, _) => item.toJson(),
-          );
-      List<HomeRoom> homeRooms = [];
-      List<QueryDocumentSnapshot<HomeRoom>> homeRoomsSnapshot =
-          await query.get().then((value) => value.docs);
-      homeRooms.forEach((element) {
-        homeRooms.add(element);
-        log("homeRoom Fetch  ${element.toJson()}");
-      });
+  // Future<List<HomeRoom>> getAllHomeRooms(uid) async {
+  //   try {
+  //     var houseReference =
+  //         firestore.collection(Config.firebaseKeys.home).doc(uid);
+  //     var query = await firestore
+  //         .collection(Config.firebaseKeys.homeRooms)
+  //         .where(Config.firebaseKeys.home, isEqualTo: houseReference)
+  //         .withConverter<HomeRoom>(
+  //           fromFirestore: (item, _) => HomeRoom.fromJson(item.data()!),
+  //           toFirestore: (item, _) => item.toJson(),
+  //         );
+  //     List<HomeRoom> homeRooms = [];
+  //     List<QueryDocumentSnapshot<HomeRoom>> homeRoomsSnapshot =
+  //         await query.get().then((value) => value.docs);
+  //     homeRooms.forEach((element) {
+  //       homeRooms.add(element);
+  //       log("homeRoom Fetch  ${element.toJson()}");
+  //     });
 
-      return homeRooms;
-    } catch (e) {
-      Get.snackbar("Error in homeRoom Fetch", e.toString());
-      log("error in homeRoom Fetch, $e");
-      rethrow;
-    }
-  }
+  //     return homeRooms;
+  //   } catch (e) {
+  //     Get.snackbar("Error in homeRoom Fetch", e.toString());
+  //     log("error in homeRoom Fetch, $e");
+  //     rethrow;
+  //   }
+  // }
 
 // create home Operation
   Future<bool> add({

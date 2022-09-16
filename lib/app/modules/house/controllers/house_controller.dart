@@ -9,6 +9,7 @@ import 'package:cite_finder_admin/app/data/models/house_room_model2.dart';
 import 'package:cite_finder_admin/app/data/models/location_model2.dart';
 import 'package:cite_finder_admin/app/data/providers/homeRoomProvider.dart';
 import 'package:cite_finder_admin/app/data/providers/houseProvider.dart';
+import 'package:cite_finder_admin/app/data/providers/landlordProvider.dart';
 import 'package:cite_finder_admin/app/modules/house/controllers/location_controller.dart';
 import 'package:cite_finder_admin/app/utils/config.dart';
 import 'package:cite_finder_admin/app/utils/formKeys.dart';
@@ -20,6 +21,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:video_player/video_player.dart';
 
@@ -32,7 +34,9 @@ class HouseController extends GetxController {
   // List<User> get moduleItems => moduleItemList.value;
   final houseProvider = HouseProvider();
   final homeRoomProvider = HomeRoomProvider();
+  final landlordProvider = LandlordProvider();
   final selectedUserIndex = Rxn<int>();
+  final box = GetStorage();
 
   final GlobalKey<FormState> _createHomeFormKey = CreateHomeFormKey();
   GlobalKey<FormState> _roomKey = GlobalKey<FormState>();
@@ -114,6 +118,7 @@ class HouseController extends GetxController {
     super.onInit();
     houseProvider.onInit();
     homeRoomProvider.onInit();
+    landlordProvider.onInit();
     // WidgetsBinding.instance.addPostFrameCallback((_) {
     //   //   // executes after build
     // });

@@ -27,13 +27,13 @@ class ImageWidget extends StatelessWidget {
         borderRadius: BorderRadius.circular(25),
         onTap: () {
           Get.put(ImageViewWidgetController());
-          Get.to(
-              () => ImageViewWidgetView(
-                  imageUrl: imageUrl,
-                  heroTag: "Gallery_image_$index",
-                  galleryItems: imageList,
-                  galleryMode: imageList != null),
-              transition: Transition.noTransition);
+          Get.dialog(
+            ImageViewWidgetView(
+                imageUrl: imageUrl,
+                heroTag: "Gallery_image_$index",
+                galleryItems: imageList,
+                galleryMode: imageList != null),
+          );
         },
         child: ClipRRect(
             borderRadius: BorderRadius.circular(25),

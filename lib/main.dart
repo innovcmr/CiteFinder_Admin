@@ -5,6 +5,7 @@ import 'package:cite_finder_admin/app/utils/config.dart';
 import 'package:cite_finder_admin/app/utils/getExtension.dart';
 import 'package:cite_finder_admin/app/utils/themes/themes.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'firebase_options.dart';
 import 'package:flutter/material.dart';
 
@@ -34,10 +35,48 @@ void main() async {
       // GetX is going to navigate the user and clear the navigation stack
 
       getPages: AppPages.routes,
-      home: FractionallySizedBox(
-          widthFactor: 0.3,
-          heightFactor: 0.3,
-          child: const CircularProgressIndicator()),
+      home: SplashScreen(),
     ),
   );
+}
+
+class SplashScreen extends StatelessWidget {
+  const SplashScreen({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return FractionallySizedBox(
+      widthFactor: 0.5,
+      heightFactor: 0.5,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Image.asset(
+                Config.assets.logo,
+                scale: 1,
+              ),
+              Text(
+                "Find-Home Admin",
+                textAlign: TextAlign.center,
+                style: Get.textTheme.headline3!.copyWith(
+                    color: AppTheme.colors.mainPurpleColor,
+                    fontWeight: FontWeight.w900,
+                    fontSize: 30),
+              )
+            ],
+          ),
+          SizedBox(
+            height: 40,
+          ),
+          SizedBox(height: 60, width: 60, child: CircularProgressIndicator()),
+        ],
+      ),
+    );
+  }
 }

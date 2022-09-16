@@ -2,6 +2,7 @@ import 'package:cite_finder_admin/app/data/models/kyc_model.dart';
 import 'package:cite_finder_admin/app/data/models/landlord_model.dart';
 import 'package:cite_finder_admin/app/data/models/user_model.dart' as UserModel;
 import 'package:cite_finder_admin/app/data/providers/baseProvider.dart';
+import 'package:cite_finder_admin/app/routes/app_pages.dart';
 import 'package:cite_finder_admin/app/utils/config.dart';
 import 'package:cite_finder_admin/app/utils/enumeration.dart';
 import 'package:cite_finder_admin/app/utils/getExtension.dart';
@@ -59,17 +60,18 @@ class UserProvider extends BasePovider {
         );
 
         await userCred.user!.sendEmailVerification();
+        Get.back();
+        log("User successfully created.");
+        Get.closeLoader();
+        return true;
       }
-      Get.back();
-      log("User successfully Created.");
-      return true;
-    } on FirebaseAuthException catch (e) {
-      Get.snackbar("Error in user Creation", e.message ?? "");
-      log("Error in User Creation ${e.message}");
       return false;
-    } finally {
+    } on FirebaseAuthException catch (e) {
       Get.closeLoader();
-    }
+      log("Error in User Creation ${e.message}");
+      Get.snackbar("Error in user Creation", e.message ?? "");
+      return false;
+    } finally {}
   }
 
 // read user operation
@@ -113,22 +115,23 @@ class UserProvider extends BasePovider {
 
   // delete user operation
   delete(String userId) async {
-    await firestore
-        .collection(Config.firebaseKeys.users)
-        .doc(userId)
-        .delete()
-        .timeout(const Duration(seconds: 20))
-        .then((val) {
+    try {
+      await firestore
+          .collection(Config.firebaseKeys.users)
+          .doc(userId)
+          .delete()
+          .timeout(const Duration(seconds: 20));
+
       Get.snackbar("Success", "User delete successful");
       log("User delete Succesful}");
-    }).catchError((error) {
-      Get.snackbar("Error in Deletion", error.toString());
-      log("Error in User Deletion  ${error.toString()}");
-    });
+    } catch (e) {
+      Get.snackbar("Error in Deletion", e.toString());
+      log("Error in User Deletion  ${e.toString()}");
+    }
   }
 
   // get KYC requests
-  Future<List<KYC>> getKycRequests() {
+  Future<List<KYC>> getPendingKycRequests() {
     return firestore
         .collection(Config.firebaseKeys.kyc)
         .where(Config.firebaseKeys.status, isEqualTo: KYCStatus.pending.toStr())
@@ -156,11 +159,11 @@ class UserProvider extends BasePovider {
         Config.firebaseKeys.status: KYCStatus.approved.toStr()
       }).timeout(const Duration(seconds: 20));
 
-      await firestore
-          .collection(Config.firebaseKeys.users)
-          .doc(userUid)
-          .update({Config.firebaseKeys.isVerified: true}).timeout(
-              const Duration(seconds: 20));
+      // await firestore
+      //     .collection(Config.firebaseKeys.users)
+      //     .doc(userUid)
+      //     .update({Config.firebaseKeys.isVerified: true}).timeout(
+      //         const Duration(seconds: 20));
       Get.back();
       Get.back();
       Get.snackbar("Success", "User Approval successful");
