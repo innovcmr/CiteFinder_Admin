@@ -6,6 +6,7 @@ import 'dart:developer';
 
 import 'package:cite_finder_admin/app/components/BadgeList.dart';
 import 'package:cite_finder_admin/app/components/controllers/crud_controller.dart';
+
 import 'package:cite_finder_admin/app/utils/themes/themes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -37,6 +38,7 @@ class CRUD extends GetView<CrudController> {
   final GetView createView;
   final GetView? editView;
   final GetView? seeView;
+
   final GetView? approveView;
   Map<String, List<String>> filterActions = {
     "houses": [
@@ -52,6 +54,7 @@ class CRUD extends GetView<CrudController> {
   Widget build(BuildContext context) {
     controller = Get.put(CrudController.to);
     controller.moduleName = moduleName;
+
     return Container(
       padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
       child: SingleChildScrollView(

@@ -11,6 +11,7 @@ abstract class Routes {
   static const AGENT = _Paths.AGENT;
   // static const CREATEEDIT = _Paths.CREATEEDIT;
   static const IMAGE_VIEW_WIDGET = _Paths.IMAGE_VIEW_WIDGET;
+
 }
 
 abstract class _Paths {

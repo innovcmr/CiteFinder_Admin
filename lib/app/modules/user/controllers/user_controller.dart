@@ -27,6 +27,7 @@ class UserController extends GetxController {
   List<KYC> kycRequests = [];
   KYC? chosenKYC;
 
+
   final GlobalKey<FormState> _createUserFormKey = CreateUserFormKey();
 
   final searchController = TextEditingController();

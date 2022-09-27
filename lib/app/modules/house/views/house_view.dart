@@ -19,6 +19,7 @@ import 'package:cite_finder_admin/app/modules/house/views/home_room_view.dart';
 import 'package:cite_finder_admin/app/modules/user/views/user_view.dart';
 import 'package:cite_finder_admin/app/utils/config.dart';
 import 'package:cite_finder_admin/app/utils/getExtension.dart';
+
 import 'package:cite_finder_admin/app/utils/validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -47,6 +48,7 @@ class HouseView extends GetView<HouseController> {
         selectedTileIndexController: controller.selectedUserIndex,
         canEdit: false,
         addBtnVisibility: false,
+
         createView: CreateEditView(
           mode: "create",
         ),
@@ -56,6 +58,7 @@ class HouseView extends GetView<HouseController> {
         approveView: CreateEditView(
           mode: "approve",
         ),
+
         seeView: CreateEditView(
           mode: "view",
         ),
@@ -340,6 +343,7 @@ class CreateEditView extends GetView<HouseController> {
                                                   Checkbox(
                                                       value:
                                                           //  mode == "view" || mode == "approve"
+
                                                           //     ? controller.isFacilitySelected(
                                                           //         moduleItem!
                                                           //             .facilities!
@@ -807,6 +811,7 @@ class CreateEditView extends GetView<HouseController> {
                                 }),
                                 if (mode != "view" && mode != "approve")
                                   SizedBox(height: 40),
+
                                 //Location
                                 Text("Location",
                                     style: Get.textTheme.titleMedium),
@@ -1180,30 +1185,35 @@ class CreateEditView extends GetView<HouseController> {
 
 // // Extra attributes not in create or editform
                             // if (mode == "view" || mode == "approve")
+
                             //   customTextFieldFunction(
                             //       moduleAttribute:
                             //           moduleItem!.location.toString(),
                             //       labelText: "Location",
                             //       icondata: Icons.location_on),
                             // if (mode == "view" || mode == "approve")
+
                             //   customTextFieldFunction(
                             //       moduleAttribute:
                             //           moduleItem!.dateAdded.toString(),
                             //       labelText: "Date added",
                             //       icondata: Icons.calendar_month_rounded),
                             // if (mode == "view" || mode == "approve")
+
                             //   customTextFieldFunction(
                             //       moduleAttribute:
                             //           moduleItem!.isVerified.toString(),
                             //       labelText: "Is Verified",
                             //       icondata: Icons.verified),
                             // if (mode == "view" || mode == "approve")
+
                             //   customTextFieldFunction(
                             //       moduleAttribute:
                             //           moduleItem!.isGoogleUser.toString(),
                             //       labelText: "Is Google user",
                             //       icondata: Icons.circle),
                             // if (mode == "view" || mode == "approve")
+
                             //   customTextFieldFunction(
                             //       moduleAttribute:
                             //           moduleItem!.isFacebookUser.toString(),

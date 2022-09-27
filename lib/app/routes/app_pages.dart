@@ -62,5 +62,6 @@ class AppPages {
     //   // page: () => ImageViewWidgetView(),
     //   binding: ImageViewWidgetBinding(),
     // ),
+
   ];
 }

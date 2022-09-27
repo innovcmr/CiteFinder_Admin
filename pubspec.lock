@@ -43,6 +43,7 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "4.1.1"
+
   characters:
     dependency: transitive
     description:
@@ -686,6 +687,7 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "3.3.0"
+
   transparent_image:
     dependency: "direct main"
     description:
@@ -693,6 +695,7 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.0"
+
   typed_data:
     dependency: transitive
     description:
