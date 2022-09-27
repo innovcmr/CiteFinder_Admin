@@ -50,20 +50,20 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyCTAt4rpnZw68SR8Sq7WyRnCotr7kIOdrs',
-    appId: '1:198222666676:web:e7792e64033ccb25ebf0e1',
-    messagingSenderId: '198222666676',
-    projectId: 'citefinder',
-    authDomain: 'citefinder.firebaseapp.com',
-    storageBucket: 'citefinder.appspot.com',
-    measurementId: 'G-MFE59Y48BG',
+    apiKey: 'AIzaSyBeSqu7Ht4eaiTtneFNLZLTkIMUqmTxpvQ',
+    appId: '1:268221767113:web:1b2099473e9c5f4f285c18',
+    messagingSenderId: '268221767113',
+    projectId: 'find-home-3aa5e',
+    authDomain: 'find-home-3aa5e.firebaseapp.com',
+    storageBucket: 'find-home-3aa5e.appspot.com',
+    measurementId: 'G-TBLC8SFBJP',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyDOFGla93B838ES2u5KQ3vOyieG-XITokI',
-    appId: '1:198222666676:android:2d47a0df8640a6c7ebf0e1',
-    messagingSenderId: '198222666676',
-    projectId: 'citefinder',
-    storageBucket: 'citefinder.appspot.com',
+    apiKey: 'AIzaSyBTlmo6-TTjAjxXIqSDhw6gpgwaIYpoz48',
+    appId: '1:268221767113:android:60d92582e438ae3f285c18',
+    messagingSenderId: '268221767113',
+    projectId: 'find-home-3aa5e',
+    storageBucket: 'find-home-3aa5e.appspot.com',
   );
 }

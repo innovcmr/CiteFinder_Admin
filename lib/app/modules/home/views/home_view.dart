@@ -1,5 +1,6 @@
 import 'package:cite_finder_admin/app/data/providers/loginProvider.dart';
 import 'package:cite_finder_admin/app/modules/dashboard/views/dashboard_view.dart';
+import 'package:cite_finder_admin/app/modules/login/controllers/login_controller.dart';
 import 'package:cite_finder_admin/app/routes/app_pages.dart';
 import 'package:cite_finder_admin/app/utils/config.dart';
 import 'package:cite_finder_admin/app/utils/extensions.dart';
@@ -64,6 +65,7 @@ class HomeView extends StatelessWidget {
   }
 
   AppBar MainAppBar() {
+    final controller = LoginController.instance;
     return AppBar(
       title: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,

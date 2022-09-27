@@ -32,9 +32,13 @@ class LoginProvider extends BasePovider {
 
   Future<bool> logInAsAdmin(
       {required String email, required String password}) async {
-    log(email);
-    log(password);
     try {
+      final userCredential = await auth
+          .signInWithEmailAndPassword(
+              email: email.trim(), password: password.trim())
+          .timeout(const Duration(seconds: 25));
+      final user = userCredential.user;
+      print(user?.uid);
       final admin = (await firestore
               .collection(Config.firebaseKeys.users)
               .where(Config.firebaseKeys.email, isEqualTo: email)
@@ -48,23 +52,21 @@ class LoginProvider extends BasePovider {
               .timeout(const Duration(seconds: 25)))
           .docs;
       userModel.User trialUser = admin.first.data();
+      log(trialUser.role.toString());
       if (admin.isEmpty ||
           trialUser.role == null ||
           trialUser.role!.toLowerCase() != userRole.admin.toStr()) {
-        Get.snackbar("Error", "Error User not an Admin");
-        throw "Error User not an Admin";
+        Get.snackbar("Error", "Connection Error or  Admin $email not found");
+        throw "User not an Admin";
       }
-      final userCredential = await auth
-          .signInWithEmailAndPassword(
-              email: email.trim(), password: password.trim())
-          .timeout(const Duration(seconds: 25));
-      final user = userCredential.user;
-      print(user?.uid);
       // box.write(Config.keys.user, user);
       Get.closeLoader();
       return true;
     } on FirebaseAuthException catch (e) {
       print("error in signin is ${e.message}");
+      if (auth.currentUser != null) {
+        logOut();
+      }
       Get.closeLoader();
       Get.snackbar("Error", e.message ?? "Error in SignIn. Check credentials");
       return false;

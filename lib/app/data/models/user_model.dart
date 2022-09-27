@@ -43,7 +43,7 @@ class User {
     if (type == "document") {
       log("hiiyaa");
       Timestamp timestampDate =
-          json.toString().contains("dateAdded") ? json['dateAdded'] : "";
+          json.toString().contains("dateAdded") ? json['dateAdded'] : null;
       DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(
           timestampDate.millisecondsSinceEpoch);
       dateAdded = dateTime.day.toString() +
@@ -59,12 +59,12 @@ class User {
     location = json.toString().contains("location") ? json['location'] : "";
 
     isVerified =
-        json.toString().contains("isVerified") ? json['isVerified'] : "";
+        json.toString().contains("isVerified") ? json['isVerified'] : null;
     isGoogleUser =
-        json.toString().contains("isGoogleUser") ? json['isGoogleUser'] : "";
+        json.toString().contains("isGoogleUser") ? json['isGoogleUser'] : null;
     isFacebookUser = json.toString().contains("isFacebookUser")
         ? json['isFacebookUser']
-        : "";
+        : null;
     phoneNumber =
         json.toString().contains("phoneNumber") ? json['phoneNumber'] : "";
 

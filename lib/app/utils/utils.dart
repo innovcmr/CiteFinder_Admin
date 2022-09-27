@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -265,6 +267,11 @@ bool searchString(String string1, String lstring) {
     }
   }
   return false;
+}
+
+void printLong(String text) {
+  final pattern = RegExp('.{1,50}'); // 800 is the size of each chunk
+  pattern.allMatches(text).forEach((match) => log(match.group(0).toString()));
 }
 
 // List<Home> homeSearch({String query = "", required List<Home> collection}) {

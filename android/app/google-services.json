@@ -1,128 +1,84 @@
 {
   "project_info": {
-    "project_number": "198222666676",
-    "project_id": "citefinder",
-    "storage_bucket": "citefinder.appspot.com"
+    "project_number": "268221767113",
+    "project_id": "find-home-3aa5e",
+    "storage_bucket": "find-home-3aa5e.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:198222666676:android:302720f99e7e95c4ebf0e1",
-        "android_client_info": {
-          "package_name": "com.DopeTech.citefinder"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "198222666676-mc5maaa0sqlqui96jus2094shnir796f.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.DopeTech.citefinder",
-            "certificate_hash": "9bbb3186b2189ef16d8f272bdab59362c395cbb4"
-          }
-        },
-        {
-          "client_id": "198222666676-cpkpgbq1pvi24vrgr438si0djogg6hmg.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyDOFGla93B838ES2u5KQ3vOyieG-XITokI"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "198222666676-cpkpgbq1pvi24vrgr438si0djogg6hmg.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "198222666676-4o6j76gcjj73uu2uhfavda6tk3iaoa3j.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.example.citeFinderAdmin"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:198222666676:android:1247f1c5dae9f797ebf0e1",
-        "android_client_info": {
-          "package_name": "com.dopetech.home_finder"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "198222666676-uilpeau62s60isj0j1ufv5pltipo6k6q.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.dopetech.home_finder",
-            "certificate_hash": "b15852886cf1c54069be9fc42c1a1d11309ec793"
-          }
-        },
-        {
-          "client_id": "198222666676-cpkpgbq1pvi24vrgr438si0djogg6hmg.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyDOFGla93B838ES2u5KQ3vOyieG-XITokI"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "198222666676-cpkpgbq1pvi24vrgr438si0djogg6hmg.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "198222666676-4o6j76gcjj73uu2uhfavda6tk3iaoa3j.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.example.citeFinderAdmin"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:198222666676:android:2d47a0df8640a6c7ebf0e1",
+        "mobilesdk_app_id": "1:268221767113:android:60d92582e438ae3f285c18",
         "android_client_info": {
           "package_name": "com.example.cite_finder_admin"
         }
       },
       "oauth_client": [
         {
-          "client_id": "198222666676-cpkpgbq1pvi24vrgr438si0djogg6hmg.apps.googleusercontent.com",
+          "client_id": "268221767113-0a1h11q0cpdgica4uqocqhtc372enhjt.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyDOFGla93B838ES2u5KQ3vOyieG-XITokI"
+          "current_key": "AIzaSyBTlmo6-TTjAjxXIqSDhw6gpgwaIYpoz48"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "198222666676-cpkpgbq1pvi24vrgr438si0djogg6hmg.apps.googleusercontent.com",
+              "client_id": "268221767113-0a1h11q0cpdgica4uqocqhtc372enhjt.apps.googleusercontent.com",
               "client_type": 3
             },
             {
-              "client_id": "198222666676-4o6j76gcjj73uu2uhfavda6tk3iaoa3j.apps.googleusercontent.com",
+              "client_id": "268221767113-ur0ki2tkrqt8u6o5q4dcsivheaelvvqm.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.example.citeFinderAdmin"
+                "bundle_id": "com.innovcmr.findhome"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:268221767113:android:668cb2c2d485f7ab285c18",
+        "android_client_info": {
+          "package_name": "com.innovcmr.findhome"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "268221767113-0q2rhcn6q4upvk4l1jn6tan7595mon0g.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.innovcmr.findhome",
+            "certificate_hash": "b15852886cf1c54069be9fc42c1a1d11309ec793"
+          }
+        },
+        {
+          "client_id": "268221767113-0a1h11q0cpdgica4uqocqhtc372enhjt.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBTlmo6-TTjAjxXIqSDhw6gpgwaIYpoz48"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "268221767113-0a1h11q0cpdgica4uqocqhtc372enhjt.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "268221767113-ur0ki2tkrqt8u6o5q4dcsivheaelvvqm.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.innovcmr.findhome"
               }
             }
           ]

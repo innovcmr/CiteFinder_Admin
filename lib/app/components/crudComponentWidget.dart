@@ -4,6 +4,7 @@
 
 import 'dart:developer';
 
+import 'package:cite_finder_admin/app/components/BadgeList.dart';
 import 'package:cite_finder_admin/app/components/controllers/crud_controller.dart';
 import 'package:cite_finder_admin/app/utils/themes/themes.dart';
 import 'package:flutter/material.dart';
@@ -33,11 +34,17 @@ class CRUD extends GetView<CrudController> {
   bool addBtnVisibility;
   final Function()? onAdd;
   final TextEditingController searchController;
-
   final GetView createView;
   final GetView? editView;
   final GetView? seeView;
   final GetView? approveView;
+  Map<String, List<String>> filterActions = {
+    "houses": [
+      "not Approved",
+      "Edit",
+      "Delete",
+    ]
+  };
   Rxn<int> selectedTileIndexController;
   CrudController controller = Get.put(CrudController());
 
@@ -124,11 +131,50 @@ class CRUD extends GetView<CrudController> {
                         const SizedBox(
                           width: 10,
                         ),
-                        IconButton(
-                          onPressed: () {},
-                          icon: const Icon(Icons.filter_list),
-                          splashRadius: 20,
-                        ),
+
+                        // PopupMenuButton(
+                        //     splashRadius: 20,
+                        //     icon: Icon(Icons.filter_list),
+                        //     onSelected: () {
+                        //       // switch (val) {
+                        //       //   case "view":
+                        //       // }
+                        //     },
+                        //     itemBuilder: (context) {
+
+                        //         return <PopupMenuEntry>[
+                        //           PopupMenuItem(
+                        //             value: "0",
+                        //             child: Text("Filter by"),),
+
+                        //           ...generalActions
+                        //                   .map((String choice) {
+                        //                 return PopupMenuItem(
+                        //                   value: choice.toLowerCase(),
+                        //                   child: Text(
+                        //                     choice,
+                        //                     style: Get.textTheme.headline4,
+                        //                   ),
+                        //                 );
+                        //               })
+                        //         ]
+
+                        //         //  PopupMenuItem(
+                        //         //   value: choice.toLowerCase(),
+                        //         //   child: Column(
+                        //         //     children: [
+                        //         //       ...controller.generalActions
+                        //         //           .map((String choice) {
+                        //         //         return Text(
+                        //         //           choice,
+                        //         //           style: Get.textTheme.headline4,
+                        //         //         );
+                        //         //       })
+                        //         //     ],
+                        //         //   ),
+                        //         // );
+
+                        //     }),
 
                         // // settings section
                         // settingsSwitch.value
@@ -148,14 +194,61 @@ class CRUD extends GetView<CrudController> {
                         //       )
                         //     : SizedBox(),
                         IconButton(
-                          onPressed: () {
-                            controller.settingsSwitch.value =
-                                !controller.settingsSwitch.value;
-                          },
-                          icon: const Icon(Icons.more_vert),
+                          constraints: BoxConstraints(),
                           splashRadius: 20,
+                          padding: EdgeInsets.zero,
+                          onPressed: () {
+                            Get.dialog(
+                              FractionallySizedBox(
+                                widthFactor: 0.6,
+                                heightFactor: 0.6,
+                                child: Card(
+                                  color: Colors.white,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(10.0),
+                                    child: Column(children: [
+                                      Text(
+                                        "Filter ${moduleName.capitalizeFirst}",
+                                        style: Get.textTheme.headline3!
+                                            .copyWith(color: Colors.black),
+                                      ),
+                                      SizedBox(height: 10),
+                                      if (moduleName == "users")
+                                        Column(children: [
+                                          Text("KYC status"),
+                                          // BadgeList(
+                                          //   optionsList: [
+                                          //     "pending",
+                                          //     "approved"
+                                          //   ],
+                                          //   isOptionSelected: (opt) =>
+                                          //       controller
+                                          //           .selectedFlt.value ==
+                                          //       opt,
+                                          //   onSelectBadge: (value) =>
+                                          //       value != null
+                                          //           ? controller.updateFilter(
+                                          //               value, moduleName)
+                                          //           : null,
+                                          // )
+                                        ])
+                                    ]),
+                                  ),
+                                ),
+                              ),
+                              // onCancel: () {
+                              //   Get.back();
+                              // },
+                              // onConfirm: () async {
+                              //   // await controller.applyFilter(moduleName);
+                              //   Get.back();
+                              // }
+                            );
+                          },
+                          icon: const Icon(
+                            Icons.filter_list,
+                          ),
                         ),
-
                         PopupMenuButton(
                             splashRadius: 20,
                             onSelected: (String val) {

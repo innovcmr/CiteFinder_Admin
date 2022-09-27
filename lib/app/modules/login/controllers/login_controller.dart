@@ -90,7 +90,7 @@ class LoginController extends GetxController {
         }
         Get.closeLoader();
       } catch (e) {
-        Get.snackbar("Error", "Error User not an Admin");
+        Get.snackbar("Error", e.toString());
         Get.closeLoader();
       }
     }

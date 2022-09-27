@@ -33,10 +33,9 @@ class LoginView extends GetView<LoginController> {
                 child: Padding(
                   padding: const EdgeInsets.all(30.0),
                   child: Column(children: [
-                    Icon(
-                      Icons.house_outlined,
-                      size: AppTheme.sizes.xl,
-                      color: AppTheme.colors.mainPurpleColor,
+                    Image.asset(
+                      Config.assets.logo,
+                      scale: 1,
                     ),
                     const SizedBox(
                       height: 5.0,
