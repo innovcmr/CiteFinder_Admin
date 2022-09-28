@@ -24,9 +24,8 @@ class UserController extends GetxController {
   // List<User> get moduleItems => moduleItemList.value;
   final userProvider = UserProvider();
   final selectedUserIndex = Rxn<int>();
-  List<KYC> kycRequests = [];
+  final kycRequests = Rxn<List<KYC>>();
   KYC? chosenKYC;
-
 
   final GlobalKey<FormState> _createUserFormKey = CreateUserFormKey();
 
@@ -78,6 +77,8 @@ class UserController extends GetxController {
     phoneNumberFocusNode = FocusNode();
     passwordFocusNode = FocusNode();
     passwordConfirmFocusNode = FocusNode();
+
+    kycRequests.bindStream(userProvider.getAllKycRequests());
   }
 
   @override
@@ -92,25 +93,50 @@ class UserController extends GetxController {
     return _createUserFormKey;
   }
 
-  getKycRequests() async {
-    kycRequests = await userProvider.getPendingKycRequests();
-    // currentKYCUser = await userProvider.getUser()
+  setChosenKYC(moduleItem) async {
+    chosenKYC = (await kycRequests.value!)
+        .firstWhere((element) => element.user == moduleItem!.record);
   }
 
-  Future<bool> hasKYCApproved(User item) async {
-    if (kycRequests.isEmpty) {
-      await getKycRequests();
-    }
+  // getKycRequests() async {
+  //   kycRequests = await userProvider.getPendingKycRequests();
+  //   // currentKYCUser = await userProvider.getUser()
+  // }
+
+  isPending(User item) {
+    // if (kycRequests.isEmpty) {
+    //   await getKycRequests();
+    // }
     // return item.isVerified != null &&
     //     item.isVerified == false &&
-    return kycRequests.any((element) => element.user == item.record);
+    if (kycRequests.value != null && kycRequests.value!.isNotEmpty) {
+      // log(kycRequests.value!
+      //     .firstWhere(
+      //       (el) => el!.user == item.record,
+      //     )!
+      //     .status
+      //     .toString());
+      return kycRequests.value!
+              .firstWhereOrNull(
+                (el) => el.user == item.record,
+              )!
+              .status ==
+          "pending";
+    }
+  }
+
+  bool hasKycApproved(item) {
+    if (kycRequests.value != null && kycRequests.value!.isNotEmpty) {
+      return kycRequests.value!.any((el) => el.user == item.record);
+    }
+    return false;
   }
 
   approveKYC(moduleId) async {
     await userProvider.approveUserKYC(
         kycUid: chosenKYC!.id!, userUid: moduleId);
-    await getKycRequests();
-    Get.closeLoader();
+    // await getKycRequests();
+    // Get.closeLoader();
   }
 
   void increment() => count.value++;

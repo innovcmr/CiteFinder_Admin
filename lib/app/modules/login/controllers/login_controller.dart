@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cite_finder_admin/app/data/providers/loginProvider.dart';
 import 'package:cite_finder_admin/app/data/providers/userProvider.dart';
 import 'package:cite_finder_admin/app/modules/dashboard/views/dashboard_view.dart';
@@ -46,8 +48,9 @@ class LoginController extends GetxController {
         Routes.LOGIN,
       );
     } else {
+      log(Get.currentRoute.toString());
       // if the user exists and logged in the the user is navigated to the Home Screen
-      if (Get.currentRoute == Routes.LOGIN) {
+      if (Get.currentRoute == Routes.LOGIN || Get.currentRoute == '/') {
         Get.offAllNamed(
           Routes.DASHBOARD,
           // parameters: {"user": user.displayName!}

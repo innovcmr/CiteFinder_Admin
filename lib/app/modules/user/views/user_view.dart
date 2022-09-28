@@ -62,8 +62,6 @@ class CreateEditView extends GetView<UserController> {
       moduleItem = User.fromJson(box.read(Config.keys.selectedUser), "map");
       if (mode == "approve") {
         // final crudController = Get.put(CrudController.to);
-        controller.chosenKYC = controller.kycRequests
-            .firstWhere((element) => element.user == moduleItem!.record);
       }
     }
     log(moduleItem.toString());
@@ -103,7 +101,6 @@ class CreateEditView extends GetView<UserController> {
                                 const SizedBox(
                                   width: 7,
                                 ),
-
                                 Text(
                                   mode == "create"
                                       ? "New Users"
@@ -112,7 +109,6 @@ class CreateEditView extends GetView<UserController> {
                                           : mode == "approve"
                                               ? "Approve User(KYC)"
                                               : "View User",
-
                                   style: Get.textTheme.headline2!.copyWith(
                                       color: AppTheme.colors.mainPurpleColor),
                                 )
@@ -146,7 +142,6 @@ class CreateEditView extends GetView<UserController> {
                                         : moduleItem!.fullName,
                                 enabled: mode != "view" && mode != "approve",
                                 controller: mode == "view" || mode == "approve"
-
                                     ? null
                                     : controller.fullNameController,
                                 focusNode: controller.fullNameFocusNode,
@@ -198,7 +193,6 @@ class CreateEditView extends GetView<UserController> {
                                         : moduleItem!.phoneNumber,
                                 enabled: mode != "view" && mode != "approve",
                                 controller: mode == "view" || mode == "approve"
-
                                     ? null
                                     : controller.phoneNumberController,
                                 focusNode: controller.phoneNumberFocusNode,
@@ -222,7 +216,6 @@ class CreateEditView extends GetView<UserController> {
                               child: DropdownButtonFormField(
                                   focusNode: controller.userRoleFocusNode,
                                   value: mode == "view" || mode == "approve"
-
                                       ? moduleItem!.role
                                       : controller.selectedUserRole.value
                                           .toLowerCase(),
@@ -271,7 +264,6 @@ class CreateEditView extends GetView<UserController> {
                                       mode == "view" || mode == "approve"
                                           ? null
                                           : controller.passwordController,
-
                                   focusNode: controller.passwordFocusNode,
                                   obscureText: controller.obscurePassword.value,
                                   validator: Validator.isRequired,
@@ -304,7 +296,6 @@ class CreateEditView extends GetView<UserController> {
                                 padding: const EdgeInsets.all(8.0),
                                 child: TextFormField(
                                   initialValue:
-
                                       mode != "view" && mode != "approve"
                                           ? null
                                           : moduleItem!.email,
@@ -314,7 +305,6 @@ class CreateEditView extends GetView<UserController> {
                                           ? null
                                           : controller
                                               .passwordConfirmationController,
-
                                   focusNode:
                                       controller.passwordConfirmFocusNode,
                                   obscureText: controller.obscurePassword.value,
@@ -343,28 +333,24 @@ class CreateEditView extends GetView<UserController> {
                               ),
                             // Extra attributes not in create or editform
                             if (mode == "view" || mode == "approve")
-
                               customTextFieldFunction(
                                   moduleAttribute:
                                       moduleItem!.location.toString(),
                                   labelText: "Location",
                                   icondata: Icons.location_on),
                             if (mode == "view" || mode == "approve")
-
                               customTextFieldFunction(
                                   moduleAttribute:
                                       moduleItem!.dateAdded.toString(),
                                   labelText: "Date added",
                                   icondata: Icons.calendar_month_rounded),
                             if (mode == "view" || mode == "approve")
-
                               customTextFieldFunction(
                                   moduleAttribute:
                                       moduleItem!.isVerified.toString(),
                                   labelText: "Is Verified",
                                   icondata: Icons.verified),
                             if (mode == "view" || mode == "approve")
-
                               customTextFieldFunction(
                                   moduleAttribute:
                                       moduleItem!.isGoogleUser.toString(),
@@ -372,7 +358,6 @@ class CreateEditView extends GetView<UserController> {
                                   icondata: Icons.circle),
 
                             if (mode == "view" || mode == "approve")
-
                               customTextFieldFunction(
                                   moduleAttribute:
                                       moduleItem!.isFacebookUser.toString(),
@@ -418,7 +403,6 @@ class CreateEditView extends GetView<UserController> {
                           height: 20,
                         ),
                         if (mode != "view" && mode != "approve")
-
                           Center(
                             // widthFactor: 0.5,
                             child: ElevatedButton(
@@ -426,7 +410,6 @@ class CreateEditView extends GetView<UserController> {
                               child: const Text('Create User'),
                             ),
                           ),
-
                         if (mode == "approve")
                           Center(
                             // widthFactor: 0.5,
@@ -447,7 +430,6 @@ class CreateEditView extends GetView<UserController> {
                               child: const Text('Approve Landlord'),
                             ),
                           ),
-
                         const SizedBox(
                           height: 20,
                         ),

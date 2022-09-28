@@ -143,31 +143,31 @@ class CrudController extends GetxController {
     }
   }
 
-  applyFilter(String moduleName) async {
-    // selectedFlt = val;
-    switch (moduleName) {
-      case "users":
-        if (userController.kycRequests.isEmpty) {
-          await userController.getKycRequests();
-        }
+  // applyFilter(String moduleName) async {
+  // // selectedFlt = val;
+  // switch (moduleName) {
+  //   case "users":
+  //     if (userController.kycRequests.isEmpty) {
+  //       // await userController.getKycRequests();
+  //     }
 
-        filteredModuleList.value = originalList.where((element) {
-          return userController.kycRequests
-              .any((kycelement) => kycelement.user == element.record);
-        }).toList();
+  //     filteredModuleList.value = originalList.where((element) {
+  //       return userController.kycRequests
+  //           .any((kycelement) => kycelement.user == element.record);
+  //     }).toList();
 
-        break;
-      case "houses":
-        filteredModuleList.value = originalList.where((element) {
-          return element.isApproved == selectedFlt.value;
-        }).toList();
-        break;
-      //   filteredModuleList.value = originalList.where((element) {
-      //     return userController.hasKYCApproved(element);
-      //   }).toList();
-      // case "houses":
-    }
-  }
+  //     break;
+  //   case "houses":
+  //     filteredModuleList.value = originalList.where((element) {
+  //       return element.isApproved == selectedFlt.value;
+  //     }).toList();
+  //     break;
+  //   filteredModuleList.value = originalList.where((element) {
+  //     return userController.hasKYCApproved(element);
+  //   }).toList();
+  // case "houses":
+  // }
+  // }
 
   void editModuleItem(i) {
     switch (moduleName) {

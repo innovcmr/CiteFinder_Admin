@@ -3,9 +3,11 @@
 // import 'dart:html';
 
 import 'dart:developer';
+import 'dart:html';
 
 import 'package:cite_finder_admin/app/components/BadgeList.dart';
 import 'package:cite_finder_admin/app/components/controllers/crud_controller.dart';
+import 'package:cite_finder_admin/app/data/models/kyc_model.dart';
 
 import 'package:cite_finder_admin/app/utils/themes/themes.dart';
 import 'package:flutter/material.dart';
@@ -474,8 +476,7 @@ class CRUD extends GetView<CrudController> {
                                           ),
                                           // kycIcon
                                           if (moduleName == "houses" &&
-                                              i.isApproved != null &&
-                                              i.isApproved == false)
+                                              i.isApproved != null)
                                             IconButton(
                                               padding:
                                                   const EdgeInsets.symmetric(
@@ -487,48 +488,65 @@ class CRUD extends GetView<CrudController> {
                                               icon: Icon(
                                                   Icons.verified_user_rounded,
                                                   size: 20,
-                                                  color: Colors.blueAccent),
-                                              onPressed: () {
-                                                if (selectedTileIndexController
-                                                        .value !=
-                                                    null) {
-                                                  selectedTileIndexController(
-                                                      controller.filteredItems
-                                                          .indexOf(i));
-                                                  log("Selected ${selectedTileIndexController.value}");
-                                                  selectedTileIndexController
-                                                      .refresh();
-                                                }
+                                                  color: i.isApproved == false
+                                                      ? Colors.orangeAccent
+                                                      : Colors.blueAccent),
+                                              onPressed: i.isApproved == false
+                                                  ? () {
+                                                      if (selectedTileIndexController
+                                                              .value !=
+                                                          null) {
+                                                        selectedTileIndexController(
+                                                            controller
+                                                                .filteredItems
+                                                                .indexOf(i));
+                                                        log("Selected ${selectedTileIndexController.value}");
+                                                        selectedTileIndexController
+                                                            .refresh();
+                                                      }
 
-                                                controller.approveModuleItem(i);
-                                                Get.dialog(approveView!,
-                                                    barrierColor: AppTheme
-                                                        .colors.dialogBgColor);
-                                              },
+                                                      controller
+                                                          .approveModuleItem(i);
+                                                      Get.dialog(approveView!,
+                                                          barrierColor: AppTheme
+                                                              .colors
+                                                              .dialogBgColor);
+                                                    }
+                                                  : null,
                                             ),
 
-                                          if (moduleName == "users")
-                                            FutureBuilder<bool>(
-                                                future: controller
+                                          if (moduleName == "users" &&
+                                              i.role == "landlord" &&
+                                              controller.userController
+                                                  .hasKycApproved(i))
+                                            if (controller.userController
+                                                        .kycRequests.value !=
+                                                    null &&
+                                                controller
                                                     .userController
-                                                    .hasKYCApproved(i),
-                                                builder: (context, future) {
-                                                  if (future.data == true) {
-                                                    return IconButton(
-                                                      padding: const EdgeInsets
-                                                              .symmetric(
-                                                          horizontal: 3),
-                                                      constraints:
-                                                          const BoxConstraints(),
-                                                      splashRadius: 20,
-                                                      // ignore: prefer_const_constructors
-                                                      icon: Icon(
-                                                          Icons
-                                                              .verified_user_rounded,
-                                                          size: 20,
-                                                          color: Colors
-                                                              .blueAccent),
-                                                      onPressed: () {
+                                                    .kycRequests
+                                                    .value!
+                                                    .isNotEmpty)
+                                              IconButton(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 3),
+                                                constraints:
+                                                    const BoxConstraints(),
+                                                splashRadius: 20,
+                                                // ignore: prefer_const_constructors
+                                                icon: Icon(
+                                                    Icons.verified_user_rounded,
+                                                    size: 20,
+                                                    color: controller
+                                                            .userController
+                                                            .isPending(i)
+                                                        ? Colors.orangeAccent
+                                                        : Colors.blueAccent),
+                                                onPressed: controller
+                                                        .userController
+                                                        .isPending(i)
+                                                    ? () {
                                                         if (selectedTileIndexController
                                                                 .value !=
                                                             null) {
@@ -540,6 +558,9 @@ class CRUD extends GetView<CrudController> {
                                                           selectedTileIndexController
                                                               .refresh();
                                                         }
+                                                        controller
+                                                            .userController
+                                                            .setChosenKYC(i);
 
                                                         controller
                                                             .approveModuleItem(
@@ -548,11 +569,85 @@ class CRUD extends GetView<CrudController> {
                                                             barrierColor: AppTheme
                                                                 .colors
                                                                 .dialogBgColor);
-                                                      },
-                                                    );
-                                                  }
-                                                  return SizedBox.shrink();
-                                                }),
+                                                      }
+                                                    : null,
+                                              ),
+                                          if (moduleName == "users" &&
+                                              (i.role != "landlord" ||
+                                                  !controller.userController
+                                                      .hasKycApproved(i)))
+                                            SizedBox(
+                                              width: 31,
+                                            ),
+
+                                          // StreamBuilder<List<KYC>>(
+                                          //     stream: controller.userProvider
+                                          //         .getAllKycRequests(),
+                                          //     builder: (context, stream) {
+                                          //       // bool hasKYCApproved = stream
+                                          //       //     .data!
+                                          //       //     .any((element) =>
+                                          //       //         element.user ==
+                                          //       //         i.record);
+                                          //       if (stream.hasData &&
+                                          //           stream.data!.any(
+                                          //               (element) =>
+                                          //                   element.user ==
+                                          //                   i.record)) {
+                                          //         KYC currentKYC = stream.data!
+                                          //             .firstWhere((el) =>
+                                          //                 el.user == i.record);
+                                          //         return IconButton(
+                                          //           padding: const EdgeInsets
+                                          //                   .symmetric(
+                                          //               horizontal: 3),
+                                          //           constraints:
+                                          //               const BoxConstraints(),
+                                          //           splashRadius: 20,
+                                          //           // ignore: prefer_const_constructors
+                                          //           icon: Icon(
+                                          //               Icons
+                                          //                   .verified_user_rounded,
+                                          //               size: 20,
+                                          //               color: currentKYC
+                                          //                           .status ==
+                                          //                       "pending"
+                                          //                   ? Colors
+                                          //                       .orangeAccent
+                                          //                   : Colors
+                                          //                       .blueAccent),
+                                          //           onPressed:
+                                          //               currentKYC.status ==
+                                          //                       "approved"
+                                          //                   ? () {}
+                                          //                   : () {
+                                          //                       if (selectedTileIndexController
+                                          //                               .value !=
+                                          //                           null) {
+                                          //                         selectedTileIndexController(
+                                          //                             controller
+                                          //                                 .filteredItems
+                                          //                                 .indexOf(
+                                          //                                     i));
+                                          //                         log("Selected ${selectedTileIndexController.value}");
+                                          //                         selectedTileIndexController
+                                          //                             .refresh();
+                                          //                       }
+
+                                          //                       controller
+                                          //                           .approveModuleItem(
+                                          //                               i);
+                                          //                       Get.dialog(
+                                          //                           approveView!,
+                                          //                           barrierColor:
+                                          //                               AppTheme
+                                          //                                   .colors
+                                          //                                   .dialogBgColor);
+                                          //                     },
+                                          //         );
+                                          //       }
+                                          //       return SizedBox.shrink();
+                                          //     }),
 
                                           if (canEdit)
                                             IconButton(

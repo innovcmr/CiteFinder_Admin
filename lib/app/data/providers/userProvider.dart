@@ -131,25 +131,39 @@ class UserProvider extends BasePovider {
   }
 
   // get KYC requests
-  Future<List<KYC>> getPendingKycRequests() {
+  Stream<List<KYC>> getAllKycRequests() {
     return firestore
         .collection(Config.firebaseKeys.kyc)
-        .where(Config.firebaseKeys.status, isEqualTo: KYCStatus.pending.toStr())
-        .get()
-        .then((querySnapshot) {
-          List<KYC> items = [];
-          for (var item in querySnapshot.docs) {
-            items.add(KYC.fromJson(item.data()));
-            //   log("KYC count is ${items.length}");
-          }
-          log("KYC Fetch  ${items.map((element) => element.toJson()).toString()}");
-          return items;
-        })
-        .timeout(const Duration(seconds: 30))
-        .catchError((error) {
-          Get.snackbar("Error in KYC Fetch", error.toString());
-          log("Error in KYC Fetch  ${error.toString()}");
-        });
+        // .where(Config.firebaseKeys.status, isEqualTo: KYCStatus.pending.toStr())
+        .snapshots()
+        .map((QuerySnapshot query) {
+      List<KYC> kycs = [];
+      for (var user in query.docs) {
+        final kycModel = KYC.fromJson(user.data());
+        kycs.add(kycModel);
+      }
+      log("KYC Fetch  ${kycs.map((element) => element.toJson()).toString()}");
+      log("user count is ${kycs.length}");
+
+      return kycs;
+    }).handleError((error) {
+      Get.snackbar("Error in Kyc Fetch", error.toString());
+      log("Error in Kyc Fetch  ${error.toString()}");
+    });
+    // .then((querySnapshot) {
+    //   List<KYC> items = [];
+    //   for (var item in querySnapshot.docs) {
+    //     items.add(KYC.fromJson(item.data()));
+    //     //   log("KYC count is ${items.length}");
+    //   }
+    //   log("KYC Fetch  ${items.map((element) => element.toJson()).toString()}");
+    //   return items;
+    // })
+    // .timeout(const Duration(seconds: 30))
+    // .catchError((error) {
+    //   Get.snackbar("Error in KYC Fetch", error.toString());
+    //   log("Error in KYC Fetch  ${error.toString()}");
+    // });
   }
 
   Future<void> approveUserKYC(
@@ -166,6 +180,7 @@ class UserProvider extends BasePovider {
       //         const Duration(seconds: 20));
       Get.back();
       Get.back();
+      Get.back();
       Get.snackbar("Success", "User Approval successful");
       log("Home Approval Succesful}");
     } catch (error) {
@@ -173,7 +188,7 @@ class UserProvider extends BasePovider {
       Get.snackbar("Error in home Approval", error.toString());
       log("Error in home Approval  ${error.toString()}");
     } finally {
-      Get.closeLoader();
+      // Get.closeLoader();
     }
   }
 

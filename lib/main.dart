@@ -1,13 +1,17 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'dart:io';
+
 import 'package:cite_finder_admin/app/modules/login/controllers/login_controller.dart';
 import 'package:cite_finder_admin/app/utils/config.dart';
 import 'package:cite_finder_admin/app/utils/getExtension.dart';
 import 'package:cite_finder_admin/app/utils/themes/themes.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'firebase_options.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
@@ -23,6 +27,9 @@ void main() async {
   });
 
   await GetStorage.init();
+  if (kIsWeb) {
+    setUrlStrategy(PathUrlStrategy());
+  }
   runApp(
     GetMaterialApp(
       navigatorKey: Get.key,
