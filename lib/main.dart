@@ -17,11 +17,12 @@ void main() async {
   ).timeout(const Duration(seconds: 15));
   await GetStorage.init();
   runApp(
-    GetMaterialApp(
+    GetMaterialApp.router(
       title: Config.appName,
       debugShowCheckedModeBanner: false,
       theme: AppTheme.themeLight,
-      initialRoute: AppPages.INITIAL,
+      // initialRoute: AppPages.INITIAL,
+      routerDelegate: Get.rootDelegate,
       getPages: AppPages.routes,
     ),
   );
