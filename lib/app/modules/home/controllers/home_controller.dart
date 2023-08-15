@@ -8,8 +8,6 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 
 class HomeController extends GetxController {
-  //TODO: Implement HomeController
-
   final index = 2.obs;
   var scaffoldKey = GlobalKey<ScaffoldState>();
 

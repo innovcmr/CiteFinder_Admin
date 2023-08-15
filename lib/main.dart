@@ -1,3 +1,7 @@
+import 'dart:developer';
+
+import 'package:cite_finder_admin/app/controllers/auth_controller.dart';
+import 'package:cite_finder_admin/app/data/initial_bindings.dart';
 import 'package:cite_finder_admin/app/utils/config.dart';
 import 'package:cite_finder_admin/app/utils/getExtension.dart';
 import 'package:cite_finder_admin/app/utils/themes/themes.dart';
@@ -21,7 +25,7 @@ void main() async {
       title: Config.appName,
       debugShowCheckedModeBanner: false,
       theme: AppTheme.themeLight,
-      // initialRoute: AppPages.INITIAL,
+      initialBinding: InitialBindings(),
       routerDelegate: Get.rootDelegate,
       getPages: AppPages.routes,
     ),

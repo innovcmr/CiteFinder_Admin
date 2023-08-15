@@ -23,9 +23,19 @@ class UserView extends GetView<UserController> {
         moduleName: "users",
         searchController: controller.searchController,
         selectedTileIndexController: controller.selectedUserIndex,
-        canEdit: false,
+        canEdit: true,
+        onSearch: (key, list) {
+          List<User> userList = list as List<User>;
+
+          final result = controller.searchUsers(key, userList);
+
+          return result;
+        },
         createView: CreateEditView(
           mode: "create",
+        ),
+        editView: CreateEditView(
+          mode: "edit",
         ),
         seeView: CreateEditView(
           mode: "view",
@@ -45,15 +55,10 @@ class CreateEditView extends GetView<UserController> {
     if (box.read(Config.keys.selectedUser) != null && mode != "create") {
       moduleItem = User.fromJson(box.read(Config.keys.selectedUser), "map");
     }
-    log(moduleItem.toString());
+
     final controller = Get.put(UserController.to);
     return Obx(
-      (() =>
-          //  Scaffold(
-          // body:
-          // SafeArea(
-          //   child:
-          FractionallySizedBox(
+      (() => FractionallySizedBox(
             alignment: Alignment.center,
             widthFactor: 0.9,
             heightFactor: 0.9,
@@ -122,7 +127,8 @@ class CreateEditView extends GetView<UserController> {
                                 enabled: mode != "view",
                                 controller: mode == "view"
                                     ? null
-                                    : controller.fullNameController,
+                                    : controller.fullNameController
+                                  ?..text = moduleItem?.fullName ?? "",
                                 focusNode: controller.fullNameFocusNode,
                                 validator: Validator.isRequired,
                                 decoration: InputDecoration(
@@ -146,7 +152,8 @@ class CreateEditView extends GetView<UserController> {
                                 enabled: mode != "view",
                                 controller: mode == "view"
                                     ? null
-                                    : controller.emailController,
+                                    : controller.emailController
+                                  ?..text = moduleItem?.email ?? "",
                                 focusNode: controller.emailFocusNode,
                                 validator: Validator.email,
                                 decoration: InputDecoration(
@@ -170,7 +177,8 @@ class CreateEditView extends GetView<UserController> {
                                 enabled: mode != "view",
                                 controller: mode == "view"
                                     ? null
-                                    : controller.phoneNumberController,
+                                    : controller.phoneNumberController
+                                  ?..text = moduleItem?.phoneNumber ?? "",
                                 focusNode: controller.phoneNumberFocusNode,
                                 validator: Validator.phoneNumberOptional,
                                 decoration: InputDecoration(
@@ -188,10 +196,10 @@ class CreateEditView extends GetView<UserController> {
                             ),
                             // role form field
                             Padding(
-                              padding: EdgeInsets.all(8),
+                              padding: const EdgeInsets.all(8),
                               child: DropdownButtonFormField(
                                   focusNode: controller.userRoleFocusNode,
-                                  value: mode == "view"
+                                  value: mode != "create"
                                       ? moduleItem!.role
                                       : controller.selectedUserRole.value
                                           .toLowerCase(),
@@ -211,6 +219,7 @@ class CreateEditView extends GetView<UserController> {
                                   validator: Validator.isRequired,
                                   onChanged: ((String? newValue) {
                                     controller.selectedUserRole(newValue);
+                                    moduleItem!.role = newValue;
                                   }),
                                   items: [
                                     for (var role in [
@@ -341,8 +350,14 @@ class CreateEditView extends GetView<UserController> {
                           Center(
                             // widthFactor: 0.5,
                             child: ElevatedButton(
-                              onPressed: controller.createNewUser,
-                              child: const Text('Create User'),
+                              onPressed: mode == "edit"
+                                  ? () {
+                                      controller.editUser(moduleItem);
+                                    }
+                                  : controller.createNewUser,
+                              child: Text(mode == "edit"
+                                  ? "UpdateUser"
+                                  : 'Create User'),
                             ),
                           ),
                         const SizedBox(

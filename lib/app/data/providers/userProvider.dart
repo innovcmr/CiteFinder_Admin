@@ -25,8 +25,6 @@ class UserProvider extends BasePovider {
 
   Future<bool> signInUser(
       {required String email, required String password}) async {
-    log(email);
-    log(password);
     try {
       final userCredential = await auth
           .signInWithEmailAndPassword(
@@ -102,9 +100,10 @@ class UserProvider extends BasePovider {
   }
 
 // read user operation
-  Stream<List<UserModel.User>> moduleStream() {
+  Stream<List<UserModel.User>> moduleStream([int limit = 200]) {
     return firestore
         .collection(Config.firebaseKeys.users)
+        .limit(limit)
         .snapshots()
         .map((QuerySnapshot query) {
       List<UserModel.User> users = [];
@@ -112,7 +111,7 @@ class UserProvider extends BasePovider {
         final userModel = UserModel.User.fromJson(user, "document");
         users.add(userModel);
       }
-      log("User Fetch  ${users.map((element) => element.toJson()).toString()}");
+
       log("user count is ${users.length}");
 
       return users;

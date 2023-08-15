@@ -31,8 +31,6 @@ class LoginController extends GetxController {
     passwordController.dispose();
   }
 
-  void increment() => count.value++;
-
   void login() async {
     if (!loginFormKey.currentState!.validate()) {
       autoValidate(true);
@@ -47,8 +45,8 @@ class LoginController extends GetxController {
             password: passwordController.text);
         if (successful) {
           Get.snackbar("Login", "Login Successful");
-          print("successful signin");
-          Get.offAll(() => HomeView());
+
+          // Get.offAll(() => HomeView());
         }
         Get.closeLoader();
       } catch (e) {

@@ -11,8 +11,6 @@ import 'package:firebase_auth/firebase_auth.dart' as fb;
 import 'package:get/get.dart';
 
 class UserController extends GetxController {
-  //TODO: Implement UserController
-
   final count = 0.obs;
   static UserController get to => Get.find();
 
@@ -48,6 +46,8 @@ class UserController extends GetxController {
   late String? initialPhoneNumber;
   RxBool obscurePassword = true.obs;
 
+  RxBool isDeleted = false.obs;
+
   @override
   void onInit() {
     super.onInit();
@@ -75,9 +75,6 @@ class UserController extends GetxController {
   @override
   void onReady() {
     super.onReady();
-    // moduleItemList.bindStream(userProvider.moduleStream());
-    // log("user count is ${moduleItems.length}");
-    // log("user count is ${moduleItems.first.toString()}");
   }
 
   getFormKey() {
@@ -118,6 +115,10 @@ class UserController extends GetxController {
     }
   }
 
+  Future<void> editUser(User? user) async {
+    if (user == null) return;
+  }
+
   void clear() {
     fullNameController.clear();
     emailController.clear();
@@ -144,6 +145,16 @@ class UserController extends GetxController {
     } else {
       return null;
     }
+  }
+
+  List<User> searchUsers(String key, List<User> list) {
+    return list
+        .where((user) =>
+            user.fullName!.toLowerCase().contains(key.toLowerCase()) ||
+            user.email!.toLowerCase().contains(key.toLowerCase()) ||
+            user.id!.toLowerCase().contains(key.toLowerCase()) ||
+            user.phoneNumber!.toLowerCase().contains(key.toLowerCase()))
+        .toList();
   }
 
   @override

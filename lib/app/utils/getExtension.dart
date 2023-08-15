@@ -16,7 +16,7 @@ extension Utils on GetInterface {
   }
 
   closeLoader() {
-    if (isDialogOpen!) {
+    if (isDialogOpen ?? false) {
       Get.back();
     }
   }

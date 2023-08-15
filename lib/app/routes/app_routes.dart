@@ -10,15 +10,17 @@ abstract class Routes {
   static const USER = _Paths.USER;
   static const AGENT = _Paths.AGENT;
   // static const CREATEEDIT = _Paths.CREATEEDIT;
+  static const ONBOARDING = _Paths.ONBOARDING;
 }
 
 abstract class _Paths {
   _Paths._();
-  static const HOME = '/';
+  static const HOME = '/home';
   static const LOGIN = '/login';
   static const DASHBOARD = '/dashboard';
   static const HOUSE = '/house';
   static const USER = '/user';
   static const AGENT = '/agent';
   // static const CREATEEDIT = '/createEdit';
+  static const ONBOARDING = '/';
 }

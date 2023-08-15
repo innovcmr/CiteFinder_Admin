@@ -11,7 +11,7 @@ class Agent extends User {
   }
 
   @override
-  Map<String, dynamic> toJson() {
+  Map<String, dynamic> toJson([bool toFirestore = false]) {
     var data = <String, dynamic>{};
     data = super.toJson();
     data['jurisdiction'] = jurisdiction;

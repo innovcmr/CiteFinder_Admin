@@ -36,6 +36,9 @@ class HouseView extends GetView<HouseController> {
         searchController: controller.searchController,
         selectedTileIndexController: controller.selectedUserIndex,
         canEdit: false,
+        onSearch: (key, houses) {
+          return houses;
+        },
         createView: CreateEditView(
           mode: "create",
         ),

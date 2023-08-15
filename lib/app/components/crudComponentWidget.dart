@@ -12,7 +12,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 
-class CRUD extends GetView {
+import '../controllers/crud_controller.dart';
+import '../data/models/user_model.dart';
+
+class CRUD extends GetView<CRUDController> {
   CRUD({
     Key? key,
     this.addBtnVisibility = true,
@@ -21,11 +24,14 @@ class CRUD extends GetView {
     this.canDelete = true,
     this.editView,
     this.seeView,
+    required this.onSearch,
     required this.moduleName,
     required this.selectedTileIndexController,
     required this.createView,
     required this.searchController,
-  }) : super(key: key);
+  }) : super(key: key) {
+    Get.put(CRUDController());
+  }
 
   final String moduleName;
   final bool canEdit;
@@ -38,6 +44,9 @@ class CRUD extends GetView {
   final GetView? seeView;
   Rx<bool> settingsSwitch = false.obs;
   Rxn<int> selectedTileIndexController;
+
+  List<dynamic> Function(String, List<dynamic>) onSearch;
+
   List<String> generalActions = [
     "View",
     "Edit",
@@ -112,8 +121,9 @@ class CRUD extends GetView {
     }
 
     return Container(
-      padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
       child: SingleChildScrollView(
+        controller: controller.scrollController,
         child: Column(
           children: [
             // Title and add button section
@@ -147,317 +157,399 @@ class CRUD extends GetView {
             // card section
             // Obx(
             //   () =>
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.baseline,
-                  textBaseline: TextBaseline.alphabetic,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        "All ${moduleName.capitalizeFirst}",
-                        style: Get.textTheme.headline5!.copyWith(
-                            fontWeight: FontWeight.bold, letterSpacing: 1.5),
+            ConstrainedBox(
+              constraints: const BoxConstraints(minWidth: 900, maxWidth: 1400),
+              child: Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.baseline,
+                    textBaseline: TextBaseline.alphabetic,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          "All ${moduleName.capitalizeFirst}",
+                          style: Get.textTheme.headline5!.copyWith(
+                              fontWeight: FontWeight.bold, letterSpacing: 1.5),
+                        ),
                       ),
-                    ),
-                    // SizedBox(height: 10),
-                    // Searchbar section
-                    Row(
-                      children: [
-                        Expanded(
-                          child: SizedBox(
-                            height: 30,
-                            child: TextFormField(
-                                decoration: InputDecoration(
-                                  floatingLabelBehavior:
-                                      FloatingLabelBehavior.never,
-                                  contentPadding: EdgeInsets.zero,
-                                  labelText: "Search Here",
-                                  isDense: true,
-                                  prefixIcon: Icon(Icons.search,
-                                      color: AppTheme
-                                          .colors.inputPlaceholderColor),
-                                ),
-                                controller: searchController),
+                      // SizedBox(height: 10),
+                      // Searchbar section
+                      Row(
+                        children: [
+                          Expanded(
+                            child: SizedBox(
+                              height: 30,
+                              // width: 900,
+                              child: TextFormField(
+                                  onChanged: (val) {
+                                    controller.searchKey.value = val;
+                                    controller.searchedItems = onSearch(
+                                        controller.searchKey.value,
+                                        controller.items);
+                                    controller.updateList();
+                                  },
+                                  decoration: InputDecoration(
+                                    floatingLabelBehavior:
+                                        FloatingLabelBehavior.never,
+                                    contentPadding: EdgeInsets.zero,
+                                    labelText: "Search Here",
+                                    isDense: true,
+                                    prefixIcon: Icon(Icons.search,
+                                        color: AppTheme
+                                            .colors.inputPlaceholderColor),
+                                  ),
+                                  controller: searchController),
+                            ),
                           ),
-                        ),
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        IconButton(
-                          onPressed: () {},
-                          icon: const Icon(Icons.filter_list),
-                          splashRadius: 20,
-                        ),
-
-                        // // settings section
-                        // settingsSwitch.value
-                        //     ? TextButton(
-                        //         onPressed: () {
-                        //           // controller.logOut();
-                        //         },
-                        //         child: Card(
-                        //           elevation: 2.0,
-                        //           margin: EdgeInsets.zero,
-                        //           child: Padding(
-                        //             padding: const EdgeInsets.symmetric(
-                        //                 horizontal: 20.0, vertical: 10.0),
-                        //             child: Text("mememe"),
-                        //           ),
-                        //         ),
-                        //       )
-                        //     : SizedBox(),
-                        IconButton(
-                          onPressed: () {
-                            settingsSwitch.value = !settingsSwitch.value;
-                          },
-                          icon: const Icon(Icons.more_vert),
-                          splashRadius: 20,
-                        ),
-
-                        PopupMenuButton(
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          IconButton(
+                            onPressed: () {},
+                            icon: const Icon(Icons.filter_list),
                             splashRadius: 20,
-                            onSelected: (String val) {
-                              switch (val) {
-                                case "view":
-                              }
-                            },
-                            itemBuilder: (context) {
-                              return generalActions.map((String choice) {
-                                return PopupMenuItem<String>(
-                                  value: choice.toLowerCase(),
-                                  child: Text(
-                                    choice,
-                                    style: Get.textTheme.headline4,
-                                  ),
-                                );
-                              }).toList();
-                            })
-                      ],
-                    ),
-
-                    StreamBuilder<List>(
-                      stream: moduleName == "users"
-                          ? userProvider.moduleStream()
-                          : houseProvider.moduleStream(),
-                      builder: (context, snapshot) {
-                        final items = snapshot.data;
-                        if (!snapshot.hasData) {
-                          return const Center(
-                              child: CircularProgressIndicator());
-                        }
-                        // if (snapshot.hasData) {
-                        //   log("items>>>>>>> ${items!.first.toString()}");
-                        // }
-                        if (snapshot.hasError) {
-                          return Center(
-                              child: Text(
-                            "An error occurred while retrieving ${moduleName.capitalizeFirst}",
-                            textAlign: TextAlign.center,
-                          ));
-                        }
-                        if (snapshot.data!.isEmpty) {
-                          return Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Center(
-                                child: Text(
-                                    "No ${moduleName.capitalizeFirst} to show.")),
-                          );
-                        }
-                        if (snapshot.hasData) {
-                          return Column(
-                            children: [
-                              if (items!.isNotEmpty)
-                                Container(
-                                  decoration: BoxDecoration(
-                                    color: AppTheme.colors.greyInputColor,
-                                    borderRadius: BorderRadius.circular(5),
-                                  ),
-                                  // Table headers
-                                  child: ListTile(
-                                    title: Row(
-                                      children: [
-                                        const SizedBox(
-                                          width: 20,
-                                        ),
-                                        for (var key in items.first
-                                            .toJson()
-                                            .keys
-                                            .toList()
-                                            .sublist(0, sublistEnd))
-                                          Flexible(
-                                            fit: FlexFit.tight,
-                                            child: Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      vertical: 5.0),
-                                              child: Text(
-                                                key.trim().isEmpty
-                                                    ? "---"
-                                                    : key.toUpperCase(),
-                                                textAlign: TextAlign.center,
-                                                style: Get.textTheme.headline4!
-                                                    .copyWith(
-                                                        color: Colors.black),
-                                              ),
-                                            ),
-                                          ),
-                                        const SizedBox(width: 60)
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              // Row loop
-                              for (var i in items)
-                                Container(
-                                  decoration: BoxDecoration(
-                                    border: Border(
-                                      bottom: BorderSide(
-                                          color: AppTheme.colors.mainGreyBg),
-                                    ),
-                                  ),
-                                  child: ListTile(
-                                    // tileColor: ,
-                                    selectedTileColor: AppTheme
-                                        .colors.mainLightPurpleColor
-                                        .withOpacity(0.2),
-                                    selected: selectedTileIndexController
-                                                .value !=
-                                            null
-                                        ? selectedTileIndexController.value ==
-                                            items.indexOf(i)
-                                        : false,
-                                    onTap: () {
-                                      if (selectedTileIndexController.value !=
-                                          null) {
-                                        selectedTileIndexController(
-                                            items.indexOf(i));
-                                        // log("Selected ${selectedTileIndexController!.value == items.indexOf(i)}");
-                                        // selectedTileIndexController!.refresh();
-                                      }
-                                    },
-                                    title: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        // COlumn loop
-
-                                        moduleName == "houses" &&
-                                                i.isApproved != null &&
-                                                i.isApproved == true
-                                            ? const Icon(
-                                                Icons.verified_outlined,
-                                                size: 20,
-                                                color: Colors.lightBlue,
-                                              )
-                                            : const SizedBox(
-                                                width: 20,
-                                              ),
-
-                                        for (var j in i
-                                            .toJson()
-                                            .values
-                                            .toList()
-                                            .sublist(0, sublistEnd))
-                                          Flexible(
-                                            fit: FlexFit.loose,
-                                            child: ListTile(
-                                              title: Padding(
-                                                padding:
-                                                    const EdgeInsets.all(1.0),
-                                                child: Text(j.toString(),
-                                                    textAlign: TextAlign.center,
-                                                    style: Get
-                                                        .textTheme.headline4!
-                                                        .copyWith(
-                                                            color:
-                                                                Colors.black)),
-                                              ),
-                                            ),
-                                          ),
-                                        IconButton(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 3),
-                                          constraints: const BoxConstraints(),
-                                          splashRadius: 20,
-                                          icon: Icon(Icons.remove_red_eye,
-                                              size: 20,
-                                              color: AppTheme
-                                                  .colors.mainPurpleColor),
-                                          onPressed: () {
-                                            if (selectedTileIndexController
-                                                    .value !=
-                                                null) {
-                                              selectedTileIndexController(
-                                                  items.indexOf(i));
-                                              log("Selected ${selectedTileIndexController.value}");
-                                              selectedTileIndexController
-                                                  .refresh();
-                                            }
-
-                                            viewModuleItem(i);
-                                          },
-                                        ),
-
-                                        if (canEdit)
-                                          IconButton(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 3),
-                                            constraints: const BoxConstraints(),
-                                            onPressed: () {
-                                              if (canEdit) {
-                                                editModuleItem(i);
-                                              }
-                                            },
-                                            splashRadius: 20,
-                                            icon: Icon(Icons.edit,
-                                                size: 20,
-                                                color: AppTheme
-                                                    .colors.mainPurpleColor),
-                                          ),
-                                        if (canDelete)
-                                          IconButton(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 3),
-                                            constraints: const BoxConstraints(),
-                                            splashRadius: 20,
-                                            icon: Icon(
-                                              Icons.delete,
-                                              size: 20,
-                                              color:
-                                                  AppTheme.colors.mainRedColor,
-                                            ),
-                                            onPressed: () {
-                                              deleteModuleItem(i);
-                                            },
-                                          ),
-
-                                        // Row(
-                                        //   mainAxisAlignment:
-                                        //       MainAxisAlignment.center,
-                                        //   children: [
-
-                                        //   ],
-                                        // )
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                            ],
-                          );
-                        } // end of snapshot has data
-                        return const Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: Center(
-                            child: Text(
-                                "Unknown Error. Refresh network and try again"),
                           ),
+
+                          // // settings section
+                          // settingsSwitch.value
+                          //     ? TextButton(
+                          //         onPressed: () {
+                          //           // controller.logOut();
+                          //         },
+                          //         child: Card(
+                          //           elevation: 2.0,
+                          //           margin: EdgeInsets.zero,
+                          //           child: Padding(
+                          //             padding: const EdgeInsets.symmetric(
+                          //                 horizontal: 20.0, vertical: 10.0),
+                          //             child: Text("mememe"),
+                          //           ),
+                          //         ),
+                          //       )
+                          //     : SizedBox(),
+                          IconButton(
+                            onPressed: () {
+                              settingsSwitch.value = !settingsSwitch.value;
+                            },
+                            icon: const Icon(Icons.more_vert),
+                            splashRadius: 20,
+                          ),
+
+                          PopupMenuButton(
+                              splashRadius: 20,
+                              onSelected: (String val) {
+                                switch (val) {
+                                  case "view":
+                                }
+                              },
+                              itemBuilder: (context) {
+                                return generalActions.map((String choice) {
+                                  return PopupMenuItem<String>(
+                                    value: choice.toLowerCase(),
+                                    child: Text(
+                                      choice,
+                                      style: Get.textTheme.headline4,
+                                    ),
+                                  );
+                                }).toList();
+                              })
+                        ],
+                      ),
+
+                      Obx(() {
+                        return StreamBuilder<List>(
+                          stream: moduleName == "users"
+                              ? userProvider
+                                  .moduleStream(controller.limit.value)
+                              : houseProvider
+                                  .moduleStream(controller.limit.value),
+                          initialData: controller.searchedItems,
+                          builder: (context, snapshot) {
+                            final items = snapshot.data;
+                            if (!snapshot.hasData) {
+                              return const Center(
+                                  child: CircularProgressIndicator());
+                            }
+                            // if (snapshot.hasData) {
+                            //   log("items>>>>>>> ${items!.first.toString()}");
+                            // }
+                            if (snapshot.hasError) {
+                              return Center(
+                                  child: Text(
+                                "An error occurred while retrieving ${moduleName.capitalizeFirst}",
+                                textAlign: TextAlign.center,
+                              ));
+                            }
+                            if (snapshot.data!.isEmpty) {
+                              return Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Center(
+                                    child: Text(
+                                        "No ${moduleName.capitalizeFirst} to show.")),
+                              );
+                            }
+                            if (snapshot.hasData) {
+                              controller.items = items!;
+
+                              Future.delayed(Duration.zero, () {
+                                controller.isLoadingMore.value = false;
+
+                                controller.prevCount = controller.currentCount;
+                                controller.currentCount = items.length;
+
+                                if (controller.prevCount ==
+                                    controller.currentCount) {
+                                  controller.stopLoadingMore.value = true;
+                                  log("Stop loading more items");
+                                }
+                              });
+
+                              return GetBuilder<CRUDController>(
+                                  id: "items_list",
+                                  builder: (context) {
+                                    final displayItems =
+                                        controller.searchKey.trim().isNotEmpty
+                                            ? controller.searchedItems
+                                            : controller.items;
+
+                                    return Column(
+                                      children: [
+                                        if (displayItems.isNotEmpty)
+                                          Container(
+                                            constraints: const BoxConstraints(
+                                                minWidth: 900, maxWidth: 1400),
+                                            decoration: BoxDecoration(
+                                              color: AppTheme
+                                                  .colors.greyInputColor,
+                                              borderRadius:
+                                                  BorderRadius.circular(5),
+                                            ),
+                                            // Table headers
+                                            child: ListTile(
+                                              title: Row(
+                                                children: [
+                                                  const SizedBox(
+                                                    width: 20,
+                                                  ),
+                                                  for (var key in controller
+                                                      .items.first
+                                                      .toJson()
+                                                      .keys
+                                                      .toList()
+                                                      .sublist(0, sublistEnd))
+                                                    Flexible(
+                                                      fit: FlexFit.tight,
+                                                      child: Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                    .symmetric(
+                                                                vertical: 5.0),
+                                                        child: Text(
+                                                          key.trim().isEmpty
+                                                              ? "---"
+                                                              : key
+                                                                  .toUpperCase(),
+                                                          textAlign:
+                                                              TextAlign.center,
+                                                          style: Get.textTheme
+                                                              .headline4!
+                                                              .copyWith(
+                                                                  color: Colors
+                                                                      .black),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  const SizedBox(width: 60)
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        // Row loop
+                                        for (var i in displayItems)
+                                          Container(
+                                            constraints: const BoxConstraints(
+                                                minWidth: 900, maxWidth: 1400),
+                                            decoration: BoxDecoration(
+                                              border: Border(
+                                                bottom: BorderSide(
+                                                    color: AppTheme
+                                                        .colors.mainGreyBg),
+                                              ),
+                                            ),
+                                            child: ListTile(
+                                              // tileColor: ,
+                                              selectedTileColor: AppTheme
+                                                  .colors.mainLightPurpleColor
+                                                  .withOpacity(0.2),
+                                              selected: selectedTileIndexController
+                                                          .value !=
+                                                      null
+                                                  ? selectedTileIndexController
+                                                          .value ==
+                                                      displayItems.indexOf(i)
+                                                  : false,
+                                              onTap: () {
+                                                if (selectedTileIndexController
+                                                        .value !=
+                                                    null) {
+                                                  selectedTileIndexController(
+                                                      displayItems.indexOf(i));
+                                                  // log("Selected ${selectedTileIndexController!.value == controller.searchedItems.indexOf(i)}");
+                                                  // selectedTileIndexController!.refresh();
+                                                }
+                                              },
+                                              title: Row(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  // COlumn loop
+
+                                                  moduleName == "houses" &&
+                                                          i.isApproved !=
+                                                              null &&
+                                                          i.isApproved == true
+                                                      ? const Icon(
+                                                          Icons
+                                                              .verified_outlined,
+                                                          size: 20,
+                                                          color:
+                                                              Colors.lightBlue,
+                                                        )
+                                                      : const SizedBox(
+                                                          width: 20,
+                                                        ),
+
+                                                  for (var j in i
+                                                      .toJson()
+                                                      .values
+                                                      .toList()
+                                                      .sublist(0, sublistEnd))
+                                                    Flexible(
+                                                      fit: FlexFit.loose,
+                                                      child: ListTile(
+                                                        title: Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .all(1.0),
+                                                          child: Text(
+                                                              j.toString(),
+                                                              textAlign:
+                                                                  TextAlign
+                                                                      .center,
+                                                              style: Get
+                                                                  .textTheme
+                                                                  .headline4!
+                                                                  .copyWith(
+                                                                      color: Colors
+                                                                          .black)),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  IconButton(
+                                                    padding: const EdgeInsets
+                                                            .symmetric(
+                                                        horizontal: 3),
+                                                    constraints:
+                                                        const BoxConstraints(),
+                                                    splashRadius: 20,
+                                                    icon: Icon(
+                                                        Icons.remove_red_eye,
+                                                        size: 20,
+                                                        color: AppTheme.colors
+                                                            .mainPurpleColor),
+                                                    onPressed: () {
+                                                      if (selectedTileIndexController
+                                                              .value !=
+                                                          null) {
+                                                        selectedTileIndexController(
+                                                            displayItems
+                                                                .indexOf(i));
+                                                        log("Selected ${selectedTileIndexController.value}");
+                                                        selectedTileIndexController
+                                                            .refresh();
+                                                      }
+
+                                                      viewModuleItem(i);
+                                                    },
+                                                  ),
+
+                                                  if (canEdit)
+                                                    IconButton(
+                                                      padding: const EdgeInsets
+                                                              .symmetric(
+                                                          horizontal: 3),
+                                                      constraints:
+                                                          const BoxConstraints(),
+                                                      onPressed: () {
+                                                        if (canEdit) {
+                                                          editModuleItem(i);
+                                                        }
+                                                      },
+                                                      splashRadius: 20,
+                                                      icon: Icon(Icons.edit,
+                                                          size: 20,
+                                                          color: AppTheme.colors
+                                                              .mainPurpleColor),
+                                                    ),
+                                                  if (canDelete)
+                                                    IconButton(
+                                                      padding: const EdgeInsets
+                                                              .symmetric(
+                                                          horizontal: 3),
+                                                      constraints:
+                                                          const BoxConstraints(),
+                                                      splashRadius: 20,
+                                                      icon: Icon(
+                                                        Icons.delete,
+                                                        size: 20,
+                                                        color: AppTheme.colors
+                                                            .mainRedColor,
+                                                      ),
+                                                      onPressed: () {
+                                                        deleteModuleItem(i);
+                                                      },
+                                                    ),
+
+                                                  // Row(
+                                                  //   mainAxisAlignment:
+                                                  //       MainAxisAlignment.center,
+                                                  //   children: [
+
+                                                  //   ],
+                                                  // )
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+
+                                        Obx(() => controller.isLoadingMore.value
+                                            ? const Center(
+                                                child: Padding(
+                                                  padding: EdgeInsets.symmetric(
+                                                      vertical: 10.0),
+                                                  child:
+                                                      CircularProgressIndicator(),
+                                                ),
+                                              )
+                                            : const SizedBox.shrink())
+                                      ],
+                                    );
+                                  });
+                            } // end of snapshot has data
+                            return const Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: Center(
+                                child: Text(
+                                    "Unknown Error. Refresh network and try again"),
+                              ),
+                            );
+                          },
                         );
-                      },
-                    ),
-                    // )
-                  ],
+                      }),
+                      // )
+                    ],
+                  ),
                 ),
               ),
             ),

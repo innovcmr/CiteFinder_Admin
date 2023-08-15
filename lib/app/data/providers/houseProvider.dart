@@ -73,9 +73,10 @@ class HouseProvider extends BasePovider {
   }
 
 // read user operation
-  Stream<List<House>> moduleStream() {
+  Stream<List<House>> moduleStream([int limit = 200]) {
     return firestore
         .collection(Config.firebaseKeys.homes)
+        .limit(limit)
         .snapshots()
         .map((QuerySnapshot query) {
       List<House> homes = [];
