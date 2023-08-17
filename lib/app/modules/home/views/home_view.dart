@@ -112,27 +112,26 @@ class HomeView extends GetView<HomeController> {
           width: 210,
           child: Padding(
             padding: const EdgeInsets.all(8.0),
-            child: GetBuilder<HomeController>(
-              id: "drawer",
-              builder: (controller) => ListView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: controller.children.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    // ListTile(
-                    //   leading: Image.asset(
-                    //     Config.assets.logo,
-                    //     height: 30,
-                    //   ),
-                    //   trailing: IconButton(
-                    //     icon: const Icon(Icons.close_rounded),
-                    //     onPressed: controller.closeDrawer,
-                    //   ),
-                    // ),
-                    // ...
-                    return Padding(
-                      padding: const EdgeInsets.all(3.0),
-                      child: ListTile(
+            child: ListView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: controller.children.length,
+                itemBuilder: (BuildContext context, int index) {
+                  // ListTile(
+                  //   leading: Image.asset(
+                  //     Config.assets.logo,
+                  //     height: 30,
+                  //   ),
+                  //   trailing: IconButton(
+                  //     icon: const Icon(Icons.close_rounded),
+                  //     onPressed: controller.closeDrawer,
+                  //   ),
+                  // ),
+                  // ...
+                  return Padding(
+                    padding: const EdgeInsets.all(3.0),
+                    child: Obx(() {
+                      return ListTile(
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(40),
                         ),
@@ -148,13 +147,13 @@ class HomeView extends GetView<HomeController> {
                         selectedTileColor: AppTheme.colors.mainLightPurpleColor
                             .withOpacity(0.15),
                         selected: controller.index.value == index,
-                        onTap: controller.changeIndex(index),
-                      ),
-                    );
-                  }
-                  // ],
-                  ),
-            ),
+                        onTap: () => controller.changeIndex(index),
+                      );
+                    }),
+                  );
+                }
+                // ],
+                ),
           ),
           // ),
         ),

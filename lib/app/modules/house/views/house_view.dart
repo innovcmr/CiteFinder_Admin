@@ -35,16 +35,16 @@ class HouseView extends GetView<HouseController> {
         moduleName: "houses",
         searchController: controller.searchController,
         selectedTileIndexController: controller.selectedUserIndex,
-        canEdit: false,
+        canEdit: true,
         onSearch: (key, houses) {
           return houses;
         },
         createView: CreateEditView(
           mode: "create",
         ),
-        // editView: CreateEditView(
-        //   mode: "edit",
-        // ),
+        editView: CreateEditView(
+          mode: "edit",
+        ),
         seeView: CreateEditView(
           mode: "view",
         ),
@@ -65,7 +65,7 @@ class CreateEditView extends GetView<HouseController> {
     if (box.read(Config.keys.selectedHome) != null && mode != "create") {
       moduleItem = House.fromJson(box.read(Config.keys.selectedHome), "map");
     }
-    log(moduleItem.toString());
+
     if (mode == "view") {
       if (moduleItem?.facilities != null) {
         for (var facility in moduleItem!.facilities!) {
@@ -136,7 +136,7 @@ class CreateEditView extends GetView<HouseController> {
                                 ),
                                 SizedBox(height: 15),
                                 TextFormField(
-                                  initialValue: mode == "view"
+                                  initialValue: mode != "create"
                                       ? moduleItem!.description
                                       : null,
                                   controller: mode != "view"
@@ -730,13 +730,13 @@ class CreateEditView extends GetView<HouseController> {
                                     style: Get.textTheme.titleMedium),
 
                                 Obx(() {
-                                  return controller.currentHomeRooms2.length > 0
+                                  return controller.currentHomeRooms2.isNotEmpty
                                       ? SizedBox(height: 20)
                                       : SizedBox.shrink();
                                 }),
 
                                 Obx(() {
-                                  return controller.currentHomeRooms2.length > 0
+                                  return controller.currentHomeRooms2.isNotEmpty
                                       ? SizedBox(
                                           height: 140,
                                           width: double.infinity,

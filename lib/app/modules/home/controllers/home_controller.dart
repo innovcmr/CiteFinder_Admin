@@ -49,13 +49,7 @@ class HomeController extends GetxController {
   void increment() => index.value++;
 
   changeIndex(int val) {
-    print(index);
-    // Future.delayed(Duration(milliseconds: 100), () {
-    // if () {}
-    // update(["drawer"]);
-    // index(val);
-    // });
-    // index(val);
+    index.value = val;
   }
 
 // To open and close the sidebar(drawer)
