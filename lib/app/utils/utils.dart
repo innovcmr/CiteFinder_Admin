@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -265,6 +267,21 @@ bool searchString(String string1, String lstring) {
     }
   }
   return false;
+}
+
+class Debouncer {
+  final int milliseconds;
+  // VoidCallback action;
+  Timer? _timer;
+
+  Debouncer({required this.milliseconds});
+
+  run(VoidCallback action) {
+    if (_timer != null) {
+      _timer!.cancel();
+    }
+    _timer = Timer(Duration(milliseconds: milliseconds), action);
+  }
 }
 
 // List<Home> homeSearch({String query = "", required List<Home> collection}) {

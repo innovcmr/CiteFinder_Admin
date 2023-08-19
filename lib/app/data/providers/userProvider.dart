@@ -31,7 +31,7 @@ class UserProvider extends BasePovider {
               email: email.trim(), password: password.trim())
           .timeout(const Duration(seconds: 15));
       final user = userCredential.user;
-      print(user?.uid);
+
       // box.write(Config.keys.user, user);
       return true;
     } on FirebaseAuthException catch (e) {
@@ -100,27 +100,32 @@ class UserProvider extends BasePovider {
   }
 
 // read user operation
-  Stream<List<UserModel.User>> moduleStream([int limit = 200]) {
+  Stream<List<UserModel.User>> moduleStream(
+    dynamic startAfter, {
+    limit = 25,
+    dummy = 0,
+  }) {
     return firestore
         .collection(Config.firebaseKeys.users)
+        .orderBy("dateAdded")
+        .startAfter([startAfter])
         .limit(limit)
         .snapshots()
         .map((QuerySnapshot query) {
-      List<UserModel.User> users = [];
-      for (var user in query.docs) {
-        final userModel = UserModel.User.fromJson(user, "document");
-        users.add(userModel);
-      }
+          List<UserModel.User> users = [];
+          for (var user in query.docs) {
+            final userModel = UserModel.User.fromJson(user, "document");
+            users.add(userModel);
+          }
 
-      log("user count is ${users.length}");
-
-      return users;
-    })
+          return users;
+        })
         // .timeout(const Duration(seconds: 30))
         .handleError((error) {
-      Get.snackbar("Error in User Fetch", error.toString());
-      log("Error in User Fetch  ${error.toString()}");
-    });
+          Get.snackbar("Error in User Fetch", error.toString());
+          print(error);
+          log("Error in User Fetch  ${error.toString()}");
+        });
   }
 
   // update user operation

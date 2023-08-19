@@ -73,27 +73,30 @@ class HouseProvider extends BasePovider {
   }
 
 // read user operation
-  Stream<List<House>> moduleStream([int limit = 200]) {
+  Stream<List<House>> moduleStream(dynamic startAfter,
+      {limit = 25, dummy = 0}) {
     return firestore
         .collection(Config.firebaseKeys.homes)
+        .orderBy("dateAdded")
+        .startAfter([startAfter])
         .limit(limit)
         .snapshots()
         .map((QuerySnapshot query) {
-      List<House> homes = [];
-      for (var home in query.docs) {
-        final homeModel = House.fromJson(home, "document");
-        homes.add(homeModel);
-      }
-      log("home Fetch  ${homes.map((element) => element.toJson()).toString()}");
-      log("home count is ${homes.length}");
+          List<House> homes = [];
+          for (var home in query.docs) {
+            final homeModel = House.fromJson(home, "document");
+            homes.add(homeModel);
+          }
+          log("home Fetch  ${homes.map((element) => element.toJson()).toString()}");
+          log("home count is ${homes.length}");
 
-      return homes;
-    })
+          return homes;
+        })
         // .timeout(const Duration(seconds: 30))
         .handleError((error) {
-      Get.snackbar("Error in home Fetch", error.toString());
-      log("Error in home Fetch  ${error.toString()}");
-    });
+          Get.snackbar("Error in home Fetch", error.toString());
+          log("Error in home Fetch  ${error.toString()}");
+        });
   }
 
   // update home operation

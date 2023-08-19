@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:cite_finder_admin/app/components/crudComponentWidget.dart';
+import 'package:cite_finder_admin/app/controllers/crud_controller.dart';
 import 'package:cite_finder_admin/app/data/models/house_model.dart';
 import 'package:cite_finder_admin/app/modules/user/views/user_view.dart';
 import 'package:cite_finder_admin/app/utils/config.dart';
@@ -25,8 +26,8 @@ class HouseView extends GetView<HouseController> {
         searchController: controller.searchController,
         selectedTileIndexController: controller.selectedUserIndex,
         canEdit: false,
-        onSearch: (key, houses) {
-          return houses;
+        onSearch: (key) async {
+          return CRUDController.to.items;
         },
         createView: CreateEditView(
           mode: "create",

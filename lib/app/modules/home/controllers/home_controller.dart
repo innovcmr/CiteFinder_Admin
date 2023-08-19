@@ -1,3 +1,4 @@
+import 'package:cite_finder_admin/app/controllers/crud_controller.dart';
 import 'package:cite_finder_admin/app/modules/agent/views/agent_view.dart';
 import 'package:cite_finder_admin/app/modules/dashboard/views/dashboard_view.dart';
 import 'package:cite_finder_admin/app/modules/house/views/house_view.dart';
@@ -50,6 +51,9 @@ class HomeController extends GetxController {
 
   changeIndex(int val) {
     index.value = val;
+    final crudController = CRUDController.to;
+
+    crudController.reset();
   }
 
 // To open and close the sidebar(drawer)

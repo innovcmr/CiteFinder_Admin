@@ -3,6 +3,8 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../utils/utils.dart';
+
 class CRUDController extends GetxController {
   CRUDController() : super();
 
@@ -12,11 +14,14 @@ class CRUDController extends GetxController {
   RxInt limit = 25.obs;
   ScrollController scrollController = ScrollController();
 
+  final Debouncer debouncer = Debouncer(milliseconds: 500);
+
   RxBool isLoadingMore = false.obs;
   RxBool stopLoadingMore = false.obs;
 
-  int prevCount = 0;
-  int currentCount = 0;
+  RxBool isSearching = false.obs;
+
+  RxBool isListLoading = false.obs;
 
   @override
   onInit() {
@@ -26,7 +31,8 @@ class CRUDController extends GetxController {
       if (scrollController.offset >=
           scrollController.position.maxScrollExtent) {
         // load more at list end
-        if (isLoadingMore.value || stopLoadingMore.value) return;
+        if (isLoadingMore.value || stopLoadingMore.value || isSearching.value)
+          return;
 
         isLoadingMore.value = true;
         prevLimit = limit.value;
@@ -35,6 +41,18 @@ class CRUDController extends GetxController {
         log("Limit is now ${limit.value}");
       }
     });
+  }
+
+  void reset() {
+    items.clear();
+    searchedItems.clear();
+    searchKey.value = "";
+    prevLimit = 25;
+    limit.value = 25;
+    isSearching.value = false;
+    isLoadingMore.value = false;
+    stopLoadingMore.value = false;
+    isListLoading.value = false;
   }
 
   List<dynamic> items = [];

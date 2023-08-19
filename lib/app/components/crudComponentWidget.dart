@@ -6,8 +6,10 @@ import 'dart:developer';
 
 import 'package:cite_finder_admin/app/data/providers/houseProvider.dart';
 import 'package:cite_finder_admin/app/data/providers/userProvider.dart';
+import 'package:cite_finder_admin/app/modules/user/controllers/user_controller.dart';
 import 'package:cite_finder_admin/app/utils/config.dart';
 import 'package:cite_finder_admin/app/utils/themes/themes.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
@@ -24,6 +26,9 @@ class CRUD extends GetView<CRUDController> {
     this.canDelete = true,
     this.editView,
     this.seeView,
+    this.onFilterOpen,
+    this.onLoadMore,
+    this.fields,
     required this.onSearch,
     required this.moduleName,
     required this.selectedTileIndexController,
@@ -45,7 +50,11 @@ class CRUD extends GetView<CRUDController> {
   Rx<bool> settingsSwitch = false.obs;
   Rxn<int> selectedTileIndexController;
 
-  List<dynamic> Function(String, List<dynamic>) onSearch;
+  VoidCallback? onFilterOpen;
+  VoidCallback? onLoadMore;
+  Future<List<dynamic>> Function(String) onSearch;
+
+  List<String>? fields;
 
   List<String> generalActions = [
     "View",
@@ -183,12 +192,22 @@ class CRUD extends GetView<CRUDController> {
                               height: 30,
                               // width: 900,
                               child: TextFormField(
-                                  onChanged: (val) {
+                                  onChanged: (val) async {
                                     controller.searchKey.value = val;
-                                    controller.searchedItems = onSearch(
-                                        controller.searchKey.value,
-                                        controller.items);
-                                    controller.updateList();
+
+                                    if (val.trim().isEmpty) {
+                                      controller.isSearching.value = false;
+                                      return;
+                                    }
+
+                                    controller.debouncer.run(() async {
+                                      controller.isSearching.value = true;
+
+                                      controller.searchedItems = await onSearch(
+                                          controller.searchKey.value);
+
+                                      controller.updateList();
+                                    });
                                   },
                                   decoration: InputDecoration(
                                     floatingLabelBehavior:
@@ -207,8 +226,21 @@ class CRUD extends GetView<CRUDController> {
                             width: 10,
                           ),
                           IconButton(
-                            onPressed: () {},
+                            onPressed: onFilterOpen,
                             icon: const Icon(Icons.filter_list),
+                            splashRadius: 20,
+                          ),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          IconButton(
+                            onPressed: () {
+                              if (onLoadMore != null) {
+                                onLoadMore!();
+                              }
+                              controller.limit.value += 1;
+                            },
+                            icon: const Icon(Icons.replay_outlined),
                             splashRadius: 20,
                           ),
 
@@ -260,21 +292,31 @@ class CRUD extends GetView<CRUDController> {
 
                       Obx(() {
                         return StreamBuilder<List>(
-                          stream: moduleName == "users"
-                              ? userProvider
-                                  .moduleStream(controller.limit.value)
-                              : houseProvider
-                                  .moduleStream(controller.limit.value),
-                          initialData: controller.searchedItems,
+                          stream: controller.isSearching.value
+                              ? null
+                              : moduleName == "users"
+                                  ? userProvider.moduleStream(
+                                      controller.items.isNotEmpty
+                                          ? controller.items.last.createdDate
+                                          : null,
+                                      dummy: controller.limit.value,
+                                    )
+                                  : houseProvider.moduleStream(
+                                      controller.items.isNotEmpty
+                                          ? controller.items.last.createdDate
+                                          : null,
+                                      dummy: controller.limit.value,
+                                    ),
+                          initialData: controller.isSearching.value
+                              ? controller.searchedItems
+                              : controller.items,
                           builder: (context, snapshot) {
                             final items = snapshot.data;
                             if (!snapshot.hasData) {
                               return const Center(
                                   child: CircularProgressIndicator());
                             }
-                            // if (snapshot.hasData) {
-                            //   log("items>>>>>>> ${items!.first.toString()}");
-                            // }
+
                             if (snapshot.hasError) {
                               return Center(
                                   child: Text(
@@ -291,28 +333,38 @@ class CRUD extends GetView<CRUDController> {
                               );
                             }
                             if (snapshot.hasData) {
-                              controller.items = items!;
+                              if (!controller.isSearching.value &&
+                                  items!.isNotEmpty) {
+                                print(items);
+                                controller.items.addAll(items);
 
-                              Future.delayed(Duration.zero, () {
-                                controller.isLoadingMore.value = false;
+                                Future.delayed(Duration.zero, () {
+                                  controller.isLoadingMore.value = false;
 
-                                controller.prevCount = controller.currentCount;
-                                controller.currentCount = items.length;
-
-                                if (controller.prevCount ==
-                                    controller.currentCount) {
-                                  controller.stopLoadingMore.value = true;
-                                  log("Stop loading more items");
-                                }
-                              });
+                                  if (items.isEmpty) {
+                                    controller.stopLoadingMore.value = true;
+                                  }
+                                });
+                              }
 
                               return GetBuilder<CRUDController>(
                                   id: "items_list",
                                   builder: (context) {
-                                    final displayItems =
+                                    List<dynamic> displayItems =
                                         controller.searchKey.trim().isNotEmpty
                                             ? controller.searchedItems
                                             : controller.items;
+
+                                    if (moduleName == "users" &&
+                                        UserController.to.currentFilter.value !=
+                                            'all') {
+                                      displayItems = displayItems
+                                          .where((el) =>
+                                              el.role ==
+                                              UserController
+                                                  .to.currentFilter.value)
+                                          .toList();
+                                    }
 
                                     return Column(
                                       children: [
@@ -333,12 +385,15 @@ class CRUD extends GetView<CRUDController> {
                                                   const SizedBox(
                                                     width: 20,
                                                   ),
-                                                  for (var key in controller
-                                                      .items.first
-                                                      .toJson()
-                                                      .keys
-                                                      .toList()
-                                                      .sublist(0, sublistEnd))
+                                                  for (var key in fields == null
+                                                      ? (controller.items.first
+                                                          .toJson()
+                                                          .keys
+                                                          .toList()
+                                                          .toList()
+                                                          .sublist(
+                                                              0, sublistEnd))
+                                                      : fields!)
                                                     Flexible(
                                                       fit: FlexFit.tight,
                                                       child: Padding(
@@ -433,7 +488,10 @@ class CRUD extends GetView<CRUDController> {
                                                               const EdgeInsets
                                                                   .all(1.0),
                                                           child: Text(
-                                                              j.toString(),
+                                                              (j is Map)
+                                                                  ? j["city"]
+                                                                  : j
+                                                                      .toString(),
                                                               textAlign:
                                                                   TextAlign
                                                                       .center,

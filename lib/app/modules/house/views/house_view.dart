@@ -7,6 +7,7 @@ import 'package:cite_finder_admin/app/components/CircularButton.dart';
 import 'package:cite_finder_admin/app/components/MapWidget.dart';
 import 'package:cite_finder_admin/app/components/PageScrollView.dart';
 import 'package:cite_finder_admin/app/components/crudComponentWidget.dart';
+import 'package:cite_finder_admin/app/controllers/crud_controller.dart';
 import 'package:cite_finder_admin/app/data/models/house_model.dart';
 import 'package:cite_finder_admin/app/modules/house/views/home_room_view.dart';
 import 'package:cite_finder_admin/app/modules/user/views/user_view.dart';
@@ -36,8 +37,9 @@ class HouseView extends GetView<HouseController> {
         searchController: controller.searchController,
         selectedTileIndexController: controller.selectedUserIndex,
         canEdit: true,
-        onSearch: (key, houses) {
-          return houses;
+        onSearch: (key) async {
+          final result = controller.searchHouses(key);
+          return result;
         },
         createView: CreateEditView(
           mode: "create",

@@ -669,6 +669,17 @@ class HouseController extends GetxController {
     roomImages = RxList<String>();
   }
 
+  Future<List<House>> searchHouses(String key) async {
+    final collection =
+        FirebaseFirestore.instance.collection(Config.firebaseKeys.homes);
+
+    final snapshots =
+        await (collection.where("name", isGreaterThanOrEqualTo: key).get());
+    return snapshots.docs
+        .map<House>((doc) => House.fromJson(doc, "document"))
+        .toList();
+  }
+
   @override
   void onClose() {
     super.onClose();

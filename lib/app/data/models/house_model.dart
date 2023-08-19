@@ -19,6 +19,7 @@ class House {
   String? mainImage;
   List<String>? images;
   String? dateAdded;
+  DateTime? createdDate;
   String? dateModified;
   DocumentReference<Map<String, dynamic>>? landlord;
   bool? isApproved;
@@ -36,6 +37,7 @@ class House {
       this.mainImage,
       this.images,
       this.dateAdded,
+      this.createdDate,
       this.dateModified,
       this.landlord,
       this.basePrice,
@@ -88,11 +90,15 @@ class House {
           dateTime.month.toString() +
           "/" +
           dateTime.year.toString();
+
+      createdDate = json["dateAdded"].toDate();
     } else {
       dateAdded =
           json.toString().contains("dateAdded") ? json['dateAdded'] : "";
       dateModified =
           json.toString().contains("dateModified") ? json['dateModified'] : "";
+
+      createdDate = DateTime.parse(json["createdDate"]);
     }
     // landlord = json['landlord'] != null
     //     ? Landlord?.fromJson(json['landlord'], type)
@@ -104,7 +110,7 @@ class House {
         json.toString().contains("isApproved") ? json['isApproved'] : null;
   }
 
-  Map<String, dynamic> toJson() {
+  Map<String, dynamic> toJson([bool toFirestore = false]) {
     final data = <String, dynamic>{};
     data['id'] = id;
     data['name'] = name;
@@ -119,6 +125,8 @@ class House {
     data['mainImage'] = mainImage;
     data['images'] = images;
     data['dateAdded'] = dateAdded;
+    data["createdDate"] = toFirestore ? createdDate : createdDate!.toString();
+
     data['dateModified'] = dateModified;
     // if (landlord != null) {
     //   data['landlord'] = landlord?.toJson();

@@ -1,12 +1,15 @@
 import 'dart:developer';
 
+import 'package:cite_finder_admin/app/controllers/crud_controller.dart';
 import 'package:cite_finder_admin/app/data/models/user_model.dart';
 import 'package:cite_finder_admin/app/data/providers/userProvider.dart';
 import 'package:cite_finder_admin/app/utils/config.dart';
 import 'package:cite_finder_admin/app/utils/formKeys.dart';
 import 'package:cite_finder_admin/app/utils/getExtension.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:firebase_auth/firebase_auth.dart' as fb;
+import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
 
@@ -47,6 +50,8 @@ class UserController extends GetxController {
   RxBool obscurePassword = true.obs;
 
   RxBool isDeleted = false.obs;
+
+  RxString currentFilter = "all".obs;
 
   @override
   void onInit() {
@@ -90,7 +95,7 @@ class UserController extends GetxController {
       return;
     } else {
       Get.showLoader();
-      bool successful = false;
+      // bool successful = false;
       try {
         var success = await userProvider.add(
             fullName: fullNameController.text.trim(),
@@ -117,6 +122,59 @@ class UserController extends GetxController {
 
   Future<void> editUser(User? user) async {
     if (user == null) return;
+  }
+
+  void openFilter() {
+    Get.dialog(
+      AlertDialog(
+        title: const Text("Filter Users"),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              title: const Text("All"),
+              selected: currentFilter.value == "all",
+              selectedTileColor: Colors.amber[100],
+              onTap: () {
+                currentFilter.value = "all";
+                CRUDController.to.updateList();
+                Get.back();
+              },
+            ),
+            ListTile(
+              title: const Text("Landlords"),
+              selected: currentFilter.value == "landlord",
+              selectedTileColor: Colors.amber[100],
+              onTap: () {
+                currentFilter.value = "landlord";
+                CRUDController.to.updateList();
+                Get.back();
+              },
+            ),
+            ListTile(
+              title: const Text("Agents"),
+              selected: currentFilter.value == "agent",
+              selectedTileColor: Colors.amber[100],
+              onTap: () {
+                currentFilter.value = "agent";
+                CRUDController.to.updateList();
+                Get.back();
+              },
+            ),
+            ListTile(
+              title: const Text("Normal Users"),
+              selected: currentFilter.value == "tenant",
+              selectedTileColor: Colors.amber[100],
+              onTap: () {
+                currentFilter.value = "tenant";
+                CRUDController.to.updateList();
+                Get.back();
+              },
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   void clear() {
@@ -147,14 +205,22 @@ class UserController extends GetxController {
     }
   }
 
-  List<User> searchUsers(String key, List<User> list) {
-    return list
-        .where((user) =>
-            user.fullName!.toLowerCase().contains(key.toLowerCase()) ||
-            user.email!.toLowerCase().contains(key.toLowerCase()) ||
-            user.id!.toLowerCase().contains(key.toLowerCase()) ||
-            user.phoneNumber!.toLowerCase().contains(key.toLowerCase()))
+  Future<List<User>> searchUsers(String key) async {
+    final collection =
+        FirebaseFirestore.instance.collection(Config.firebaseKeys.users);
+
+    final snapshots =
+        await (collection.where("fullName", isGreaterThanOrEqualTo: key).get());
+    return snapshots.docs
+        .map<User>((doc) => User.fromJson(doc, "document"))
         .toList();
+    // return list
+    //     .where((user) =>
+    //         user.fullName!.toLowerCase().contains(key.toLowerCase()) ||
+    //         user.email!.toLowerCase().contains(key.toLowerCase()) ||
+    //         user.id!.toLowerCase().contains(key.toLowerCase()) ||
+    //         user.phoneNumber!.toLowerCase().contains(key.toLowerCase()))
+    //     .toList();
   }
 
   @override

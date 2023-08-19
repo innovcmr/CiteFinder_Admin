@@ -24,10 +24,13 @@ class UserView extends GetView<UserController> {
         searchController: controller.searchController,
         selectedTileIndexController: controller.selectedUserIndex,
         canEdit: true,
-        onSearch: (key, list) {
-          List<User> userList = list as List<User>;
+        onFilterOpen: () {
+          controller.openFilter();
+        },
+        onSearch: (key) async {
+          // List<User> userList = list as List<User>;
 
-          final result = controller.searchUsers(key, userList);
+          final result = controller.searchUsers(key);
 
           return result;
         },
