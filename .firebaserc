@@ -1,0 +1,15 @@
+{
+  "projects": {
+    "default": "citefinder"
+  },
+  "targets": {
+    "citefinder": {
+      "hosting": {
+        "admin": [
+          "citefinder"
+        ]
+      }
+    }
+  },
+  "etags": {}
+}

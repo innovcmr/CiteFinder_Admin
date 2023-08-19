@@ -1,0 +1,124 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isAdmin(uid){
+
+      let adminDatabasePath = /databases/$(database)/documents/users/$(uid);
+      let isAdminUser = exists(adminDatabasePath) && get(adminDatabasePath).data.get("role","tenant") == "admin";
+
+      return isAdminUser;
+    }
+    
+    function isUserOrAdmin(uid, docId){
+
+        let userDatabasePath = /databases/$(database)/documents/users/$(uid);
+        let isAdminUser = exists(userDatabasePath) && get(userDatabasePath).data.get("role","tenant") == "admin";
+        let isOwner = docId == uid;
+
+        return isOwner || isAdminUser;
+    }
+    
+    function isLandLordOrAdmin(uid){
+    	let userDatabasePath = /databases/$(database)/documents/users/$(uid);
+      
+      return exists(userDatabasePath) && (get(userDatabasePath).data.role == "landlord" ||
+      	get(userDatabasePath).data.role == "admin");
+    }
+    
+    function isHomeOwner(){
+      	
+       return request.resource.data.landlord == /databases/$(database)/documents/users/$(request.auth.uid);
+      }
+    
+    //users rules
+    match /users/{document} {
+      allow create: if true;
+      allow read: if request.auth != null; 
+      
+      allow update: if request.auth!=null &&  isUserOrAdmin(request.auth.uid,document) ;
+     
+     allow delete: if  request.auth!=null && isUserOrAdmin(request.auth.uid, document);
+    }
+    
+    //homes rules
+    match /homes/{document} {
+    	
+    	allow create: if request.auth!=null && isLandLordOrAdmin(request.auth.uid);
+      allow read: if request.auth != null;
+      allow update, delete: if isAdmin(request.auth.uid) || isHomeOwner();
+      
+    }
+    
+    //home rooms rules
+    match /home_rooms/{document} {
+    	
+      function isHomeRoomOwner(){
+      	let home = get(request.resource.data.home);
+        
+          return home != null && home.data.landlord == /databases/$(database)/documents/users/$(request.auth.uid);
+        }
+
+        allow create, update, delete: if isHomeRoomOwner() || isAdmin(request.auth.uid);
+        allow read: if request.auth != null;
+      
+    }
+    
+    //chats rules
+    match /chats/{document} {
+    	
+      allow read, write: if request.auth!=null && /databases/$(database)/documents/users/$(request.auth.uid) in request.resource.data.users;
+      
+    }
+    
+    //chat messages rules
+    
+    match /chat_messages/{document} {
+    
+    	function isSenderOrReceiver(){
+				return request.auth!=null && (/databases/$(database)/documents/users/$(request.auth.uid) == resource.data.sender) ||
+        	(/databases/$(database)/documents/users/$(request.auth.uid) == resource.data.receiver);
+      }
+      
+    	allow read: if isSenderOrReceiver();
+      allow create: if request.auth !=null && (/databases/$(database)/documents/users/$(request.auth.uid) in get(resource.data.chat).data.users);
+      allow update, delete: if request.auth !=null && (/databases/$(database)/documents/users/$(request.auth.uid) == resource.data.sender);
+    }
+    
+		//home comments rules
+    
+    match /home_comments/{document}{
+    	allow read, write: if request.auth!=null;
+    }
+    
+    //ratings rules
+    match /ratings/{document}{
+    	allow read, write: if request.auth!=null;
+    }
+    
+    //kyc rules
+    match /kyc/{document}{
+    	allow create, read: if /databases/$(database)/documents/users/$(request.auth.uid) == request.resource.data.user || isAdmin(request.auth.uid);
+      allow update, delete: if isAdmin(request.auth.uid);
+    }
+    
+    //fcm tokens rules
+    match /fcm_tokens/{document}{
+    	allow read, write: if /databases/$(database)/documents/users/$(request.auth.uid) == request.resource.data.user || isAdmin(request.auth.uid);
+    }
+    
+    //favorites rules
+    match /favorites/{document}{
+    	allow read: if request.auth!=null;
+      allow write: if request.auth!=null && /databases/$(database)/documents/users/$(request.auth.uid) == request.resource.data.user;
+    }
+    
+    //notifications rules
+    match /notifications/{document} {
+      allow read, write: if request.auth!=null;
+    }
+    
+    match /{docs=**} {
+    	allow  read, write: if request.auth != null;
+    }
+  }
+}
