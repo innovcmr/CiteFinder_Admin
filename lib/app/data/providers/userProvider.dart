@@ -4,6 +4,7 @@ import 'package:cite_finder_admin/app/utils/config.dart';
 import 'package:cite_finder_admin/app/utils/getExtension.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'dart:developer';
 
@@ -11,16 +12,6 @@ class UserProvider extends BasePovider {
   @override
   void onInit() {
     super.onInit();
-    auth.authStateChanges().listen((User? user) {
-      if (user != null) {
-        print(user.uid);
-        //   box.write(Config.keys.user, user);
-        //   box.write(Config.keys.userIsLogIn, true);
-        // } else {
-        //   box.remove(Config.keys.user);
-        //   box.write(Config.keys.userIsLogIn, false);
-      }
-    });
   }
 
   Future<bool> signInUser(
@@ -34,10 +25,12 @@ class UserProvider extends BasePovider {
 
       // box.write(Config.keys.user, user);
       return true;
-    } on FirebaseAuthException catch (e) {
-      print("error in signin is ${e.message}");
-      Get.closeLoader();
-      Get.snackbar("Error", e.message ?? "Error in signIn. Check credentials");
+    } on FirebaseException catch (e) {
+      // print("error in signin is ${e.message}");
+      Fluttertoast.showToast(
+          timeInSecForIosWeb: 4,
+          msg: e.message ?? "Error in signIn. Check credentials",
+          webBgColor: "#ff0000");
       return false;
       // rethrow;
     }

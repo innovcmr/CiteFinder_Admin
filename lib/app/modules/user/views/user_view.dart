@@ -221,7 +221,12 @@ class CreateEditView extends GetView<UserController> {
                                   ),
                                   validator: Validator.isRequired,
                                   onChanged: ((String? newValue) {
+                                    if (mode != "create") {
+                                      controller.updateUserRole(
+                                          moduleItem!.record, newValue!);
+                                    }
                                     controller.selectedUserRole(newValue);
+
                                     moduleItem!.role = newValue;
                                   }),
                                   items: [

@@ -2,6 +2,8 @@ import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import '../../utils/config.dart';
+
 class User {
   String? id;
   String? fullName;
@@ -33,9 +35,12 @@ class User {
     this.isDeleted = false,
   });
 
+  DocumentReference<Map<String, dynamic>> get record =>
+      FirebaseFirestore.instance.collection('users').doc(id!);
+
   User.fromJson(json1, [String type = "map"]) {
     var json = json1;
-    print(json1);
+    // print(json1);
     if (type == "document") {
       json = json1.data();
     }
@@ -97,5 +102,18 @@ class User {
     data['phoneNumber'] = phoneNumber;
     data["isDeleted"] = isDeleted;
     return data;
+  }
+
+  static Future<User> getUserFromFirestore(String uid) async {
+    final firestore = FirebaseFirestore.instance;
+    final DocumentSnapshot userData;
+
+    userData =
+        (await firestore.collection(Config.firebaseKeys.users).doc(uid).get());
+
+    if (userData.data() != null) {
+      return User.fromJson(userData, "document");
+    }
+    throw Exception("couldNotGetUserData");
   }
 }

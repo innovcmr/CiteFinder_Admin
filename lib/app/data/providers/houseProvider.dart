@@ -8,6 +8,7 @@ import 'package:cite_finder_admin/app/utils/config.dart';
 import 'package:cite_finder_admin/app/utils/getExtension.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 
 class HouseProvider extends BasePovider {
@@ -129,6 +130,18 @@ class HouseProvider extends BasePovider {
           Get.snackbar("Error in home Approval", error.toString());
           log("Error in home Approval  ${error.toString()}");
         });
+  }
+
+  Future<bool> setAgent(DocumentReference<Map<String, dynamic>> homeRef,
+      DocumentReference<Map<String, dynamic>> agentRef) async {
+    try {
+      await homeRef.update({Config.firebaseKeys.agent: agentRef});
+      Fluttertoast.showToast(msg: "House agent updated successfully");
+      return true;
+    } on FirebaseException catch (e) {
+      Fluttertoast.showToast(msg: e.message.toString());
+      return false;
+    }
   }
 
   // delete home operation

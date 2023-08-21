@@ -6,10 +6,12 @@ import 'package:cite_finder_admin/app/data/providers/userProvider.dart';
 import 'package:cite_finder_admin/app/utils/config.dart';
 import 'package:cite_finder_admin/app/utils/formKeys.dart';
 import 'package:cite_finder_admin/app/utils/getExtension.dart';
+import 'package:cite_finder_admin/app/utils/new_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:firebase_auth/firebase_auth.dart' as fb;
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 import 'package:get/get.dart';
 
@@ -221,6 +223,18 @@ class UserController extends GetxController {
     //         user.id!.toLowerCase().contains(key.toLowerCase()) ||
     //         user.phoneNumber!.toLowerCase().contains(key.toLowerCase()))
     //     .toList();
+  }
+
+  Future<void> updateUserRole(
+      DocumentReference<Map<String, dynamic>> userRef, String role) async {
+    runAsyncFunction(() async {
+      try {
+        await userRef.update({"role": role});
+        Fluttertoast.showToast(msg: "User role updated.");
+      } catch (e) {
+        Fluttertoast.showToast(msg: "An unexpected error occured");
+      }
+    });
   }
 
   @override

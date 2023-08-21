@@ -1,3 +1,7 @@
+import 'package:cite_finder_admin/app/modules/chats/controllers/chats_controller.dart';
+import 'package:cite_finder_admin/app/modules/chats/controllers/chats_details_controller.dart';
+import 'package:cite_finder_admin/app/modules/chats/views/all_chats.dart';
+import 'package:cite_finder_admin/app/modules/chats/views/chat_details.dart';
 import 'package:get/get.dart';
 
 import '../modules/agent/bindings/agent_binding.dart';
@@ -53,10 +57,16 @@ class AppPages {
       page: () => AgentView(),
       binding: AgentBinding(),
     ),
-    // GetPage(
-    //   name: _Paths.CREATEEDIT,
-    //   page: () => CreateEditView(),
-    // ),
+    GetPage(
+      name: _Paths.CHATS,
+      page: () => const AllChatsPage(),
+      binding: BindingsBuilder(() => ChatsController()),
+    ),
+    GetPage(
+      name: _Paths.CHAT_DETAILS,
+      page: () => const ChatDetailsPage(),
+      binding: BindingsBuilder(() => ChatDetailsController()),
+    ),
     GetPage(
       name: _Paths.ONBOARDING,
       page: () => const OnboardingView(),

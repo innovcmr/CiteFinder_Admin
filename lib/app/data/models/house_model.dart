@@ -1,11 +1,8 @@
-import 'dart:developer';
-
-import 'package:cite_finder_admin/app/data/models/admin_model.dart';
-import 'package:cite_finder_admin/app/data/models/landlord_model.dart';
 import 'package:cite_finder_admin/app/data/models/location_model.dart';
-import 'package:cite_finder_admin/app/data/models/user_model.dart';
 import 'package:cite_finder_admin/app/utils/config.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+
+import 'ownerInfo.dart';
 
 class House {
   String? id;
@@ -24,6 +21,12 @@ class House {
   DocumentReference<Map<String, dynamic>>? landlord;
   bool? isApproved;
   double? basePrice;
+  int floors = 0;
+  int rooms = 0;
+  int minimumPeriodCount = 1;
+  String? paymentPeriod;
+  DocumentReference<Map<String, dynamic>>? agent;
+  OwnerInfo? ownerInfo;
 
   House(
       {this.id,
@@ -41,6 +44,12 @@ class House {
       this.dateModified,
       this.landlord,
       this.basePrice,
+      this.agent,
+      this.ownerInfo,
+      this.floors = 0,
+      this.rooms = 0,
+      this.minimumPeriodCount = 1,
+      this.paymentPeriod,
       this.isApproved});
 
   House.fromJson(json1, String type1) {
@@ -108,6 +117,22 @@ class House {
         json.toString().contains("basePrice") ? json['basePrice'] : null;
     isApproved =
         json.toString().contains("isApproved") ? json['isApproved'] : null;
+
+    agent = json[Config.firebaseKeys.agent] is String
+        ? FirebaseFirestore.instance
+            .collection("users")
+            .doc(json[Config.firebaseKeys.agent])
+        : json[Config.firebaseKeys.agent];
+
+    ownerInfo = json[Config.firebaseKeys.ownerInfo] != null
+        ? OwnerInfo.fromJson(json[Config.firebaseKeys.ownerInfo])
+        : null;
+
+    floors = json[Config.firebaseKeys.floors] ?? 0;
+    rooms = json[Config.firebaseKeys.rooms] ?? 0;
+
+    minimumPeriodCount = json[Config.firebaseKeys.minimumPeriodCount] ?? 1;
+    paymentPeriod = json[Config.firebaseKeys.paymentPeriod] ?? "Yearly";
   }
 
   Map<String, dynamic> toJson([bool toFirestore = false]) {
@@ -133,10 +158,30 @@ class House {
     // }
     data['basePrice'] = basePrice;
     data['isApproved'] = isApproved;
+
+    data[Config.firebaseKeys.agent] = toFirestore ? agent : agent?.id;
+    data[Config.firebaseKeys.ownerInfo] = ownerInfo?.toJson();
+    data[Config.firebaseKeys.floors] = floors;
+    data[Config.firebaseKeys.rooms] = rooms;
+    data[Config.firebaseKeys.minimumPeriodCount] = minimumPeriodCount;
+    data[Config.firebaseKeys.paymentPeriod] = paymentPeriod;
     return data;
   }
 
   DocumentReference<Map<String, dynamic>> get record => id != null
       ? FirebaseFirestore.instance.collection(Config.firebaseKeys.homes).doc(id)
       : FirebaseFirestore.instance.collection(Config.firebaseKeys.homes).doc();
+
+  static Future<House> getFromFirestore(String uid) async {
+    final firestore = FirebaseFirestore.instance;
+    final DocumentSnapshot houseData;
+
+    houseData =
+        (await firestore.collection(Config.firebaseKeys.homes).doc(uid).get());
+
+    if (houseData.data() != null) {
+      return House.fromJson(houseData, "document");
+    }
+    throw Exception("Could not get house data");
+  }
 }

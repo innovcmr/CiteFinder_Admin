@@ -1,19 +1,22 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'dart:developer';
+import 'dart:io';
 
+import 'package:cite_finder_admin/app/controllers/crud_controller.dart';
 import 'package:cite_finder_admin/app/data/models/home_room_model.dart';
 import 'package:cite_finder_admin/app/data/models/house_model.dart';
 import 'package:cite_finder_admin/app/data/models/house_model2.dart';
 import 'package:cite_finder_admin/app/data/models/house_room_model2.dart';
 import 'package:cite_finder_admin/app/data/models/location_model2.dart';
+import 'package:cite_finder_admin/app/data/models/user.dart';
 import 'package:cite_finder_admin/app/data/providers/homeRoomProvider.dart';
 import 'package:cite_finder_admin/app/data/providers/houseProvider.dart';
 import 'package:cite_finder_admin/app/modules/house/controllers/location_controller.dart';
 import 'package:cite_finder_admin/app/utils/config.dart';
 import 'package:cite_finder_admin/app/utils/formKeys.dart';
+import 'package:cite_finder_admin/app/utils/new_utils.dart';
 import 'package:cite_finder_admin/app/utils/upload_media.dart';
-import 'package:cite_finder_admin/app/utils/utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -21,12 +24,36 @@ import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:video_player/video_player.dart';
+import 'package:typesense/typesense.dart' as ts;
+
+import '../../../data/models/user_model.dart';
 
 class HouseController extends GetxController {
   //TODO: Implement HouseController
 
   final count = 0.obs;
   static HouseController get to => Get.find();
+
+  final host = "localhost", protocol = ts.Protocol.https;
+  final config = ts.Configuration(
+    // Api key
+    "bmMUgpw8Uqf7QMCtJp6CayxNF4a6xUHe",
+    nodes: {
+      ts.Node.withUri(
+        Uri(
+          scheme: 'https',
+          host: "r6qkamspgd8wy0cnp-1.a1.typesense.net",
+          port: 443,
+        ),
+      ),
+    },
+    numRetries: 3, // A total of 4 tries (1 original try + 3 retries)
+    connectionTimeout: const Duration(seconds: 10),
+  );
+
+  ts.Client? searchClient;
+
+  RxString houseFilter = "all".obs;
 
   // List<User> get moduleItems => moduleItemList.value;
   final houseProvider = HouseProvider();
@@ -111,6 +138,7 @@ class HouseController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    searchClient = ts.Client(config);
     houseProvider.onInit();
     homeRoomProvider.onInit();
     // WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -585,6 +613,42 @@ class HouseController extends GetxController {
         });
   }
 
+  Future<void> setAgent(
+      DocumentReference<Map<String, dynamic>> homeRef, String agentId) async {
+    final agentRef = FirebaseFirestore.instance
+        .collection(Config.firebaseKeys.users)
+        .doc(agentId);
+    runAsyncFunction(() => houseProvider.setAgent(homeRef, agentRef));
+  }
+
+  Stream<List<AppUser>> getAgentsList() {
+    final stream = queryCollection(
+        FirebaseFirestore.instance.collection(Config.firebaseKeys.users),
+        queryBuilder: (users) {
+      return users.where(Config.firebaseKeys.role,
+          isEqualTo: Config.firebaseKeys.agent);
+    }, objectBuilder: (map) {
+      return AppUser.fromMap(map);
+    });
+
+    // final agents = await stream.first;
+
+    return stream;
+  }
+
+  Stream<List<AppUser>> getHomeAgent(House house) {
+    final stream = queryCollection(
+        FirebaseFirestore.instance.collection(Config.firebaseKeys.users),
+        singleRecord: true, queryBuilder: (users) {
+      return users.where(Config.firebaseKeys.id,
+          isEqualTo: house.agent?.id ?? '0');
+    }, objectBuilder: (map) {
+      return AppUser.fromMap(map);
+    });
+
+    return stream;
+  }
+
   //method to save the entered data in the database
   Future<void> addHome() async {
     if (!_createHomeFormKey.currentState!.validate()) {
@@ -678,6 +742,34 @@ class HouseController extends GetxController {
     return snapshots.docs
         .map<House>((doc) => House.fromJson(doc, "document"))
         .toList();
+  }
+
+  Future<List<House>> searchHomes(String key) async {
+    final searchParams = {
+      'q': key,
+      'query_by': 'name,description,location.quarter',
+      'per_page': '250',
+      'page': '1',
+      'sort_by': 'dateAdded:desc'
+    };
+    final results =
+        await searchClient!.collection("homes").documents.search(searchParams);
+
+    List<dynamic> docIds =
+        results["hits"].map((hit) => hit["document"]["id"]).toList();
+
+    List<Future<House>> homeFutures =
+        docIds.map((id) => House.getFromFirestore(id)).toList();
+
+    List<House> res = await Future.wait(homeFutures);
+
+    return res;
+  }
+
+  Future<void> filterHomes(String filter) async {
+    houseFilter.value = filter;
+    Get.back();
+    CRUDController.to.updateList();
   }
 
   @override

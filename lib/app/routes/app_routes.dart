@@ -9,6 +9,8 @@ abstract class Routes {
   static const HOUSE = _Paths.HOUSE;
   static const USER = _Paths.USER;
   static const AGENT = _Paths.AGENT;
+  static const CHATS = _Paths.CHATS;
+  static const CHAT_DETAILS = _Paths.CHAT_DETAILS;
   // static const CREATEEDIT = _Paths.CREATEEDIT;
   static const ONBOARDING = _Paths.ONBOARDING;
 }
@@ -21,6 +23,8 @@ abstract class _Paths {
   static const HOUSE = '/house';
   static const USER = '/user';
   static const AGENT = '/agent';
+  static const CHATS = '/chats';
+  static const CHAT_DETAILS = '/dash-details';
   // static const CREATEEDIT = '/createEdit';
   static const ONBOARDING = '/';
 }

@@ -1,8 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cite_finder_admin/app/components/loaderWidget.dart';
 import 'package:cite_finder_admin/app/controllers/auth_controller.dart';
-import 'package:cite_finder_admin/app/utils/config.dart';
-import 'package:cite_finder_admin/app/utils/extensions.dart';
 import 'package:cite_finder_admin/app/utils/themes/themes.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -63,31 +61,26 @@ class HomeView extends GetView<HomeController> {
                                         Future.delayed(Duration.zero, () {
                                           authController.signoutUser();
                                         });
-                                        // Get.snackbar("Sign out",
-                                        //     "Are you sure you want to sign out?",
-                                        //     backgroundColor:
-                                        //         Get.theme.colorScheme.surface,
-                                        //     duration: null,
-                                        //     isDismissible: true,
-                                        //     mainButton: TextButton(
-                                        //         onPressed: () {
-                                        //           ;
-                                        //         },
-                                        //         child: Text("Yes")));
                                       },
                                       child: const Text("Logout"))
                                 ]);
                           },
-                          child: CircleAvatar(
-                            child: const Icon(Icons.person),
-                            backgroundImage:
-                                authController.currentUser.value!.photoUrl ==
-                                        null
-                                    ? null
-                                    : CachedNetworkImageProvider(authController
-                                        .currentUser.value!.photoUrl!),
-                            maxRadius: 15,
-                          ),
+                          child: Obx(() {
+                            return CircleAvatar(
+                              child:
+                                  authController.currentUser.value!.photoUrl ==
+                                          null
+                                      ? const Icon(Icons.person)
+                                      : null,
+                              backgroundImage: authController
+                                          .currentUser.value!.photoUrl ==
+                                      null
+                                  ? null
+                                  : CachedNetworkImageProvider(authController
+                                      .currentUser.value!.photoUrl!),
+                              maxRadius: 15,
+                            );
+                          }),
                         )
                       ],
                     )
@@ -139,10 +132,10 @@ class HomeView extends GetView<HomeController> {
                           controller.children[index]["icon"],
                           color: controller.index.value == index
                               ? AppTheme.colors.mainPurpleColor
-                              : AppTheme.colors.greySidebarTextColor,
+                              : AppTheme.colors.darkerGreyTextColor,
                         ),
                         title: Text(controller.children[index]["label"]),
-                        textColor: AppTheme.colors.greySidebarTextColor,
+                        textColor: AppTheme.colors.darkerGreyTextColor,
                         selectedColor: AppTheme.colors.mainPurpleColor,
                         selectedTileColor: AppTheme.colors.mainLightPurpleColor
                             .withOpacity(0.15),

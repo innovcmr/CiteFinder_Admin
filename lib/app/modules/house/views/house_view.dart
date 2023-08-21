@@ -9,10 +9,13 @@ import 'package:cite_finder_admin/app/components/PageScrollView.dart';
 import 'package:cite_finder_admin/app/components/crudComponentWidget.dart';
 import 'package:cite_finder_admin/app/controllers/crud_controller.dart';
 import 'package:cite_finder_admin/app/data/models/house_model.dart';
+import 'package:cite_finder_admin/app/data/models/user.dart';
+import 'package:cite_finder_admin/app/data/models/user_model.dart';
 import 'package:cite_finder_admin/app/modules/house/views/home_room_view.dart';
 import 'package:cite_finder_admin/app/modules/user/views/user_view.dart';
 import 'package:cite_finder_admin/app/utils/config.dart';
 import 'package:cite_finder_admin/app/utils/validator.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -36,9 +39,43 @@ class HouseView extends GetView<HouseController> {
         moduleName: "houses",
         searchController: controller.searchController,
         selectedTileIndexController: controller.selectedUserIndex,
-        canEdit: true,
+        canEdit: false,
+        onFilterOpen: () {
+          Get.dialog(AlertDialog(
+            title: Text("Filter Homes"),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ListTile(
+                  title: Text("All"),
+                  selected: controller.houseFilter.value == "all",
+                  selectedTileColor: Colors.amber[100],
+                  onTap: () {
+                    controller.filterHomes("all");
+                  },
+                ),
+                ListTile(
+                  title: Text("Not Approved"),
+                  selected: controller.houseFilter.value == "notApproved",
+                  selectedTileColor: Colors.amber[100],
+                  onTap: () {
+                    controller.filterHomes("notApproved");
+                  },
+                ),
+                ListTile(
+                  title: Text("Approved Homes"),
+                  selected: controller.houseFilter.value == "approved",
+                  selectedTileColor: Colors.amber[100],
+                  onTap: () {
+                    controller.filterHomes("approved");
+                  },
+                ),
+              ],
+            ),
+          ));
+        },
         onSearch: (key) async {
-          final result = controller.searchHouses(key);
+          final result = controller.searchHomes(key);
           return result;
         },
         createView: CreateEditView(
@@ -841,6 +878,86 @@ class CreateEditView extends GetView<HouseController> {
                                   ),
                                 if (mode != "view") SizedBox(height: 30),
 
+                                if (mode == "view")
+                                  Center(
+                                    child: StreamBuilder<List<AppUser?>>(
+                                        stream: controller
+                                            .getHomeAgent(moduleItem!),
+                                        builder: (context, snapshot) {
+                                          if (snapshot.hasError ||
+                                              snapshot.connectionState ==
+                                                  ConnectionState.waiting ||
+                                              !snapshot.hasData) {
+                                            return Center(
+                                                child:
+                                                    CircularProgressIndicator());
+                                          }
+                                          final currentAgent = snapshot.data!;
+
+                                          return StreamBuilder<List<AppUser>>(
+                                              stream:
+                                                  controller.getAgentsList(),
+                                              builder: (context, asnapshot) {
+                                                if (asnapshot.hasError ||
+                                                    !asnapshot.hasData) {
+                                                  return Text(
+                                                      "No agent information yet");
+                                                }
+
+                                                final agents = asnapshot.data!;
+
+                                                return Column(
+                                                  mainAxisSize:
+                                                      MainAxisSize.min,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.center,
+                                                  children: [
+                                                    Text("House Agent"),
+                                                    const SizedBox(height: 20),
+                                                    DropdownButton<String>(
+                                                        focusColor:
+                                                            Colors.transparent,
+                                                        value:
+                                                            currentAgent.isEmpty
+                                                                ? null
+                                                                : currentAgent
+                                                                    .first!.id,
+                                                        items:
+                                                            agents.map((agent) {
+                                                          return DropdownMenuItem<
+                                                              String>(
+                                                            value: agent.id!,
+                                                            child: Text(agent
+                                                                .fullName!),
+                                                          );
+                                                        }).toList(),
+                                                        onChanged: (val) {
+                                                          if (val != null &&
+                                                              val !=
+                                                                  moduleItem!
+                                                                      .agent
+                                                                      ?.id) {
+                                                            moduleItem!.agent =
+                                                                FirebaseFirestore
+                                                                    .instance
+                                                                    .collection(
+                                                                        "users")
+                                                                    .doc(val);
+                                                            controller.setAgent(
+                                                                moduleItem!
+                                                                    .record,
+                                                                val);
+                                                          }
+                                                        }),
+                                                  ],
+                                                );
+                                              });
+                                        }),
+                                  ),
+
+                                const SizedBox(
+                                  height: 30,
+                                ),
                                 //create button
                                 Center(
                                   child: ElevatedButton(
@@ -856,13 +973,15 @@ class CreateEditView extends GetView<HouseController> {
                                                 AppTheme.colors.mainRedColor,
                                             onCancel: () => Get.back(),
                                             onConfirm: () {
+                                              Get.back();
+
                                               controller
                                                   .approveHome(moduleItem!.id);
                                             },
                                           );
 
-                                          controller
-                                              .approveHome(moduleItem!.id);
+                                          // controller
+                                          //     .approveHome(moduleItem!.id);
                                         } else if (mode == "create") {
                                           controller.addHome();
                                         }

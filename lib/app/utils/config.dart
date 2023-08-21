@@ -5,7 +5,7 @@ class Config {
   static final keys = _Keys();
   static final assets = _Assets();
   static final firebaseKeys = _firebaseKeys();
-  static final appName = "Cite Finder Admin";
+  static const appName = "Find-Home Admin";
   // static final countryCode = "+237";
   // static final appKeyAndroid = "j8V634F9f0x8DGkqj4HkT6bELJWd0mBt";
 }
@@ -92,6 +92,7 @@ class _firebaseKeys {
   final String text = "text";
   final String replyingTo = "replyingTo";
   final String favorites = "favorites";
+  final String isDeleted = "isDeleted";
   final String facilities = "facilities";
   final String geoCoordinates = "geoCoordinates";
   final String city = "city";
@@ -121,6 +122,40 @@ class _firebaseKeys {
   final String isRead = "isRead";
   final String source = "source";
   final String isApproved = "isApproved";
+  final String receiver = "receiver";
+  final String visibleTo = "visibleTo";
+  final String sender = "sender";
+  final String addHomeRequests = "addHomeRequests";
+  final String idFront = "idFront";
+  final String idBack = "idBack";
+  final String idUser = "idUser";
+  final String idType = "idType";
+  final String agentRequests = "agentRequests";
+  final String address = "address";
+  final String homeSearchRequest = "homeSearchRequest";
+  final String title = "title";
+  final String recipientsType = "recipientsType";
+  final String readBy = "readBy";
+  final String link = "link";
+  final String route = "route";
+  final String extras = "extras";
+  final String notifications = "notifications";
+  final String roomType = "roomType";
+  final String paymentPlan = "paymentPlan";
+  final String periodCount = "periodCount";
+  final String roomRequests = "roomRequests";
+  final String towns = "towns";
+  final String region = "region";
+  final String paymentMethod = "paymentMethod";
+  final String amount = "amount";
+  final String receipt = "receipt";
+  final String transactions = "transactions";
+  final String agent = "agent";
+  final String ownerInfo = "ownerInfo";
+  final String floors = "floors";
+  final String rooms = "rooms";
+  final String paymentPeriod = "paymentPeriod";
+  final String minimumPeriodCount = "minimumPeriodCount";
 
   //list of cities
 

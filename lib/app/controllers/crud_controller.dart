@@ -31,8 +31,9 @@ class CRUDController extends GetxController {
       if (scrollController.offset >=
           scrollController.position.maxScrollExtent) {
         // load more at list end
-        if (isLoadingMore.value || stopLoadingMore.value || isSearching.value)
+        if (isLoadingMore.value || stopLoadingMore.value || isSearching.value) {
           return;
+        }
 
         isLoadingMore.value = true;
         prevLimit = limit.value;

@@ -6,7 +6,9 @@ import 'dart:developer';
 
 import 'package:cite_finder_admin/app/data/providers/houseProvider.dart';
 import 'package:cite_finder_admin/app/data/providers/userProvider.dart';
+import 'package:cite_finder_admin/app/modules/chats/controllers/chats_details_controller.dart';
 import 'package:cite_finder_admin/app/modules/user/controllers/user_controller.dart';
+import 'package:cite_finder_admin/app/routes/app_pages.dart';
 import 'package:cite_finder_admin/app/utils/config.dart';
 import 'package:cite_finder_admin/app/utils/themes/themes.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -16,6 +18,7 @@ import 'package:get_storage/get_storage.dart';
 
 import '../controllers/crud_controller.dart';
 import '../data/models/user_model.dart';
+import '../modules/house/controllers/house_controller.dart';
 
 class CRUD extends GetView<CRUDController> {
   CRUD({
@@ -324,7 +327,8 @@ class CRUD extends GetView<CRUDController> {
                                 textAlign: TextAlign.center,
                               ));
                             }
-                            if (snapshot.data!.isEmpty) {
+                            if (snapshot.data!.isEmpty &&
+                                controller.stopLoadingMore.value == true) {
                               return Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: Center(
@@ -335,17 +339,18 @@ class CRUD extends GetView<CRUDController> {
                             if (snapshot.hasData) {
                               if (!controller.isSearching.value &&
                                   items!.isNotEmpty) {
-                                print(items);
                                 controller.items.addAll(items);
 
                                 Future.delayed(Duration.zero, () {
-                                  controller.isLoadingMore.value = false;
-
                                   if (items.isEmpty) {
                                     controller.stopLoadingMore.value = true;
                                   }
                                 });
                               }
+
+                              Future.delayed(Duration.zero, () {
+                                controller.isLoadingMore.value = false;
+                              });
 
                               return GetBuilder<CRUDController>(
                                   id: "items_list",
@@ -364,6 +369,20 @@ class CRUD extends GetView<CRUDController> {
                                               UserController
                                                   .to.currentFilter.value)
                                           .toList();
+                                    }
+
+                                    if (moduleName == "houses" &&
+                                        HouseController.to.houseFilter.value !=
+                                            'all') {
+                                      final filter =
+                                          HouseController.to.houseFilter.value;
+
+                                      displayItems =
+                                          displayItems.where((house) {
+                                        return filter == 'notApproved'
+                                            ? house.isApproved != true
+                                            : house.isApproved == true;
+                                      }).toList();
                                     }
 
                                     return Column(
@@ -550,6 +569,46 @@ class CRUD extends GetView<CRUDController> {
                                                           color: AppTheme.colors
                                                               .mainPurpleColor),
                                                     ),
+
+                                                  if (moduleName == "users")
+                                                    IconButton(
+                                                      padding: const EdgeInsets
+                                                              .symmetric(
+                                                          horizontal: 3),
+                                                      constraints:
+                                                          const BoxConstraints(),
+                                                      splashRadius: 20,
+                                                      icon: Icon(
+                                                        Icons.message,
+                                                        size: 20,
+                                                        color: AppTheme.colors
+                                                            .mainPurpleColor,
+                                                      ),
+                                                      onPressed: () {
+                                                        if (!Get.isRegistered<
+                                                            ChatDetailsController>()) {
+                                                          Get.put(
+                                                              ChatDetailsController());
+                                                        }
+                                                        Get.showOverlay(
+                                                            asyncFunction:
+                                                                () async {
+                                                              await ChatDetailsController
+                                                                  .to
+                                                                  .initializeChat(
+                                                                      i);
+
+                                                              Get.rootDelegate
+                                                                  .toNamed(Routes
+                                                                      .CHAT_DETAILS);
+                                                            },
+                                                            loadingWidget:
+                                                                const Center(
+                                                              child:
+                                                                  CircularProgressIndicator(),
+                                                            ));
+                                                      },
+                                                    ),
                                                   if (canDelete)
                                                     IconButton(
                                                       padding: const EdgeInsets
@@ -581,7 +640,10 @@ class CRUD extends GetView<CRUDController> {
                                             ),
                                           ),
 
-                                        Obx(() => controller.isLoadingMore.value
+                                        Obx(() => controller
+                                                    .isLoadingMore.value &&
+                                                !controller
+                                                    .stopLoadingMore.value
                                             ? const Center(
                                                 child: Padding(
                                                   padding: EdgeInsets.symmetric(

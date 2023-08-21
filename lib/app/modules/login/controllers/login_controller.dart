@@ -2,6 +2,7 @@ import 'package:cite_finder_admin/app/data/providers/userProvider.dart';
 import 'package:cite_finder_admin/app/modules/home/views/home_view.dart';
 import 'package:cite_finder_admin/app/utils/formKeys.dart';
 import 'package:cite_finder_admin/app/utils/getExtension.dart';
+import 'package:cite_finder_admin/app/utils/new_utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -21,11 +22,6 @@ class LoginController extends GetxController {
   }
 
   @override
-  void onReady() {
-    super.onReady();
-  }
-
-  @override
   void onClose() {
     emailController.dispose();
     passwordController.dispose();
@@ -37,21 +33,17 @@ class LoginController extends GetxController {
       return;
     } else {
       autoValidate(false);
-      Get.showLoader();
-      bool successful = false;
-      try {
-        successful = await _userProvider.signInUser(
-            email: emailController.text.trim(),
-            password: passwordController.text);
-        if (successful) {
-          Get.snackbar("Login", "Login Successful");
-
-          // Get.offAll(() => HomeView());
-        }
-        Get.closeLoader();
-      } catch (e) {
-        Get.closeLoader();
-      }
+      runAsyncFunction(() async {
+        bool successful = false;
+        try {
+          successful = await _userProvider.signInUser(
+              email: emailController.text.trim(),
+              password: passwordController.text);
+          if (successful) {
+            // Get.offAll(() => HomeView());
+          }
+        } catch (e) {}
+      });
     }
   }
 }
