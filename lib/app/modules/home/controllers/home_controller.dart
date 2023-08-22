@@ -5,6 +5,7 @@ import 'package:cite_finder_admin/app/modules/chats/controllers/chats_controller
 import 'package:cite_finder_admin/app/modules/dashboard/views/dashboard_view.dart';
 import 'package:cite_finder_admin/app/modules/home_add_requests/views/home_add_requests_view.dart';
 import 'package:cite_finder_admin/app/modules/home_search_request/views/home_search_request_view.dart';
+import 'package:cite_finder_admin/app/modules/house/views/home_list_view.dart';
 import 'package:cite_finder_admin/app/modules/house/views/house_view.dart';
 import 'package:cite_finder_admin/app/modules/user/views/users_list.dart';
 import 'package:cite_finder_admin/app/routes/app_pages.dart';
@@ -13,8 +14,10 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 
 class HomeController extends GetxController {
-  final index = 2.obs;
+  final index = 0.obs;
   var scaffoldKey = GlobalKey<ScaffoldState>();
+
+  static HomeController get to => Get.find();
 
   final List<Map<String, dynamic>> children = [
     {
@@ -24,10 +27,10 @@ class HomeController extends GetxController {
       "tab": "dashboard"
     },
     {
-      "view": HouseView(),
-      "label": "Houses",
-      "icon": Icons.maps_home_work_rounded,
-      "tab": "houses"
+      "view": const HomeListView(),
+      "label": "Home List",
+      "icon": FontAwesomeIcons.house,
+      "tab": "home-list"
     },
     {
       "view": const UserListView(),
@@ -76,7 +79,7 @@ class HomeController extends GetxController {
         Get.rootDelegate.currentConfiguration!.currentPage?.parameters!["tab"];
 
     if (tab == null) {
-      index.value = 2;
+      index.value = 0;
       return;
     }
 
@@ -93,14 +96,24 @@ class HomeController extends GetxController {
         .offNamed(Routes.HOME, parameters: {'tab': children[index]['tab']});
   }
 
-  changeIndex(int val) {
-    if (val < 2) {
-      final crudController = CRUDController.to;
+  Future<void> navigateToPageByTab(String tab) async {
+    final tabIndex = children.indexWhere((child) => child["tab"] == tab);
 
-      crudController.reset();
-      navigateToPage(val);
-      return;
-    }
+    if (tabIndex == -1) return;
+
+    index.value = tabIndex;
+    await Get.rootDelegate
+        .offNamed(Routes.HOME, parameters: {'tab': children[tabIndex]['tab']});
+  }
+
+  changeIndex(int val) {
+    // if (val < 2) {
+    //   final crudController = CRUDController.to;
+
+    //   crudController.reset();
+    //   navigateToPage(val);
+    //   return;
+    // }
 
     if (val == 4) {
       if (!Get.isRegistered<ChatsController>()) {

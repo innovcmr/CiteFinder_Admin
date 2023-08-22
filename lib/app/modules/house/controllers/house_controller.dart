@@ -34,7 +34,6 @@ class HouseController extends GetxController {
   final count = 0.obs;
   static HouseController get to => Get.find();
 
-  final host = "localhost", protocol = ts.Protocol.https;
   final config = ts.Configuration(
     // Api key
     "bmMUgpw8Uqf7QMCtJp6CayxNF4a6xUHe",

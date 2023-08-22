@@ -160,19 +160,12 @@ class _firebaseKeys {
   //list of cities
 
   final List<String> availableCities = [
+    'Bambili',
     'Bamenda',
     'Buea',
     'Yaounde',
     'Douala',
-    'Bafoussam',
-    'Bambili',
-    'Limbe',
-    'Kumba',
-    'Muyuka',
-    'Edea',
-    'Soa',
   ];
-
   final List<String> categories = [
     "All",
     "Recent",
@@ -189,7 +182,9 @@ class _firebaseKeys {
     "STUDIO",
     "HOTEL",
     "MOTEL",
-    "HOUSE"
+    "HOUSE",
+    "GUEST HOUSE",
+    "VILLA"
   ];
 
   final List<String> roomTypes = [

@@ -107,20 +107,9 @@ class HomeView extends GetView<HomeController> {
             padding: const EdgeInsets.all(8.0),
             child: ListView.builder(
                 shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
+                // physics: const NeverScrollableScrollPhysics(),
                 itemCount: controller.children.length,
                 itemBuilder: (BuildContext context, int index) {
-                  // ListTile(
-                  //   leading: Image.asset(
-                  //     Config.assets.logo,
-                  //     height: 30,
-                  //   ),
-                  //   trailing: IconButton(
-                  //     icon: const Icon(Icons.close_rounded),
-                  //     onPressed: controller.closeDrawer,
-                  //   ),
-                  // ),
-                  // ...
                   return Padding(
                     padding: const EdgeInsets.all(3.0),
                     child: Obx(() {
