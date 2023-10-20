@@ -26,6 +26,8 @@ class UsersListController extends GetxController {
   RxBool isSearching = false.obs;
   Debouncer debouncer = Debouncer(milliseconds: 500);
 
+  RxList<AppUser> selectedUsers = RxList();
+
   @override
   onInit() {
     super.onInit();
@@ -77,6 +79,26 @@ class UsersListController extends GetxController {
 
   void updateList() {
     update(["users_list"]);
+  }
+
+  bool isSelected(AppUser user) {
+    return selectedUsers.indexWhere((u) => u.id == user.id) > -1;
+  }
+
+  void selectUser(AppUser user) {
+    // stop if user is already selected
+    if (selectedUsers.indexWhere((u) => u.id == user.id) > -1) {
+      return;
+    }
+
+    selectedUsers.add(user);
+  }
+
+  void unselectUser(AppUser user) {
+    final index = selectedUsers.indexWhere((u) => u.id == user.id);
+    if (index != -1) {
+      selectedUsers.removeAt(index);
+    }
   }
 
   List<AppUser> searchAppUsers(List<AppUser> userList) {

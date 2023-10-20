@@ -1,5 +1,6 @@
 import 'package:cite_finder_admin/app/controllers/auth_controller.dart';
 import 'package:cite_finder_admin/app/controllers/crud_controller.dart';
+import 'package:cite_finder_admin/app/controllers/notifications_controller.dart';
 import 'package:cite_finder_admin/app/modules/agent/controllers/agent_controller.dart';
 import 'package:cite_finder_admin/app/modules/bookingRequests/controllers/booking_requests_controller.dart';
 import 'package:cite_finder_admin/app/modules/dashboard/controllers/dashboard_controller.dart';
@@ -25,5 +26,6 @@ class InitialBindings implements Bindings {
     Get.lazyPut(() => HomeAddRequestController());
     Get.lazyPut(() => UsersListController());
     Get.lazyPut(() => HomeListController());
+    Get.lazyPut(() => NotificationsController());
   }
 }

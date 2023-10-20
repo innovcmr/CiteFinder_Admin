@@ -2,6 +2,7 @@
 
 import 'dart:typed_data';
 
+import 'package:cite_finder_admin/app/controllers/auth_controller.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -12,9 +13,10 @@ import 'package:mime_type/mime_type.dart';
 const allowedFormats = {'image/png', 'image/jpeg', 'video/mp4', 'image/gif'};
 
 class SelectedMedia {
-  const SelectedMedia(this.storagePath, this.bytes);
+  const SelectedMedia(this.storagePath, this.bytes, this.extension);
   final String storagePath;
   final Uint8List bytes;
+  final String? extension;
 }
 
 enum MediaSource {
@@ -124,13 +126,12 @@ Future<SelectedMedia?> selectMedia({
   if (mediaBytes == null) {
     return null;
   }
-  // TODO: add landlord user id here
-  final currentUser = "1234";
-  // Get.find<AuthController>().currentUser.value;
-  if (currentUser != null && pickedMedia != null) {
-    // change current user to currentUser!.id
-    final path = storagePath(currentUser, pickedMedia.name, isVideo);
-    return SelectedMedia(path, mediaBytes);
+
+  final currentUserId = AuthController.to.supportUser.value!.id;
+
+  if (currentUserId != null && pickedMedia != null) {
+    final path = storagePath(currentUserId, pickedMedia.name, isVideo);
+    return SelectedMedia(path, mediaBytes, pickedMedia.name.split(".").last);
   }
   return null;
 }
@@ -162,15 +163,12 @@ Future<SelectedMedia?> selectFile({
   if (file.bytes == null) {
     return null;
   }
-  //  TODO: add landlord user id here
 
-  final currentUser = "1234";
-  //  Get.find<AuthController>().currentUser.value;
+  final currentUserId = AuthController.to.supportUser.value!.id;
 
-  if (currentUser != null && file.bytes != null) {
-    //TODO: change current user to currentUser!.id
-    final path = storagePath(currentUser, file.name, false);
-    return SelectedMedia(path, file.bytes!);
+  if (currentUserId != null && file.bytes != null) {
+    final path = storagePath(currentUserId, file.name, false);
+    return SelectedMedia(path, file.bytes!, file.extension);
   }
   return null;
 }

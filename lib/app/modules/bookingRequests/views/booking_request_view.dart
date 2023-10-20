@@ -8,6 +8,8 @@ import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
 
+import '../../../data/models/user.dart';
+
 class BookingRequestsView extends GetView<BookingRequestsController> {
   const BookingRequestsView({Key? key}) : super(key: key);
 
@@ -56,6 +58,11 @@ class BookingRequestsView extends GetView<BookingRequestsController> {
                                         fontWeight: FontWeight.bold))),
                             Expanded(
                                 flex: 4,
+                                child: Text("User",
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold))),
+                            Expanded(
+                                flex: 3,
                                 child: Text("Home",
                                     style: TextStyle(
                                         fontWeight: FontWeight.bold))),
@@ -120,6 +127,22 @@ class BookingRequestsView extends GetView<BookingRequestsController> {
                             Expanded(flex: 1, child: Text(index.toString())),
                             Expanded(
                                 flex: 4,
+                                child: FutureBuilder<AppUser>(
+                                    future: AppUser.getUserFromFirestore(
+                                        request.user!.id),
+                                    builder: (context, snapshot) {
+                                      if (snapshot.hasError) {
+                                        return const Text("-");
+                                      }
+
+                                      if (!snapshot.hasData) {
+                                        return const Text("Loading...");
+                                      }
+
+                                      return Text(snapshot.data!.fullName!);
+                                    })),
+                            Expanded(
+                                flex: 3,
                                 child: FutureBuilder<House>(
                                     future: House.getFromFirestore(
                                         request.home!.id),

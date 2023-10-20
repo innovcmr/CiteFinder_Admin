@@ -1,7 +1,9 @@
 import 'package:cite_finder_admin/app/components/custom_search_bar.dart';
+import 'package:cite_finder_admin/app/controllers/notifications_controller.dart';
 import 'package:cite_finder_admin/app/data/models/user_model.dart';
 import 'package:cite_finder_admin/app/modules/user/controllers/user_list_controller.dart';
 import 'package:cite_finder_admin/app/utils/new_utils.dart';
+import 'package:cite_finder_admin/app/utils/themes/themes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -41,9 +43,10 @@ class UserListView extends GetView<UsersListController> {
         child: SingleChildScrollView(
           controller: controller.scrollController,
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Expanded(
                     flex: 1,
@@ -115,7 +118,55 @@ class UserListView extends GetView<UsersListController> {
                         ],
                       ),
                     ),
-                  )
+                  ),
+                  Obx(() {
+                    return controller.selectedUsers.isNotEmpty
+                        ? Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 15.0),
+                            child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Checkbox(
+                                      value: controller.selectedUsers.length ==
+                                          controller.currentUsers.length,
+                                      onChanged: (val) {
+                                        if (val == true) {
+                                          controller.selectedUsers.value =
+                                              controller.currentUsers;
+                                        } else {
+                                          controller.selectedUsers.value = [];
+                                        }
+                                      }),
+                                  const Text(
+                                    "Select all",
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 15),
+                                  )
+                                ]),
+                          )
+                        : const SizedBox.shrink();
+                  }),
+                  Obx(() {
+                    return controller.selectedUsers.isNotEmpty
+                        ? Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 15.0),
+                            child: IconButton(
+                                onPressed: () {
+                                  NotificationsController.to
+                                      .showNotificationForm(controller
+                                          .selectedUsers
+                                          .map((u) => u.id!)
+                                          .toList());
+                                },
+                                icon: const Icon(Icons.notification_add_rounded,
+                                    size: 30)),
+                          )
+                        : const SizedBox.shrink();
+                  }),
                 ],
               ),
               GetBuilder<UsersListController>(
@@ -147,6 +198,16 @@ class UserListView extends GetView<UsersListController> {
                               controller.searchAppUsers(snapshot.data!);
 
                           controller.currentUsers = users;
+
+                          Future.delayed(Duration.zero, () {
+                            controller.selectedUsers.value = controller
+                                .selectedUsers
+                                .where((selectedUser) =>
+                                    users.indexWhere(
+                                        (u) => u.id == selectedUser.id) !=
+                                    -1)
+                                .toList();
+                          });
 
                           return ListView.separated(
                             itemCount: users.length + 1,
@@ -211,113 +272,159 @@ class UserListView extends GetView<UsersListController> {
                               }
 
                               final user = users[index - 1];
-                              return Card(
-                                  child: ListTile(
-                                tileColor: Colors.grey[200]!,
-                                onTap: () {},
-                                title: Row(
-                                  children: [
-                                    Expanded(
-                                        flex: 1,
-                                        child: Text(
-                                          index.toString(),
-                                        )),
-                                    Expanded(
-                                        flex: 5,
-                                        child: Text(
-                                          "${user.fullName}",
-                                        )),
-                                    Expanded(
-                                        flex: 3,
-                                        child: Text(
-                                          "${user.email}",
-                                        )),
-                                    Expanded(
-                                        flex: 3,
-                                        child: Text(
-                                          "${user.phoneNumber}",
-                                        )),
-                                    Expanded(
-                                        flex: 1,
-                                        child: Text(
-                                          "${user.location}",
-                                        )),
-                                    Expanded(
-                                      flex: 2,
-                                      child: DropdownButton<String>(
-                                        focusColor: Colors.transparent,
-                                        icon: const Icon(
-                                            Icons.expand_more_outlined),
-                                        isExpanded: true,
-                                        iconSize: 30,
-                                        value: user.role,
-                                        items: [
-                                          "tenant",
-                                          "agent",
-                                          "admin",
-                                          "landlord"
-                                        ]
-                                            .map<DropdownMenuItem<String>>(
-                                                (String status) =>
-                                                    DropdownMenuItem<String>(
-                                                        value: status,
-                                                        child: Text(status)))
-                                            .toList(),
-                                        onChanged: (val) {
-                                          if (val == null || val == user.role) {
-                                            return;
-                                          }
-
-                                          controller.updateUserRole(
-                                              user.record!, val);
-                                        },
-                                      ),
-                                      // Text(request.status)
-                                    ),
-                                    Expanded(
-                                        flex: 3,
-                                        child: Padding(
-                                          padding:
-                                              const EdgeInsets.only(left: 20.0),
+                              return Obx(() {
+                                return Card(
+                                    child: ListTile(
+                                  tileColor: Colors.grey[200]!,
+                                  selected: controller.isSelected(user),
+                                  selectedTileColor: AppTheme
+                                      .colors.mainPurpleColor
+                                      .withOpacity(.3),
+                                  // selectedColor: AppTheme.colors.mainPurpleColor
+                                  //     .withOpacity(.5),
+                                  onTap: () {
+                                    print("Tap");
+                                  },
+                                  onLongPress: () {
+                                    print("LongPress");
+                                    if (!controller.isSelected(user)) {
+                                      controller.selectUser(user);
+                                    } else {
+                                      controller.unselectUser(user);
+                                    }
+                                  },
+                                  title: Row(
+                                    children: [
+                                      Expanded(
+                                          flex: 1,
                                           child: Text(
-                                            user.dateAdded!.visualFormat(),
-                                          ),
-                                        )),
-                                    Expanded(
+                                            index.toString(),
+                                          )),
+                                      Expanded(
+                                          flex: 5,
+                                          child: Text(
+                                            "${user.fullName}",
+                                          )),
+                                      Expanded(
+                                          flex: 3,
+                                          child: Text(
+                                            "${user.email}",
+                                          )),
+                                      Expanded(
+                                          flex: 3,
+                                          child: Text(
+                                            "${user.phoneNumber}",
+                                          )),
+                                      Expanded(
+                                          flex: 1,
+                                          child: Text(
+                                            "${user.location}",
+                                          )),
+                                      Expanded(
                                         flex: 2,
-                                        child: Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            IconButton(
-                                              icon: const Icon(Icons.message),
-                                              onPressed: () {
-                                                runAsyncFunction(() async {
-                                                  if (!Get.isRegistered<
-                                                      ChatDetailsController>()) {
-                                                    Get.put(
-                                                        ChatDetailsController());
-                                                  }
-                                                  await ChatDetailsController.to
-                                                      .initializeChat(user);
+                                        child: DropdownButton<String>(
+                                          focusColor: Colors.transparent,
+                                          icon: const Icon(
+                                              Icons.expand_more_outlined),
+                                          isExpanded: true,
+                                          iconSize: 30,
+                                          value: user.role,
+                                          items: [
+                                            "tenant",
+                                            "agent",
+                                            "admin",
+                                            "landlord"
+                                          ]
+                                              .map<DropdownMenuItem<String>>(
+                                                  (String status) =>
+                                                      DropdownMenuItem<String>(
+                                                          value: status,
+                                                          child: Text(status)))
+                                              .toList(),
+                                          onChanged: (val) {
+                                            if (val == null ||
+                                                val == user.role) {
+                                              return;
+                                            }
 
-                                                  Get.rootDelegate.toNamed(
-                                                      Routes.CHAT_DETAILS);
-                                                });
-                                              },
+                                            controller.updateUserRole(
+                                                user.record!, val);
+                                          },
+                                        ),
+                                        // Text(request.status)
+                                      ),
+                                      Expanded(
+                                          flex: 3,
+                                          child: Padding(
+                                            padding: const EdgeInsets.only(
+                                                left: 20.0),
+                                            child: Text(
+                                              user.dateAdded!.visualFormat(),
                                             ),
-                                            if (user.role == "landlord")
+                                          )),
+                                      Expanded(
+                                          flex: 2,
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
                                               IconButton(
-                                                icon: const Icon(Icons.house),
+                                                icon: const Icon(Icons.message),
                                                 onPressed: () {
-                                                  controller
-                                                      .showLandlordHomes(user);
+                                                  runAsyncFunction(() async {
+                                                    if (!Get.isRegistered<
+                                                        ChatDetailsController>()) {
+                                                      Get.put(
+                                                          ChatDetailsController());
+                                                    }
+                                                    await ChatDetailsController
+                                                        .to
+                                                        .initializeChat(user);
+
+                                                    Get.rootDelegate.toNamed(
+                                                        Routes.CHAT_DETAILS);
+                                                  });
                                                 },
                                               ),
-                                          ],
-                                        )),
-                                  ],
-                                ),
-                              ));
+                                              if (user.role == "landlord")
+                                                IconButton(
+                                                  icon: const Icon(Icons.house),
+                                                  onPressed: () {
+                                                    controller
+                                                        .showLandlordHomes(
+                                                            user);
+                                                  },
+                                                ),
+                                              IconButton(
+                                                icon: const Icon(
+                                                    Icons.notification_add),
+                                                onPressed: () {
+                                                  NotificationsController.to
+                                                      .showNotificationForm(
+                                                          [user.id!]);
+                                                },
+                                              ),
+                                              Obx(() => controller
+                                                      .selectedUsers.isNotEmpty
+                                                  ? Checkbox(
+                                                      value: controller
+                                                          .isSelected(user),
+                                                      onChanged: (val) {
+                                                        if (val == true) {
+                                                          controller
+                                                              .selectUser(user);
+                                                        } else {
+                                                          controller
+                                                              .unselectUser(
+                                                                  user);
+                                                        }
+                                                      })
+                                                  : const SizedBox.shrink())
+                                            ],
+                                          )),
+                                    ],
+                                  ),
+                                ));
+                              });
                             },
                             separatorBuilder: (context, index) {
                               return const SizedBox(

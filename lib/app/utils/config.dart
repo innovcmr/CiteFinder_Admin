@@ -163,8 +163,10 @@ class _firebaseKeys {
     'Bambili',
     'Bamenda',
     'Buea',
-    'Yaounde',
     'Douala',
+    'Kribi',
+    'Limbe',
+    'Yaounde',
   ];
   final List<String> categories = [
     "All",
